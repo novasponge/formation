@@ -1,7 +1,7 @@
 # Sorting-Algorithm-visualization
 ### Wireframe
 
-![Sorting](./wireFrame/Sorting_visualization.png) 
+![Sorting](./wireFrame/Sorting_visualization.png)
 
 ### MVP  
 
@@ -23,7 +23,7 @@ This project will use JavaScript and `HTML5 Canvas` to implement the visualizati
 - [ ] Write Sticks class that stores its display slope and position
 - [ ] Add a button to trigger bubble sort and quick sort visualization
 
-### Phase 2: Maze solving (1.5 days)
+### Phase 2: Merge sort and Heap sort (1.5 days)
 
 - [ ] Write merge sort and heap sort visualization
 - [ ] Add a timer on each sorting algorithm
