@@ -1,7 +1,7 @@
 # Sorting-Algorithm-visualization
 ### Wireframe
 
-- [Sorting](./wireFrame/Sorting_visualization.png)
+![Sorting](./wireFrame/Sorting_visualization.png) 
 
 ### MVP  
 
