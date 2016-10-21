@@ -8,21 +8,27 @@
     <style media="screen">
       body {
         width: 90%;
+        text-align: center;
         margin: 0 auto;
       }
+
+      canva-container {
+        width: auto;
+        display: block;
+      };
     </style>
   </head>
   <body>
     <h1>Sorting Visualization</h1>
-    <div>
+    <div class="canvas-container">
       <h2>Shuffle</h2>
       <canvas id="canvas-shuffle"></canvas>
     </div>
-    <div >
+    <div class="canvas-container">
       <h2>Bubble Sort</h2>
       <canvas id="canvas-bubblesort"></canvas>
     </div>
-    <div>
+    <div class="canvas-container">
       <h2>Quick Sort</h2>
       <canvas id="canvas-quicksort">Quick Sort</canvas>
     </div>
