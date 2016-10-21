@@ -5,9 +5,29 @@
     <title>Sorting Visualization</title>
     <script type="text/javascript" src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
     <script type="text/javascript" src="bundle.js"></script>
+    <style media="screen">
+      canvas {
+        margin: 0 auto;
+      }
+      body {
+        width: 1024px;
+        margin: 0 auto;
+      }
+    </style>
   </head>
   <body>
     <h1>Sorting Visualization</h1>
-    <canvas id="canvas"></canvas>
+    <div>
+      <h2>Shuffle</h2>
+      <canvas id="canvas-shuffle"></canvas>
+    </div>
+    <div >
+      <h2>Bubble Sort</h2>
+      <canvas id="canvas-bubblesort"></canvas>
+    </div>
+    <div>
+      <h2>Quick Sort</h2>
+      <canvas id="canvas-quicksort">Quick Sort</canvas>
+    </div>
   </body>
 </html>
