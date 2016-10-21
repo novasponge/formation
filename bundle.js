@@ -54,7 +54,7 @@
 	
 	var _bubble_sort = __webpack_require__(6);
 	
-	var _quick_sort_revised = __webpack_require__(8);
+	var _quick_sort = __webpack_require__(7);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -64,7 +64,7 @@
 	  canvasEl.height = 200;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
-	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle, true);
 	  sticksView.start();
 	});
 	
@@ -86,7 +86,7 @@
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
-	  sticksView.sticks.adopAlgorithm(_quick_sort_revised.quickSort);
+	  sticksView.sticks.adopAlgorithm(_quick_sort.quickSort);
 	  sticksView.start();
 	});
 
@@ -121,19 +121,20 @@
 	  _createClass(SticksView, [{
 	    key: "start",
 	    value: function start() {
-	      var _this = this;
-	
-	      this.lastTime = 0;
+	      this.lastTime = Date.now();
 	      this.sticks.draw(this.ctx);
-	      this.interval = window.setInterval(function () {
-	        _this.render();
-	      }, 20);
+	      window.requestAnimationFrame(this.render.bind(this));
 	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      this.sticks.step();
+	      var time = Date.now();
+	      var timeDelta = time - this.lastTime;
+	      this.sticks.step(timeDelta);
 	      this.sticks.draw(this.ctx);
+	      this.lastTime = time;
+	
+	      window.requestAnimationFrame(this.render.bind(this));
 	    }
 	  }]);
 	
@@ -165,15 +166,14 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Sticks = function () {
-	  function Sticks(ctx) {
+	  function Sticks() {
 	    _classCallCheck(this, Sticks);
 	
-	    this.ctx = ctx;
 	    this.DIM_X = 1024;
-	    this.DIM_Y = 480;
+	    this.DIM_Y = 200;
 	    this.sticks = [];
-	    this.NUM_STICK = 100;
-	    this.MID_NUM = Math.floor(this.NUM_STICK / 2);
+	    this.NUM_STICK = 99;
+	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
 	    this.cons = 0;
@@ -183,69 +183,74 @@
 	  _createClass(Sticks, [{
 	    key: 'addSticks',
 	    value: function addSticks() {
-	      var mid_stick = new _stick2.default({ lineHead: [512, 100], lineTail: [512, 40], pos: this.MID_NUM });
+	      var mid_stick = new _stick2.default({ lineHead: [512, 100], lineTail: [512, 40] });
 	      this.sticks.push(mid_stick);
 	
-	      for (var i = 1; i < this.MID_NUM + 1; i++) {
+	      for (var _i = 1; _i < this.MID_NUM + 1; _i++) {
 	        var leftOne = Object.assign({}, this.sticks[0]);
-	        var leftAngle = Math.PI / 2 - this.dangle * i;
+	        var leftAngle = Math.PI / 2 - this.dangle * _i;
 	        var rightOne = Object.assign({}, this.sticks[this.sticks.length - 1]);
-	        var rightAngle = Math.PI / 2 + this.dangle * i;
+	        var rightAngle = Math.PI / 2 + this.dangle * _i;
 	
-	        leftOne.lineHead = [leftOne.lineHead[0] - 9, leftOne.lineHead[1]];
+	        leftOne.lineHead = [leftOne.lineHead[0] - 8, leftOne.lineHead[1]];
 	        leftOne.lineTail = _util.Util.findLineTail(leftOne.lineHead, leftAngle);
-	        leftOne.pos = leftOne.pos - 1;
 	        this.sticks.unshift(new _stick2.default(leftOne));
 	
-	        rightOne.lineHead = [rightOne.lineHead[0] + 9, rightOne.lineHead[1]];
+	        rightOne.lineHead = [rightOne.lineHead[0] + 8, rightOne.lineHead[1]];
 	        rightOne.lineTail = _util.Util.findLineTail(rightOne.lineHead, rightAngle);
-	        rightOne.pos = rightOne.pos + 1;
 	        this.sticks.push(new _stick2.default(rightOne));
+	      }
+	
+	      for (var i = 0; i < this.sticks.length; i++) {
+	        this.sticks[i].pos = i;
 	      }
 	    }
 	  }, {
 	    key: 'checkFinishSwap',
 	    value: function checkFinishSwap(stick1, stick2) {
-	      if (stick1 == stick2) {
-	        return true;
-	      }
 	      return stick1.checkFinishMove() && stick2.checkFinishMove();
 	    }
 	  }, {
 	    key: 'updateSticks',
-	    value: function updateSticks() {
+	    value: function updateSticks(timeDelta) {
 	      var swapPos = this.swapPos;
-	      if (this.cons > swapPos.length - 1) {
-	        return;
-	      } else {
+	      if (this.cons < swapPos.length) {
 	        var swaps = swapPos[this.cons];
 	        var stick1 = this.sticks[swaps[0]];
 	        var stick2 = this.sticks[swaps[1]];
-	        stick1.getEndpos(stick2);
-	        stick2.getEndpos(stick1);
 	        if (stick1 !== stick2) {
-	          this.swap(this.sticks[swaps[0]], this.sticks[swaps[1]]);
-	        }
-	        if (this.checkFinishSwap(this.sticks[swaps[0]], this.sticks[swaps[1]])) {
+	          stick1.getEndpos(stick2);
+	          stick2.getEndpos(stick1);
+	          this.swap(stick1, stick2, timeDelta);
+	        } else {
 	          this.cons++;
+	          return;
 	        }
+	      } else {
+	        console.log(1 + 1);
+	        return;
 	      }
 	    }
 	  }, {
 	    key: 'step',
-	    value: function step() {
-	      this.updateSticks();
+	    value: function step(timeDelta) {
+	      this.updateSticks(timeDelta);
 	    }
 	  }, {
 	    key: 'adopAlgorithm',
-	    value: function adopAlgorithm(algorithm) {
+	    value: function adopAlgorithm(algorithm, isShuffle) {
 	      this.swapPos = this.swapPos.concat(algorithm(this.sticks));
 	    }
 	  }, {
 	    key: 'swap',
-	    value: function swap(stick1, stick2) {
-	      stick1.moveTo(stick1.endPos);
-	      stick2.moveTo(stick2.endPos);
+	    value: function swap(stick1, stick2, timeDelta) {
+	      if (this.checkFinishSwap(stick1, stick2)) {
+	        this.cons++;
+	        console.log(this.cons);
+	      } else {
+	        stick1.moveTo(stick1.endPos, timeDelta);
+	        stick2.moveTo(stick2.endPos, timeDelta);
+	      }
 	    }
 	  }, {
 	    key: 'draw',
@@ -287,10 +292,9 @@
 	
 	    this.lineHead = options.lineHead;
 	    this.lineTail = options.lineTail;
-	    this.color = "#000";
+	    this.color = "#909090";
 	    this.pos = options.pos;
 	    this.endPos = null;
-	    this.stg = options.stg;
 	  }
 	
 	  _createClass(Stick, [{
@@ -302,9 +306,10 @@
 	    }
 	  }, {
 	    key: "moveTo",
-	    value: function moveTo(endPos) {
+	    value: function moveTo(endPos, timeDelta) {
 	      if (!this.checkFinishMove()) {
-	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos);
+	        this.color = "#f00";
+	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos, timeDelta);
 	        this.lineHead[0] = this.lineHead[0] + speed;
 	        this.lineTail[0] = this.lineTail[0] + speed;
 	      }
@@ -313,6 +318,7 @@
 	    key: "checkFinishMove",
 	    value: function checkFinishMove() {
 	      if (this.lineHead[0] === this.endPos) {
+	        this.color = "#000";
 	        this.endPos = null;
 	        return true;
 	      } else {
@@ -322,12 +328,7 @@
 	  }, {
 	    key: "draw",
 	    value: function draw(ctx) {
-	      // if (this.checkFinishMove()) {
-	      //   ctx.strokeStyle('black');
-	      // } else {
-	      //   ctx.strokeStyle("red");
-	      // }
-	
+	      ctx.strokeStyle = this.color;
 	      ctx.beginPath();
 	      ctx.moveTo.apply(ctx, _toConsumableArray(this.lineHead));
 	      ctx.lineTo.apply(ctx, _toConsumableArray(this.lineTail));
@@ -355,16 +356,21 @@
 	    var dx = Math.cos(angle) * 60;
 	    return [lineHead[0] - dx, lineHead[1] - dy];
 	  },
-	  moveSpeed: function moveSpeed(linePos, endPos) {
+	  moveSpeed: function moveSpeed(linePos, endPos, timeDelta) {
 	    var distance = Math.abs(endPos - linePos);
+	    if (distance === 0) {
+	      return 0;
+	    }
+	
 	    var direction = distance / (endPos - linePos);
 	    var vel = void 0;
+	
 	    if (distance > 20) {
-	      vel = 10;
-	    } else if (distance > 10) {
-	      vel = 2;
-	    } else if (distance > 0) {
+	      vel = distance / timeDelta;
+	    } else if (distance > 1) {
 	      vel = 1;
+	    } else {
+	      vel = distance;
 	    }
 	    return vel * direction;
 	  }
@@ -420,8 +426,7 @@
 	};
 
 /***/ },
-/* 7 */,
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -429,59 +434,36 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var swap = function swap(arr, i, j, swapPos) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  swapPos.push([i, j]);
+	};
+	
 	var quickSort = exports.quickSort = function quickSort(arr) {
 	  var swapPos = [];
 	  sort(arr, 0, arr.length - 1, swapPos);
 	  return swapPos;
 	};
 	
-	function sort(arr, oLeft, oRight, swapPos) {
+	var sort = function sort(arr, left, right, swapPos) {
+	  if (left >= right) return;
 	
-	  var swapped = false;
+	  swap(arr, left, Math.floor((left + right) / 2), swapPos);
 	
-	  //If you make any swaps the resulting sub arrays are of smaller length than the original
-	  //so you just need to handle the case where no swaps are made.
-	
-	  var left = oLeft;
-	  var right = oRight;
-	
-	  //I am not sure but you might need a check for right - left > -1.
-	  if (right - left <= 1 && right >= left) {
-	    if (arr[right].pos < arr[left].pos) {
-	      var mix = arr[right];
-	      arr[right] = arr[left];
-	      arr[left] = mix;
-	      swapPos.push([left, right]);
-	    }
-	  } else {
-	    var plnd = Math.floor((left + right) / 2);
-	    var pivot = arr[plnd];
-	    while (left <= right) {
-	      if (arr[left].pos > pivot.pos) {
-	        var temp = arr[right];
-	        arr[right] = arr[left];
-	        arr[left] = temp;
-	        swapPos.push([left, right]);
-	        right = right - 1;
-	        swapped = true;
-	      } else {
-	        left = left + 1;
-	      }
-	    }
-	
-	    if (swapped) {
-	      sort(arr, oLeft, right, swapPos);
-	      sort(arr, left, oRight, swapPos);
-	    } else {
-	      var _temp = arr[oRight];
-	      arr[oRight] = arr[plnd];
-	      arr[plnd] = _temp;
-	      swapPos.push([plnd, oRight]);
-	      sort(arr, oLeft, oRight - 1, swapPos);
+	  var last = left;
+	  for (var i = left + 1; i <= right; i++) {
+	    if (arr[i].pos < arr[left].pos) {
+	      last++;
+	      swap(arr, last, i, swapPos);
 	    }
 	  }
-	  console.log(arr);
-	}
+	
+	  swap(arr, left, last, swapPos);
+	  sort(arr, left, last - 1, swapPos);
+	  sort(arr, last + 1, right, swapPos);
+	};
 
 /***/ }
 /******/ ]);
