@@ -60,6 +60,8 @@
 	
 	var _select_sort = __webpack_require__(12);
 	
+	var _heap_sort = __webpack_require__(13);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// import { mergeSort } from './sorting_algs/merge_sort';
@@ -115,6 +117,17 @@
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
 	  sticksView.sticks.adopAlgorithm(_select_sort.selectionSort);
+	  sticksView.start();
+	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var canvasEl = document.getElementById("canvas-heapsort");
+	  canvasEl.width = 1024;
+	  canvasEl.height = 200;
+	  var ctx = canvasEl.getContext("2d");
+	  var sticksView = new _stick_view2.default(ctx);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_heap_sort.heapSort);
 	  sticksView.start();
 	});
 
@@ -257,7 +270,6 @@
 	        if (this.mergeSort) {
 	          stick1 = this.sticks[swaps[0]];
 	          stick2 = this.aux[swaps[1]];
-	          // debugger
 	        } else {
 	          stick1 = this.sticks[swaps[0]];
 	          stick2 = this.sticks[swaps[1]];
@@ -293,6 +305,9 @@
 	    value: function checkFinishShuffle() {
 	      if (this.cons === this.shuffle - 1) {
 	        this.mergeSort = this.isMergeSort;
+	        for (var i = 0; i < this.sticks.length; i++) {
+	          this.sticks[i].color = "#909090";
+	        }
 	      }
 	    }
 	  }, {
@@ -313,7 +328,6 @@
 	      } else {
 	        stick1.moveTo(stick1.endPos, timeDelta);
 	        stick2.moveTo(stick2.endPos, timeDelta);
-	        // debugger
 	      }
 	    }
 	  }, {
@@ -17555,7 +17569,6 @@
 	var insertionSort = exports.insertionSort = function insertionSort(arr) {
 	  var swapPos = [];
 	  sort(arr, swapPos);
-	  console.log(arr);
 	  return swapPos;
 	};
 	
@@ -17590,7 +17603,6 @@
 	var selectionSort = exports.selectionSort = function selectionSort(arr) {
 	  var swapPos = [];
 	  sort(arr, swapPos);
-	  console.log(arr);
 	  return swapPos;
 	};
 	
@@ -17605,6 +17617,57 @@
 	    }
 	    swap(arr, i, min, swapPos);
 	  }
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, swapPos) {
+	  var temp = arr[i - 1];
+	  arr[i - 1] = arr[j - 1];
+	  arr[j - 1] = temp;
+	  swapPos.push([i - 1, j - 1]);
+	};
+	
+	var heapSort = exports.heapSort = function heapSort(arr) {
+	  var swapPos = [];
+	  sort(arr, swapPos);
+	  return swapPos;
+	};
+	
+	function sort(arr, swapPos) {
+	  var len = arr.length;
+	  for (var k = Math.floor(len / 2); k >= 1; k--) {
+	    sink(arr, k, len, swapPos);
+	  }
+	  while (len > 1) {
+	    swap(arr, 1, len--, swapPos);
+	    sink(arr, 1, len, swapPos);
+	  }
+	}
+	
+	function sink(arr, k, n, swapPos) {
+	  while (2 * k <= n) {
+	    var j = 2 * k;
+	    if (j < n && less(arr, j, j + 1)) {
+	      j++;
+	    }
+	    if (!less(arr, k, j)) {
+	      break;
+	    }
+	    swap(arr, k, j, swapPos);
+	    k = j;
+	  }
+	}
+	
+	function less(arr, i, j) {
+	  return arr[i - 1].pos < arr[j - 1].pos;
 	}
 
 /***/ }
