@@ -69,7 +69,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-shuffle");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle, true);
@@ -79,7 +79,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-bubblesort");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
@@ -90,7 +90,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-quicksort");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
@@ -101,7 +101,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-insertsort");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
@@ -112,7 +112,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-selectsort");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
@@ -123,7 +123,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-heapsort");
 	  canvasEl.width = 1024;
-	  canvasEl.height = 200;
+	  canvasEl.height = 100;
 	  var ctx = canvasEl.getContext("2d");
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
@@ -213,7 +213,7 @@
 	    _classCallCheck(this, Sticks);
 	
 	    this.DIM_X = 1024;
-	    this.DIM_Y = 200;
+	    this.DIM_Y = 100;
 	    this.sticks = [];
 	    this.NUM_STICK = 99;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
@@ -229,7 +229,7 @@
 	  _createClass(Sticks, [{
 	    key: 'addSticks',
 	    value: function addSticks() {
-	      var mid_stick = new _stick2.default({ lineHead: [512, 100], lineTail: [512, 40] });
+	      var mid_stick = new _stick2.default({ lineHead: [512, 80], lineTail: [512, 20] });
 	      this.sticks.push(mid_stick);
 	
 	      for (var _i = 1; _i < this.MID_NUM + 1; _i++) {
@@ -371,6 +371,7 @@
 	    this.lineHead = options.lineHead;
 	    this.lineTail = options.lineTail;
 	    this.color = "#909090";
+	    this.width = 1;
 	    this.pos = options.pos;
 	    this.endPos = null;
 	    this.isFake = options.isFake;
@@ -388,6 +389,7 @@
 	    value: function moveTo(endPos, timeDelta) {
 	      if (!this.checkFinishMove()) {
 	        this.color = "#f00";
+	        this.width = 2;
 	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos, timeDelta);
 	        this.lineHead[0] = this.lineHead[0] + speed;
 	        this.lineTail[0] = this.lineTail[0] + speed;
@@ -398,6 +400,7 @@
 	    value: function checkFinishMove() {
 	      if (this.lineHead[0] === this.endPos) {
 	        this.color = "#000";
+	        this.width = 1;
 	        this.endPos = null;
 	        return true;
 	      } else {
@@ -408,6 +411,7 @@
 	    key: "draw",
 	    value: function draw(ctx) {
 	      ctx.strokeStyle = this.color;
+	      ctx.lineWidth = this.width;
 	      ctx.beginPath();
 	      ctx.moveTo.apply(ctx, _toConsumableArray(this.lineHead));
 	      ctx.lineTo.apply(ctx, _toConsumableArray(this.lineTail));
