@@ -62,6 +62,12 @@
 	
 	var _heap_sort = __webpack_require__(13);
 	
+	var _odd_even_sort = __webpack_require__(14);
+	
+	var _cocktail_sort = __webpack_require__(15);
+	
+	var _bitonic_sort = __webpack_require__(16);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// import { mergeSort } from './sorting_algs/merge_sort';
@@ -128,6 +134,39 @@
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
 	  sticksView.sticks.adopAlgorithm(_heap_sort.heapSort);
+	  sticksView.start();
+	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var canvasEl = document.getElementById("canvas-oddevensort");
+	  canvasEl.width = 1024;
+	  canvasEl.height = 100;
+	  var ctx = canvasEl.getContext("2d");
+	  var sticksView = new _stick_view2.default(ctx);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
+	  sticksView.start();
+	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var canvasEl = document.getElementById("canvas-cocktailsort");
+	  canvasEl.width = 1024;
+	  canvasEl.height = 100;
+	  var ctx = canvasEl.getContext("2d");
+	  var sticksView = new _stick_view2.default(ctx);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_cocktail_sort.cockTailSort);
+	  sticksView.start();
+	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var canvasEl = document.getElementById("canvas-bitonicsort");
+	  canvasEl.width = 1024;
+	  canvasEl.height = 100;
+	  var ctx = canvasEl.getContext("2d");
+	  var sticksView = new _stick_view2.default(ctx);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_bitonic_sort.bitonicSort);
 	  sticksView.start();
 	});
 
@@ -215,7 +254,7 @@
 	    this.DIM_X = 1024;
 	    this.DIM_Y = 100;
 	    this.sticks = [];
-	    this.NUM_STICK = 99;
+	    this.NUM_STICK = 49;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
@@ -305,9 +344,6 @@
 	    value: function checkFinishShuffle() {
 	      if (this.cons === this.shuffle - 1) {
 	        this.mergeSort = this.isMergeSort;
-	        for (var i = 0; i < this.sticks.length; i++) {
-	          this.sticks[i].color = "#909090";
-	        }
 	      }
 	    }
 	  }, {
@@ -17672,6 +17708,147 @@
 	
 	function less(arr, i, j) {
 	  return arr[i - 1].pos < arr[j - 1].pos;
+	}
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, swapPos) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  swapPos.push([i, j]);
+	};
+	
+	var oddEvenSort = exports.oddEvenSort = function oddEvenSort(arr) {
+	  var swapPos = [];
+	  sort(arr, swapPos);
+	  return swapPos;
+	};
+	
+	function sort(arr, swapPos) {
+	  var len = arr.length;
+	  var sorted = false;
+	  while (!sorted) {
+	    sorted = true;
+	    for (var p = 0; p <= 1; p++) {
+	      for (var i = p; i + 1 < len; i += 2) {
+	        if (arr[i + 1].pos < arr[i].pos) {
+	          swap(arr, i + 1, i, swapPos);
+	          sorted = false;
+	        }
+	      }
+	    }
+	  }
+	}
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, swapPos) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  swapPos.push([i, j]);
+	};
+	
+	var cockTailSort = exports.cockTailSort = function cockTailSort(arr) {
+	  var swapPos = [];
+	  sort(arr, swapPos);
+	  return swapPos;
+	};
+	
+	function sort(arr, swapPos) {
+	  var n = arr.length;
+	  var left = 0;
+	  var right = n - 1;
+	  while (left < right) {
+	    var new_right = right - 1;
+	    for (var i = left; i + 1 <= right; i++) {
+	      if (arr[i + 1].pos < arr[i].pos) {
+	        swap(arr, i + 1, i, swapPos);
+	        new_right = i;
+	      }
+	    }
+	    right = new_right;
+	    var new_left = left + 1;
+	    for (var _i = right; _i - 1 >= left; _i--) {
+	      if (arr[_i].pos < arr[_i - 1].pos) {
+	        swap(arr, _i, _i - 1, swapPos);
+	        new_left = _i;
+	      }
+	    }
+	    left = new_left;
+	  }
+	}
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, swapPos) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  swapPos.push([i, j]);
+	};
+	
+	var bitonicSort = exports.bitonicSort = function bitonicSort(arr) {
+	  var swapPos = [];
+	  var ASC = true;
+	  sort(arr, 0, arr.length, ASC, swapPos);
+	  return swapPos;
+	};
+	
+	function sort(arr, lo, hi, dir, swapPos) {
+	  if (hi > 1) {
+	    var m = Math.floor(hi / 2);
+	    sort(arr, lo, m, !dir, swapPos);
+	    sort(arr, lo + m, hi - m, dir, swapPos);
+	    bitonicMerge(arr, lo, hi, dir, swapPos);
+	  }
+	}
+	
+	function bitonicMerge(arr, lo, hi, dir, swapPos) {
+	  if (hi > 1) {
+	    var m = greatestPowerOfTwoLessThan(hi);
+	    for (var i = lo; i < lo + hi - m; i++) {
+	      compare(arr, i, i + m, dir, swapPos);
+	    }
+	    bitonicMerge(arr, lo, m, dir, swapPos);
+	    bitonicMerge(arr, lo + m, hi - m, dir, swapPos);
+	  }
+	}
+	
+	function compare(arr, i, j, dir, swapPos) {
+	  if (dir === arr[i].pos > arr[j].pos) {
+	    swap(arr, i, j, swapPos);
+	  }
+	}
+	
+	function greatestPowerOfTwoLessThan(n) {
+	  var k = 1;
+	  while (k < n) {
+	    k = k << 1;
+	  }
+	  return k >> 1;
 	}
 
 /***/ }
