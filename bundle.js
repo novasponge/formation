@@ -265,7 +265,7 @@
 	    this.DIM_X = 1024;
 	    this.DIM_Y = 100;
 	    this.sticks = [];
-	    this.NUM_STICK = 99;
+	    this.NUM_STICK = 49;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
@@ -433,7 +433,7 @@
 	    key: "compare",
 	    value: function compare(timeDelta) {
 	      if (!this.checkFinishCompare()) {
-	        this.color = "#15c327";
+	        this.color = "#000";
 	        this.width = 2;
 	        this.waitTime = _util.Util.wait(this.waitTime, timeDelta);
 	      }
@@ -442,7 +442,7 @@
 	    key: "checkFinishCompare",
 	    value: function checkFinishCompare() {
 	      if (this.waitTime === 0) {
-	        this.color = "#000";
+	        this.color = "#909090";
 	        this.width = 1;
 	        this.waitTime = 200;
 	        return true;
@@ -472,7 +472,7 @@
 	    key: "checkFinishMove",
 	    value: function checkFinishMove() {
 	      if (this.lineHead[0] === this.endPos) {
-	        this.color = "#000";
+	        this.color = "#909090";
 	        this.width = 1;
 	        this.endPos = null;
 	        return true;
