@@ -68,9 +68,9 @@
 	
 	var _bitonic_sort = __webpack_require__(15);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _merge_sort = __webpack_require__(16);
 	
-	// import { mergeSort } from './sorting_algs/merge_sort';
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-shuffle");
@@ -167,6 +167,17 @@
 	  var sticksView = new _stick_view2.default(ctx);
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
 	  sticksView.sticks.adopAlgorithm(_bitonic_sort.bitonicSort);
+	  sticksView.start();
+	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var canvasEl = document.getElementById("canvas-mergesort");
+	  canvasEl.width = 1024;
+	  canvasEl.height = 100;
+	  var ctx = canvasEl.getContext("2d");
+	  var sticksView = new _stick_view2.default(ctx);
+	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle);
+	  sticksView.sticks.adopAlgorithm(_merge_sort.mergeSort);
 	  sticksView.start();
 	});
 
@@ -17891,6 +17902,108 @@
 	  }
 	  return k >> 1;
 	}
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var mergeSort = exports.mergeSort = function mergeSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
+	};
+	
+	function perm_to_swaps(perm) {
+	  var n = perm.length;
+	  var used = [];
+	  for (var i = 0; i < n; i++) {
+	    used.push(false);
+	  }
+	
+	  var swaps = [];
+	
+	  for (var _i = 0; _i < n; _i++) {
+	    if (used[_i]) {
+	      continue;
+	    }
+	    var current = _i;
+	    if (perm[_i] == _i) {
+	      used[_i] = true;
+	    }
+	    while (!used[perm[current]]) {
+	      swaps.push([current, perm[current]]);
+	      used[current] = true;
+	      current = perm[current];
+	    }
+	  }
+	
+	  return swaps;
+	}
+	
+	function sort(arr, traces, left, right) {
+	
+	  if (!left) {
+	    left = 0;
+	  }
+	
+	  if (!right) {
+	    right = arr.length - 1;
+	  }
+	
+	  var mid = Math.floor((left + right) / 2);
+	
+	  if (left >= right) {
+	    return;
+	  }
+	
+	  if (right - left > 1) {
+	    sort(arr, traces, left, mid);
+	    sort(arr, traces, mid + 1, right);
+	  }
+	
+	  var next_left = left;
+	  var next_right = mid + 1;
+	  var perm = [];
+	  for (var i = left; i <= right; i++) {
+	    var choice = void 0;
+	    if (next_left <= mid && next_right <= right) {
+	      traces.push(["compare", next_left, next_right]);
+	      if (arr[next_left].pos < arr[next_right].pos) {
+	        choice = 'L';
+	      } else {
+	        choice = 'R';
+	      }
+	    } else if (next_left > mid) {
+	      choice = 'R';
+	    } else if (next_right > right) {
+	      choice = 'L';
+	    }
+	
+	    if (choice === 'L') {
+	      perm.push(next_left - left);
+	      next_left++;
+	    } else if (choice === 'R') {
+	      perm.push(next_right - left);
+	      next_right++;
+	    }
+	  }
+	  var swaps = perm_to_swaps(perm);
+	  for (var _i2 = 0; _i2 < swaps.length; _i2++) {
+	    swap(arr, swaps[_i2][0] + left, swaps[_i2][1] + left, traces);
+	  }
+	}
+	
+	var swap = function swap(arr, i, j, traces) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  traces.push(["swap", i, j]);
+	};
 
 /***/ }
 /******/ ]);
