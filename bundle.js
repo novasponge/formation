@@ -50,23 +50,23 @@
 	
 	var _stick_view2 = _interopRequireDefault(_stick_view);
 	
-	var _shuffle = __webpack_require__(5);
+	var _shuffle = __webpack_require__(7);
 	
-	var _bubble_sort = __webpack_require__(6);
+	var _bubble_sort = __webpack_require__(8);
 	
-	var _quick_sort = __webpack_require__(7);
+	var _quick_sort = __webpack_require__(9);
 	
-	var _insert_sort = __webpack_require__(11);
+	var _insert_sort = __webpack_require__(10);
 	
-	var _select_sort = __webpack_require__(12);
+	var _select_sort = __webpack_require__(11);
 	
-	var _heap_sort = __webpack_require__(13);
+	var _heap_sort = __webpack_require__(12);
 	
-	var _odd_even_sort = __webpack_require__(14);
+	var _odd_even_sort = __webpack_require__(13);
 	
-	var _cocktail_sort = __webpack_require__(15);
+	var _cocktail_sort = __webpack_require__(14);
 	
-	var _bitonic_sort = __webpack_require__(16);
+	var _bitonic_sort = __webpack_require__(15);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -103,7 +103,7 @@
 	  sticksView.sticks.adopAlgorithm(_quick_sort.quickSort);
 	  sticksView.start();
 	});
-	
+	//
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-insertsort");
 	  canvasEl.width = 1024;
@@ -114,7 +114,7 @@
 	  sticksView.sticks.adopAlgorithm(_insert_sort.insertionSort);
 	  sticksView.start();
 	});
-	
+	//
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-selectsort");
 	  canvasEl.width = 1024;
@@ -125,7 +125,7 @@
 	  sticksView.sticks.adopAlgorithm(_select_sort.selectionSort);
 	  sticksView.start();
 	});
-	
+	//
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-heapsort");
 	  canvasEl.width = 1024;
@@ -136,7 +136,7 @@
 	  sticksView.sticks.adopAlgorithm(_heap_sort.heapSort);
 	  sticksView.start();
 	});
-	
+	//
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-oddevensort");
 	  canvasEl.width = 1024;
@@ -147,7 +147,7 @@
 	  sticksView.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
 	  sticksView.start();
 	});
-	
+	//
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-cocktailsort");
 	  canvasEl.width = 1024;
@@ -241,7 +241,7 @@
 	
 	var _util = __webpack_require__(4);
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(5);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -254,12 +254,12 @@
 	    this.DIM_X = 1024;
 	    this.DIM_Y = 100;
 	    this.sticks = [];
-	    this.NUM_STICK = 49;
+	    this.NUM_STICK = 99;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
 	    this.cons = 0;
-	    this.swapPos = [];
+	    this.traces = [];
 	    this.mergesort = null;
 	    this.isMergeSort = null;
 	    this.shuffle = null;
@@ -302,25 +302,25 @@
 	    value: function updateSticks(timeDelta) {
 	      var stick1 = void 0;
 	      var stick2 = void 0;
+	      var operation = void 0;
 	
-	      var swapPos = this.swapPos;
-	      if (this.cons < swapPos.length) {
-	        var swaps = swapPos[this.cons];
-	        if (this.mergeSort) {
-	          stick1 = this.sticks[swaps[0]];
-	          stick2 = this.aux[swaps[1]];
-	        } else {
-	          stick1 = this.sticks[swaps[0]];
-	          stick2 = this.sticks[swaps[1]];
-	        }
+	      var traces = this.traces;
+	      if (this.cons < traces.length) {
+	        var trace = traces[this.cons];
+	        operation = trace[0];
+	        stick1 = this.sticks[trace[1]];
+	        stick2 = this.sticks[trace[2]];
 	
-	        if (stick1 !== stick2) {
-	          stick1.getEndpos(stick2);
-	          stick2.getEndpos(stick1);
-	          this.swap(stick1, stick2, timeDelta, this.mergeSort);
+	        if (operation === 'compare') {
+	          this.compare(stick1, stick2, timeDelta);
 	        } else {
-	          this.cons++;
-	          return;
+	          if (stick1 !== stick2) {
+	            stick1.getEndpos(stick2);
+	            stick2.getEndpos(stick1);
+	            this.swap(stick1, stick2, timeDelta, this.mergeSort);
+	          } else {
+	            this.cons++;
+	          }
 	        }
 	      } else {
 	        return;
@@ -329,28 +329,13 @@
 	  }, {
 	    key: 'adopAlgorithm',
 	    value: function adopAlgorithm(algorithm, isMergeSort) {
-	      var swapPos = void 0;
-	      if (!isMergeSort) {
-	        swapPos = algorithm(this.sticks);
-	        this.shuffle = swapPos.length;
-	      } else {
-	        swapPos = algorithm(this.sticks, this.aux);
-	        this.isMergeSort = isMergeSort;
-	      }
-	      this.swapPos = this.swapPos.concat(swapPos);
-	    }
-	  }, {
-	    key: 'checkFinishShuffle',
-	    value: function checkFinishShuffle() {
-	      if (this.cons === this.shuffle - 1) {
-	        this.mergeSort = this.isMergeSort;
-	      }
+	      var traces = algorithm(this.sticks, this.aux);
+	      this.traces = this.traces.concat(traces);
 	    }
 	  }, {
 	    key: 'checkFinishSwap',
 	    value: function checkFinishSwap(stick1, stick2) {
 	      if (stick1.checkFinishMove() && stick2.checkFinishMove()) {
-	        this.checkFinishShuffle();
 	        return true;
 	      } else {
 	        return false;
@@ -364,6 +349,25 @@
 	      } else {
 	        stick1.moveTo(stick1.endPos, timeDelta);
 	        stick2.moveTo(stick2.endPos, timeDelta);
+	      }
+	    }
+	  }, {
+	    key: 'checkFinishCompare',
+	    value: function checkFinishCompare(stick1, stick2) {
+	      if (stick1.checkFinishCompare() && stick2.checkFinishCompare()) {
+	        return true;
+	      } else {
+	        return false;
+	      }
+	    }
+	  }, {
+	    key: 'compare',
+	    value: function compare(stick1, stick2, timeDelta) {
+	      if (this.checkFinishCompare(stick1, stick2)) {
+	        this.cons++;
+	      } else {
+	        stick1.compare(timeDelta);
+	        stick2.compare(timeDelta);
 	      }
 	    }
 	  }, {
@@ -410,10 +414,32 @@
 	    this.width = 1;
 	    this.pos = options.pos;
 	    this.endPos = null;
+	    this.waitTime = 200;
 	    this.isFake = options.isFake;
 	  }
 	
 	  _createClass(Stick, [{
+	    key: "compare",
+	    value: function compare(timeDelta) {
+	      if (!this.checkFinishCompare()) {
+	        this.color = "#15c327";
+	        this.width = 2;
+	        this.waitTime = _util.Util.wait(this.waitTime, timeDelta);
+	      }
+	    }
+	  }, {
+	    key: "checkFinishCompare",
+	    value: function checkFinishCompare() {
+	      if (this.waitTime === 0) {
+	        this.color = "#000";
+	        this.width = 1;
+	        this.waitTime = 200;
+	        return true;
+	      } else {
+	        return false;
+	      }
+	    }
+	  }, {
 	    key: "getEndpos",
 	    value: function getEndpos(anotherStick) {
 	      if (!this.endPos) {
@@ -492,101 +518,18 @@
 	      vel = distance;
 	    }
 	    return vel * direction;
+	  },
+	  wait: function wait(waitTime, timeDelta) {
+	    if (waitTime > 20) {
+	      return waitTime - timeDelta;
+	    } else {
+	      return 0;
+	    }
 	  }
 	};
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var shuffle = exports.shuffle = function shuffle(arr) {
-	  var n = arr.length,
-	      t = void 0,
-	      i = void 0;
-	  var swapPos = [];
-	  while (n) {
-	    i = Math.random() * n-- | 0;
-	    t = arr[n];
-	    arr[n] = arr[i];
-	    arr[i] = t;
-	    swapPos.push([n, i]);
-	  }
-	  return swapPos;
-	};
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var bubbleSort = exports.bubbleSort = function bubbleSort(arr) {
-	  var swapPos = [];
-	  for (var i = 0; i < arr.length - 1; i++) {
-	    for (var j = i + 1; j < arr.length; j++) {
-	      if (arr[i].pos > arr[j].pos) {
-	        var _ref = [arr[j], arr[i]];
-	        arr[i] = _ref[0];
-	        arr[j] = _ref[1];
-	
-	        swapPos.push([i, j]);
-	      }
-	    }
-	  }
-	  return swapPos;
-	};
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var swap = function swap(arr, i, j, swapPos) {
-	  var temp = arr[i];
-	  arr[i] = arr[j];
-	  arr[j] = temp;
-	  swapPos.push([i, j]);
-	};
-	
-	var quickSort = exports.quickSort = function quickSort(arr) {
-	  var swapPos = [];
-	  sort(arr, 0, arr.length - 1, swapPos);
-	  return swapPos;
-	};
-	
-	var sort = function sort(arr, left, right, swapPos) {
-	  if (left >= right) return;
-	
-	  swap(arr, left, Math.floor((left + right) / 2), swapPos);
-	
-	  var last = left;
-	  for (var i = left + 1; i <= right; i++) {
-	    if (arr[i].pos < arr[left].pos) {
-	      last++;
-	      swap(arr, last, i, swapPos);
-	    }
-	  }
-	
-	  swap(arr, left, last, swapPos);
-	  sort(arr, left, last - 1, swapPos);
-	  sort(arr, last + 1, right, swapPos);
-	};
-
-/***/ },
-/* 8 */,
-/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -17572,10 +17515,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(10)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(6)(module)))
 
 /***/ },
-/* 10 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -17591,6 +17534,132 @@
 
 
 /***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var shuffle = exports.shuffle = function shuffle(arr) {
+	  var n = arr.length,
+	      t = void 0,
+	      i = void 0;
+	  var traces = [];
+	  while (n) {
+	    i = Math.random() * n-- | 0;
+	    t = arr[n];
+	    arr[n] = arr[i];
+	    arr[i] = t;
+	    traces.push(["swap", n, i]);
+	  }
+	  return traces;
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var bubbleSort = exports.bubbleSort = function bubbleSort(arr) {
+	  var traces = [];
+	  for (var i = 0; i < arr.length - 1; i++) {
+	    for (var j = i + 1; j < arr.length; j++) {
+	      traces.push(["compare", i, j]);
+	      if (arr[i].pos > arr[j].pos) {
+	        var _ref = [arr[j], arr[i]];
+	        arr[i] = _ref[0];
+	        arr[j] = _ref[1];
+	
+	        traces.push(["swap", i, j]);
+	      }
+	    }
+	  }
+	  return traces;
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, traces) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  traces.push(["swap", i, j]);
+	};
+	
+	var quickSort = exports.quickSort = function quickSort(arr) {
+	  var traces = [];
+	  sort(arr, 0, arr.length - 1, traces);
+	  return traces;
+	};
+	
+	var sort = function sort(arr, left, right, traces) {
+	  if (left >= right) return;
+	
+	  swap(arr, left, Math.floor((left + right) / 2), traces);
+	
+	  var last = left;
+	  for (var i = left + 1; i <= right; i++) {
+	    traces.push(["compare", i, left]);
+	    if (arr[i].pos < arr[left].pos) {
+	      last++;
+	      swap(arr, last, i, traces);
+	    }
+	  }
+	
+	  swap(arr, left, last, traces);
+	  sort(arr, left, last - 1, traces);
+	  sort(arr, last + 1, right, traces);
+	};
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var swap = function swap(arr, i, j, traces) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  traces.push(["swap", i, j]);
+	};
+	
+	var insertionSort = exports.insertionSort = function insertionSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
+	};
+	
+	function sort(arr, traces) {
+	  for (var i = 0; i < arr.length; i++) {
+	    for (var j = i; j > 0; j--) {
+	      traces.push(["compare", j, j - 1]);
+	      if (arr[j].pos < arr[j - 1].pos) {
+	        swap(arr, j, j - 1, traces);
+	      } else {
+	        break;
+	      }
+	    }
+	  }
+	}
+
+/***/ },
 /* 11 */
 /***/ function(module, exports) {
 
@@ -17599,28 +17668,30 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var swap = function swap(arr, i, j, swapPos) {
+	var swap = function swap(arr, i, j, traces) {
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  swapPos.push([i, j]);
+	  traces.push(["swap", i, j]);
 	};
 	
-	var insertionSort = exports.insertionSort = function insertionSort(arr) {
-	  var swapPos = [];
-	  sort(arr, swapPos);
-	  return swapPos;
+	var selectionSort = exports.selectionSort = function selectionSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
 	};
 	
-	function sort(arr, swapPos) {
-	  for (var i = 0; i < arr.length; i++) {
-	    for (var j = i; j > 0; j--) {
-	      if (arr[j].pos < arr[j - 1].pos) {
-	        swap(arr, j, j - 1, swapPos);
-	      } else {
-	        break;
+	function sort(arr, traces) {
+	  var length = arr.length;
+	  for (var i = 0; i < length; i++) {
+	    var min = i;
+	    for (var j = i + 1; j < length; j++) {
+	      traces.push(["compare", j, min]);
+	      if (arr[j].pos < arr[min].pos) {
+	        min = j;
 	      }
 	    }
+	    swap(arr, i, min, traces);
 	  }
 	}
 
@@ -17633,30 +17704,47 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var swap = function swap(arr, i, j, swapPos) {
-	  var temp = arr[i];
-	  arr[i] = arr[j];
-	  arr[j] = temp;
-	  swapPos.push([i, j]);
+	var swap = function swap(arr, i, j, traces) {
+	  var temp = arr[i - 1];
+	  arr[i - 1] = arr[j - 1];
+	  arr[j - 1] = temp;
+	  traces.push(["swap", i - 1, j - 1]);
 	};
 	
-	var selectionSort = exports.selectionSort = function selectionSort(arr) {
-	  var swapPos = [];
-	  sort(arr, swapPos);
-	  return swapPos;
+	var heapSort = exports.heapSort = function heapSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
 	};
 	
-	function sort(arr, swapPos) {
-	  var length = arr.length;
-	  for (var i = 0; i < length; i++) {
-	    var min = i;
-	    for (var j = i + 1; j < length; j++) {
-	      if (arr[j].pos < arr[min].pos) {
-	        min = j;
-	      }
-	    }
-	    swap(arr, i, min, swapPos);
+	function sort(arr, traces) {
+	  var len = arr.length;
+	  for (var k = Math.floor(len / 2); k >= 1; k--) {
+	    sink(arr, k, len, traces);
 	  }
+	  while (len > 1) {
+	    swap(arr, 1, len--, traces);
+	    sink(arr, 1, len, traces);
+	  }
+	}
+	
+	function sink(arr, k, n, traces) {
+	  while (2 * k <= n) {
+	    var j = 2 * k;
+	    if (j < n && less(arr, j, j + 1, traces)) {
+	      j++;
+	    }
+	    if (!less(arr, k, j, traces)) {
+	      break;
+	    }
+	    swap(arr, k, j, traces);
+	    k = j;
+	  }
+	}
+	
+	function less(arr, i, j, traces) {
+	  traces.push(["compare", i - 1, j - 1]);
+	  return arr[i - 1].pos < arr[j - 1].pos;
 	}
 
 /***/ },
@@ -17668,46 +17756,34 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var swap = function swap(arr, i, j, swapPos) {
-	  var temp = arr[i - 1];
-	  arr[i - 1] = arr[j - 1];
-	  arr[j - 1] = temp;
-	  swapPos.push([i - 1, j - 1]);
+	var swap = function swap(arr, i, j, traces) {
+	  var temp = arr[i];
+	  arr[i] = arr[j];
+	  arr[j] = temp;
+	  traces.push(["swap", i, j]);
 	};
 	
-	var heapSort = exports.heapSort = function heapSort(arr) {
-	  var swapPos = [];
-	  sort(arr, swapPos);
-	  return swapPos;
+	var oddEvenSort = exports.oddEvenSort = function oddEvenSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
 	};
 	
-	function sort(arr, swapPos) {
+	function sort(arr, traces) {
 	  var len = arr.length;
-	  for (var k = Math.floor(len / 2); k >= 1; k--) {
-	    sink(arr, k, len, swapPos);
-	  }
-	  while (len > 1) {
-	    swap(arr, 1, len--, swapPos);
-	    sink(arr, 1, len, swapPos);
-	  }
-	}
-	
-	function sink(arr, k, n, swapPos) {
-	  while (2 * k <= n) {
-	    var j = 2 * k;
-	    if (j < n && less(arr, j, j + 1)) {
-	      j++;
+	  var sorted = false;
+	  while (!sorted) {
+	    sorted = true;
+	    for (var p = 0; p <= 1; p++) {
+	      for (var i = p; i + 1 < len; i += 2) {
+	        traces.push(["compare", i, i + 1]);
+	        if (arr[i + 1].pos < arr[i].pos) {
+	          swap(arr, i + 1, i, traces);
+	          sorted = false;
+	        }
+	      }
 	    }
-	    if (!less(arr, k, j)) {
-	      break;
-	    }
-	    swap(arr, k, j, swapPos);
-	    k = j;
 	  }
-	}
-	
-	function less(arr, i, j) {
-	  return arr[i - 1].pos < arr[j - 1].pos;
 	}
 
 /***/ },
@@ -17719,32 +17795,42 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var swap = function swap(arr, i, j, swapPos) {
+	var swap = function swap(arr, i, j, traces) {
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  swapPos.push([i, j]);
+	  traces.push(["swap", i, j]);
 	};
 	
-	var oddEvenSort = exports.oddEvenSort = function oddEvenSort(arr) {
-	  var swapPos = [];
-	  sort(arr, swapPos);
-	  return swapPos;
+	var cockTailSort = exports.cockTailSort = function cockTailSort(arr) {
+	  var traces = [];
+	  sort(arr, traces);
+	  return traces;
 	};
 	
-	function sort(arr, swapPos) {
-	  var len = arr.length;
-	  var sorted = false;
-	  while (!sorted) {
-	    sorted = true;
-	    for (var p = 0; p <= 1; p++) {
-	      for (var i = p; i + 1 < len; i += 2) {
-	        if (arr[i + 1].pos < arr[i].pos) {
-	          swap(arr, i + 1, i, swapPos);
-	          sorted = false;
-	        }
+	function sort(arr, traces) {
+	  var n = arr.length;
+	  var left = 0;
+	  var right = n - 1;
+	  while (left < right) {
+	    var new_right = right - 1;
+	    for (var i = left; i + 1 <= right; i++) {
+	      traces.push(["compare", i, i + 1]);
+	      if (arr[i + 1].pos < arr[i].pos) {
+	        swap(arr, i + 1, i, traces);
+	        new_right = i;
 	      }
 	    }
+	    right = new_right;
+	    var new_left = left + 1;
+	    for (var _i = right; _i - 1 >= left; _i--) {
+	      traces.push(["compare", _i, _i - 1]);
+	      if (arr[_i].pos < arr[_i - 1].pos) {
+	        swap(arr, _i, _i - 1, traces);
+	        new_left = _i;
+	      }
+	    }
+	    left = new_left;
 	  }
 	}
 
@@ -17757,89 +17843,44 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var swap = function swap(arr, i, j, swapPos) {
+	var swap = function swap(arr, i, j, traces) {
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  swapPos.push([i, j]);
-	};
-	
-	var cockTailSort = exports.cockTailSort = function cockTailSort(arr) {
-	  var swapPos = [];
-	  sort(arr, swapPos);
-	  return swapPos;
-	};
-	
-	function sort(arr, swapPos) {
-	  var n = arr.length;
-	  var left = 0;
-	  var right = n - 1;
-	  while (left < right) {
-	    var new_right = right - 1;
-	    for (var i = left; i + 1 <= right; i++) {
-	      if (arr[i + 1].pos < arr[i].pos) {
-	        swap(arr, i + 1, i, swapPos);
-	        new_right = i;
-	      }
-	    }
-	    right = new_right;
-	    var new_left = left + 1;
-	    for (var _i = right; _i - 1 >= left; _i--) {
-	      if (arr[_i].pos < arr[_i - 1].pos) {
-	        swap(arr, _i, _i - 1, swapPos);
-	        new_left = _i;
-	      }
-	    }
-	    left = new_left;
-	  }
-	}
-
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var swap = function swap(arr, i, j, swapPos) {
-	  var temp = arr[i];
-	  arr[i] = arr[j];
-	  arr[j] = temp;
-	  swapPos.push([i, j]);
+	  traces.push(["swap", i, j]);
 	};
 	
 	var bitonicSort = exports.bitonicSort = function bitonicSort(arr) {
-	  var swapPos = [];
+	  var traces = [];
 	  var ASC = true;
-	  sort(arr, 0, arr.length, ASC, swapPos);
-	  return swapPos;
+	  sort(arr, 0, arr.length, ASC, traces);
+	  return traces;
 	};
 	
-	function sort(arr, lo, hi, dir, swapPos) {
+	function sort(arr, lo, hi, dir, traces) {
 	  if (hi > 1) {
 	    var m = Math.floor(hi / 2);
-	    sort(arr, lo, m, !dir, swapPos);
-	    sort(arr, lo + m, hi - m, dir, swapPos);
-	    bitonicMerge(arr, lo, hi, dir, swapPos);
+	    sort(arr, lo, m, !dir, traces);
+	    sort(arr, lo + m, hi - m, dir, traces);
+	    bitonicMerge(arr, lo, hi, dir, traces);
 	  }
 	}
 	
-	function bitonicMerge(arr, lo, hi, dir, swapPos) {
+	function bitonicMerge(arr, lo, hi, dir, traces) {
 	  if (hi > 1) {
 	    var m = greatestPowerOfTwoLessThan(hi);
 	    for (var i = lo; i < lo + hi - m; i++) {
-	      compare(arr, i, i + m, dir, swapPos);
+	      compare(arr, i, i + m, dir, traces);
 	    }
-	    bitonicMerge(arr, lo, m, dir, swapPos);
-	    bitonicMerge(arr, lo + m, hi - m, dir, swapPos);
+	    bitonicMerge(arr, lo, m, dir, traces);
+	    bitonicMerge(arr, lo + m, hi - m, dir, traces);
 	  }
 	}
 	
-	function compare(arr, i, j, dir, swapPos) {
+	function compare(arr, i, j, dir, traces) {
 	  if (dir === arr[i].pos > arr[j].pos) {
-	    swap(arr, i, j, swapPos);
+	    traces.push(["compare", i, j]);
+	    swap(arr, i, j, traces);
 	  }
 	}
 	
