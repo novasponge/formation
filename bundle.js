@@ -81,7 +81,7 @@
 	  sticksView.sticks.adopAlgorithm(_shuffle.shuffle, true);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-bubblesort");
 	  canvasEl.width = 1024;
@@ -92,7 +92,7 @@
 	  sticksView.sticks.adopAlgorithm(_bubble_sort.bubbleSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-quicksort");
 	  canvasEl.width = 1024;
@@ -103,7 +103,7 @@
 	  sticksView.sticks.adopAlgorithm(_quick_sort.quickSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-insertsort");
 	  canvasEl.width = 1024;
@@ -114,7 +114,7 @@
 	  sticksView.sticks.adopAlgorithm(_insert_sort.insertionSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-selectsort");
 	  canvasEl.width = 1024;
@@ -125,7 +125,7 @@
 	  sticksView.sticks.adopAlgorithm(_select_sort.selectionSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-heapsort");
 	  canvasEl.width = 1024;
@@ -136,7 +136,7 @@
 	  sticksView.sticks.adopAlgorithm(_heap_sort.heapSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-oddevensort");
 	  canvasEl.width = 1024;
@@ -147,7 +147,7 @@
 	  sticksView.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
 	  sticksView.start();
 	});
-	//
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvasEl = document.getElementById("canvas-cocktailsort");
 	  canvasEl.width = 1024;
@@ -224,7 +224,6 @@
 	      this.sticks.step(timeDelta);
 	      this.sticks.draw(this.ctx);
 	      this.lastTime = time;
-	
 	      window.requestAnimationFrame(this.render.bind(this));
 	    }
 	  }]);
@@ -265,15 +264,15 @@
 	    this.DIM_X = 1024;
 	    this.DIM_Y = 100;
 	    this.sticks = [];
-	    this.NUM_STICK = 49;
+	    this.NUM_STICK = 9;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
 	    this.cons = 0;
 	    this.traces = [];
-	    this.mergesort = null;
-	    this.isMergeSort = null;
-	    this.shuffle = null;
+	    this.operationState = "";
+	    this.numComparison = 0;
+	    this.numSwap = 0;
 	  }
 	
 	  _createClass(Sticks, [{
@@ -300,8 +299,6 @@
 	      for (var i = 0; i < this.sticks.length; i++) {
 	        this.sticks[i].pos = i;
 	      }
-	
-	      this.aux = new Array(this.sticks.length);
 	    }
 	  }, {
 	    key: 'step',
@@ -321,14 +318,25 @@
 	        operation = trace[0];
 	        stick1 = this.sticks[trace[1]];
 	        stick2 = this.sticks[trace[2]];
+	        this.operationState = trace[3];
+	
+	        if (this.cons === traces.length - 1) {
+	          if (this.operationState === 'Sorting') {
+	            this.operationState = 'Sorted';
+	          } else {
+	            this.operationState = 'Shuffled';
+	          }
+	        }
 	
 	        if (operation === 'compare') {
 	          this.compare(stick1, stick2, timeDelta);
+	          this.numComparison++;
 	        } else {
 	          if (stick1 !== stick2) {
 	            stick1.getEndpos(stick2);
 	            stick2.getEndpos(stick1);
 	            this.swap(stick1, stick2, timeDelta, this.mergeSort);
+	            this.numSwap++;
 	          } else {
 	            this.cons++;
 	          }
@@ -385,6 +393,10 @@
 	    key: 'draw',
 	    value: function draw(ctx) {
 	      ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
+	
+	      ctx.font = "18px serif";
+	      ctx.fillStyle = "#000";
+	      ctx.fillText('' + this.operationState, 0, 50);
 	
 	      this.sticks.forEach(function (stick) {
 	        stick.draw(ctx);
@@ -17563,8 +17575,9 @@
 	    t = arr[n];
 	    arr[n] = arr[i];
 	    arr[i] = t;
-	    traces.push(["swap", n, i]);
+	    traces.push(["swap", n, i, "Shuffling"]);
 	  }
+	  traces[traces.length - 1][3] = "Shuffled";
 	  return traces;
 	};
 
@@ -17581,13 +17594,13 @@
 	  var traces = [];
 	  for (var i = 0; i < arr.length - 1; i++) {
 	    for (var j = i + 1; j < arr.length; j++) {
-	      traces.push(["compare", i, j]);
+	      traces.push(["compare", i, j, "Sorting"]);
 	      if (arr[i].pos > arr[j].pos) {
 	        var _ref = [arr[j], arr[i]];
 	        arr[i] = _ref[0];
 	        arr[j] = _ref[1];
 	
-	        traces.push(["swap", i, j]);
+	        traces.push(["swap", i, j, "Sorting"]);
 	      }
 	    }
 	  }
@@ -17607,7 +17620,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var quickSort = exports.quickSort = function quickSort(arr) {
@@ -17623,7 +17636,7 @@
 	
 	  var last = left;
 	  for (var i = left + 1; i <= right; i++) {
-	    traces.push(["compare", i, left]);
+	    traces.push(["compare", i, left, "Sorting"]);
 	    if (arr[i].pos < arr[left].pos) {
 	      last++;
 	      swap(arr, last, i, traces);
@@ -17648,7 +17661,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var insertionSort = exports.insertionSort = function insertionSort(arr) {
@@ -17660,7 +17673,7 @@
 	function sort(arr, traces) {
 	  for (var i = 0; i < arr.length; i++) {
 	    for (var j = i; j > 0; j--) {
-	      traces.push(["compare", j, j - 1]);
+	      traces.push(["compare", j, j - 1, "Sorting"]);
 	      if (arr[j].pos < arr[j - 1].pos) {
 	        swap(arr, j, j - 1, traces);
 	      } else {
@@ -17669,6 +17682,18 @@
 	    }
 	  }
 	}
+	
+	// function sort(arr, traces) {
+	//   for (let i = 1; i < arr.length; i++) {
+	//     let key = arr[i];
+	//     let prePos = i - 1;
+	//     while(prePos > 0 && arr[prePos].pos > key.pos) {
+	//       arr[prePos + 1] = arr[prePos];
+	//       prePos--;
+	//     }
+	//     arr[prePos + 1] = key;
+	//   }
+	// }
 
 /***/ },
 /* 11 */
@@ -17683,7 +17708,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var selectionSort = exports.selectionSort = function selectionSort(arr) {
@@ -17697,7 +17722,7 @@
 	  for (var i = 0; i < length; i++) {
 	    var min = i;
 	    for (var j = i + 1; j < length; j++) {
-	      traces.push(["compare", j, min]);
+	      traces.push(["compare", j, min, "Sorting"]);
 	      if (arr[j].pos < arr[min].pos) {
 	        min = j;
 	      }
@@ -17719,7 +17744,7 @@
 	  var temp = arr[i - 1];
 	  arr[i - 1] = arr[j - 1];
 	  arr[j - 1] = temp;
-	  traces.push(["swap", i - 1, j - 1]);
+	  traces.push(["swap", i - 1, j - 1, "Sorting"]);
 	};
 	
 	var heapSort = exports.heapSort = function heapSort(arr) {
@@ -17754,7 +17779,7 @@
 	}
 	
 	function less(arr, i, j, traces) {
-	  traces.push(["compare", i - 1, j - 1]);
+	  traces.push(["compare", i - 1, j - 1, "Sorting"]);
 	  return arr[i - 1].pos < arr[j - 1].pos;
 	}
 
@@ -17771,7 +17796,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var oddEvenSort = exports.oddEvenSort = function oddEvenSort(arr) {
@@ -17787,7 +17812,7 @@
 	    sorted = true;
 	    for (var p = 0; p <= 1; p++) {
 	      for (var i = p; i + 1 < len; i += 2) {
-	        traces.push(["compare", i, i + 1]);
+	        traces.push(["compare", i, i + 1, "Sorting"]);
 	        if (arr[i + 1].pos < arr[i].pos) {
 	          swap(arr, i + 1, i, traces);
 	          sorted = false;
@@ -17810,7 +17835,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var cockTailSort = exports.cockTailSort = function cockTailSort(arr) {
@@ -17826,7 +17851,7 @@
 	  while (left < right) {
 	    var new_right = right - 1;
 	    for (var i = left; i + 1 <= right; i++) {
-	      traces.push(["compare", i, i + 1]);
+	      traces.push(["compare", i, i + 1, "Sorting"]);
 	      if (arr[i + 1].pos < arr[i].pos) {
 	        swap(arr, i + 1, i, traces);
 	        new_right = i;
@@ -17835,7 +17860,7 @@
 	    right = new_right;
 	    var new_left = left + 1;
 	    for (var _i = right; _i - 1 >= left; _i--) {
-	      traces.push(["compare", _i, _i - 1]);
+	      traces.push(["compare", _i, _i - 1, "Sorting"]);
 	      if (arr[_i].pos < arr[_i - 1].pos) {
 	        swap(arr, _i, _i - 1, traces);
 	        new_left = _i;
@@ -17858,7 +17883,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 	
 	var bitonicSort = exports.bitonicSort = function bitonicSort(arr) {
@@ -17890,7 +17915,7 @@
 	
 	function compare(arr, i, j, dir, traces) {
 	  if (dir === arr[i].pos > arr[j].pos) {
-	    traces.push(["compare", i, j]);
+	    traces.push(["compare", i, j, "Sorting"]);
 	    swap(arr, i, j, traces);
 	  }
 	}
@@ -17907,7 +17932,7 @@
 /* 16 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -17972,7 +17997,7 @@
 	  for (var i = left; i <= right; i++) {
 	    var choice = void 0;
 	    if (next_left <= mid && next_right <= right) {
-	      traces.push(["compare", next_left, next_right]);
+	      traces.push(["compare", next_left, next_right, "Sorting"]);
 	      if (arr[next_left].pos < arr[next_right].pos) {
 	        choice = 'L';
 	      } else {
@@ -18002,7 +18027,7 @@
 	  var temp = arr[i];
 	  arr[i] = arr[j];
 	  arr[j] = temp;
-	  traces.push(["swap", i, j]);
+	  traces.push(["swap", i, j, "Sorting"]);
 	};
 
 /***/ }
