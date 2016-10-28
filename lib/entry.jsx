@@ -193,7 +193,10 @@ class SortingVisualization extends React.Component {
       <div className="visualization-body">
         <header>
           <button className='open-instruction' onClick={this.openModal}>Instruction</button>
-          <h1>Sorting Visualization</h1>
+          <div className='title-container'>
+            <h1>Sorting Visualization</h1>
+            <h6>created by Zhuoli Zhang</h6>
+          </div>
           <a href='https://github.com/novasponge/formation' className="github">
             <i className="fa fa-github" aria-hidden="true"></i>
           </a>

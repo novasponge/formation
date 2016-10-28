@@ -303,9 +303,18 @@
 	            'Instruction'
 	          ),
 	          _react2.default.createElement(
-	            'h1',
-	            null,
-	            'Sorting Visualization'
+	            'div',
+	            { className: 'title-container' },
+	            _react2.default.createElement(
+	              'h1',
+	              null,
+	              'Sorting Visualization'
+	            ),
+	            _react2.default.createElement(
+	              'h6',
+	              null,
+	              'created by Zhuoli Zhang'
+	            )
 	          ),
 	          _react2.default.createElement(
 	            'a',
