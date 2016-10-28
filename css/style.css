@@ -13,7 +13,7 @@ body {
 button {
   width: 150px;
   margin: 0 auto;
-  font-size: 21px;
+  font-size: 16px;
   margin-top: 20px;
   border-radius: 4px;
   margin-bottom: 10px;
@@ -25,4 +25,21 @@ button {
 
 .shuffle-sort-button-container>button:first-child{
   margin-right: 10px;
+}
+
+.github {
+  font-size: 37px;
+  color: #000;
+  margin-top: 21.440px;
+  margin-bottom: 21.440px;
+  margin-left: 30px;
+}
+
+.github:hover {
+  opacity: 0.7;
+}
+
+header {
+  display: flex;
+  justify-content: center;
 }

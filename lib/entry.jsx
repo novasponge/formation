@@ -11,11 +11,38 @@ import { bitonicSort } from './sorting_algs/bitonic_sort';
 import { mergeSort } from './sorting_algs/merge_sort';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
+
+const modalStyle = {
+  overlay : {
+    position          : 'fixed',
+    top               : 0,
+    left              : 0,
+    right             : 0,
+    bottom            : 0,
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    display: "block",
+    position : 'fixed',
+    top : "50%",
+    left : "50%",
+    width : "314px",
+    border : '1px solid #ccc',
+    background : '#fff',
+    overflow : 'auto',
+    WebkitOverflowScrolling : 'touch',
+    borderRadius : '4px',
+    transform: 'translate(-50%, -50%)',
+  }
+};
 
 class SortingVisualization extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {};
+    this.state = {
+      instructionOpen: false
+    };
 
     this.handleShuffle = this.handleShuffle.bind(this);
     this.handleQuickSort = this.handleQuickSort.bind(this);
@@ -28,6 +55,8 @@ class SortingVisualization extends React.Component {
     this.handleOddEvenSort = this.handleOddEvenSort.bind(this);
     this.handleCocktailSort = this.handleCocktailSort.bind(this);
     this.handleSortAll = this.handleSortAll.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.openModal = this.openModal.bind(this);
   }
 
   componentDidMount () {
@@ -151,10 +180,30 @@ class SortingVisualization extends React.Component {
     this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
   }
 
+  closeModal () {
+    this.setState({instructionOpen: false});
+  }
+
+  openModal () {
+    this.setState({instructionOpen: true});
+  }
+
   render () {
     return (
       <div className="visualization-body">
-        <h1>Sorting Visualization</h1>
+        <header>
+          <button className='open-instruction' onClick={this.openModal}>instruction</button>
+          <h1>Sorting Visualization</h1>
+          <a href='https://github.com/novasponge/formation' className="github">
+            <i className="fa fa-github" aria-hidden="true"></i>
+          </a>
+          <Modal className="instruction"
+            isOpen={this.state.instructionOpen}
+            onRequestClose={this.closeModal}
+            style={modalStyle}>
+            <button className='close-instruction' onClick={this.closeModal}>Close</button>
+          </Modal>
+        </header>
         <div className="canvas-container">
           <div className="shuffle-sort-button-container">
             <button onClick={this.handleShuffle}>Shuffle All</button>
@@ -206,5 +255,6 @@ class SortingVisualization extends React.Component {
 
 document.addEventListener("DOMContentLoaded", ()=>{
   const root = document.getElementById("root");
+  Modal.setAppElement(document.body);
   ReactDOM.render(<SortingVisualization />, root);
 });
