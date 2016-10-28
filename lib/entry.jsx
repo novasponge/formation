@@ -27,7 +27,7 @@ const modalStyle = {
     position : 'fixed',
     top : "50%",
     left : "50%",
-    width : "314px",
+    width : "500px",
     border : '1px solid #ccc',
     background : '#fff',
     overflow : 'auto',
@@ -192,7 +192,7 @@ class SortingVisualization extends React.Component {
     return (
       <div className="visualization-body">
         <header>
-          <button className='open-instruction' onClick={this.openModal}>instruction</button>
+          <button className='open-instruction' onClick={this.openModal}>Instruction</button>
           <h1>Sorting Visualization</h1>
           <a href='https://github.com/novasponge/formation' className="github">
             <i className="fa fa-github" aria-hidden="true"></i>
@@ -201,6 +201,11 @@ class SortingVisualization extends React.Component {
             isOpen={this.state.instructionOpen}
             onRequestClose={this.closeModal}
             style={modalStyle}>
+            <h2>Lines are shuffled first, then sorted by slope.</h2>
+            <h3 className='red'>Red</h3>
+            <p>Red indicates line switch.</p>
+            <h3>Black</h3>
+            <p>Black indicates slope comparison between two lines.</p>
             <button className='close-instruction' onClick={this.closeModal}>Close</button>
           </Modal>
         </header>

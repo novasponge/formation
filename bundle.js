@@ -106,7 +106,7 @@
 	    position: 'fixed',
 	    top: "50%",
 	    left: "50%",
-	    width: "314px",
+	    width: "500px",
 	    border: '1px solid #ccc',
 	    background: '#fff',
 	    overflow: 'auto',
@@ -300,7 +300,7 @@
 	          _react2.default.createElement(
 	            'button',
 	            { className: 'open-instruction', onClick: this.openModal },
-	            'instruction'
+	            'Instruction'
 	          ),
 	          _react2.default.createElement(
 	            'h1',
@@ -318,6 +318,31 @@
 	              isOpen: this.state.instructionOpen,
 	              onRequestClose: this.closeModal,
 	              style: modalStyle },
+	            _react2.default.createElement(
+	              'h2',
+	              null,
+	              'Lines are shuffled first, then sorted by slope.'
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              { className: 'red' },
+	              'Red'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Red indicates line switch.'
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              null,
+	              'Black'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Black indicates slope comparison between two lines.'
+	            ),
 	            _react2.default.createElement(
 	              'button',
 	              { className: 'close-instruction', onClick: this.closeModal },
@@ -739,7 +764,7 @@
 	    this.width = 1;
 	    this.pos = options.pos;
 	    this.endPos = null;
-	    this.waitTime = 200;
+	    this.waitTime = 10;
 	  }
 	
 	  _createClass(Stick, [{
@@ -757,7 +782,7 @@
 	      if (this.waitTime === 0) {
 	        this.color = "#909090";
 	        this.width = 1;
-	        this.waitTime = 200;
+	        this.waitTime = 10;
 	        return true;
 	      } else {
 	        return false;
@@ -832,7 +857,7 @@
 	    var vel = void 0;
 	
 	    if (distance > 20) {
-	      vel = distance / timeDelta;
+	      vel = distance * 19 / timeDelta;
 	    } else if (distance > 1) {
 	      vel = 1;
 	    } else {
@@ -841,7 +866,7 @@
 	    return vel * direction;
 	  },
 	  wait: function wait(waitTime, timeDelta) {
-	    if (waitTime > 20) {
+	    if (waitTime > 5) {
 	      return waitTime - timeDelta;
 	    } else {
 	      return 0;
