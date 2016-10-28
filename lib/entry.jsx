@@ -27,6 +27,7 @@ class SortingVisualization extends React.Component {
     this.handleInsertionSort = this.handleInsertionSort.bind(this);
     this.handleOddEvenSort = this.handleOddEvenSort.bind(this);
     this.handleCocktailSort = this.handleCocktailSort.bind(this);
+    this.handleSortAll = this.handleSortAll.bind(this);
   }
 
   componentDidMount () {
@@ -138,41 +139,57 @@ class SortingVisualization extends React.Component {
     this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
   }
 
+  handleSortAll () {
+    this.state.quickSort.sticks.adopAlgorithm(quickSort);
+    this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort);
+    this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
+    this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
+    this.state.heapSort.sticks.adopAlgorithm(heapSort);
+    this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
+    this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
+    this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
+    this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
+  }
+
   render () {
     return (
       <div className="visualization-body">
         <h1>Sorting Visualization</h1>
         <div className="canvas-container">
-          <button onClick={this.handleShuffle}>Shuffle</button>
-          <canvas ref="canvasShuffle" width={1024} height={100} />
+          <div className="shuffle-sort-button-container">
+            <button onClick={this.handleShuffle}>Shuffle All</button>
+            <button onClick={this.handleSortAll}>Sort All</button>
+          </div>
+          <h2>Shuffle demo</h2>
+          <canvas ref="canvasShuffle" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleQuickSort}>Quick Sort</button>
-          <canvas ref="canvasQuicksort" width={1024} height={100} />
+          <canvas ref="canvasQuicksort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleMergeSort}>Merge Sort</button>
-          <canvas ref="canvasMergesort" width={1024} height={100} />
+          <canvas ref="canvasMergesort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
-          <canvas ref="canvasBitonicsort" width={1024} height={100} />
+          <canvas ref="canvasBitonicsort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
-          <button onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
-          <canvas ref="canvasHeapsort" width={1024} height={100} />
+          <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
+          <canvas ref="canvasHeapsort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleSelectionSort}>Selection Sort</button>
-          <canvas ref="canvasSelectsort" width={1024} height={100} />
+          <canvas ref="canvasSelectsort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleInsertionSort}>Insertion Sort</button>
-          <canvas ref="canvasInsertsort" width={1024} height={100} />
+          <canvas ref="canvasInsertsort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleBubbleSort}>Bubble Sort</button>
-          <canvas ref="canvasBubblesort" width={1024} height={100} />
+          <canvas ref="canvasBubblesort" width={1024} height={110} />
         </div>
         <div className="canvas-container">
           <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>

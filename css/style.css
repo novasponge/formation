@@ -1,0 +1,28 @@
+body {
+  width: 90%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+button {
+  width: 150px;
+  margin: 0 auto;
+  font-size: 21px;
+  margin-top: 20px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.heapsort-button {
+  width: 250px;
+}
+
+.shuffle-sort-button-container>button:first-child{
+  margin-right: 10px;
+}

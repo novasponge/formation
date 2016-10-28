@@ -108,6 +108,7 @@
 	    _this.handleInsertionSort = _this.handleInsertionSort.bind(_this);
 	    _this.handleOddEvenSort = _this.handleOddEvenSort.bind(_this);
 	    _this.handleCocktailSort = _this.handleCocktailSort.bind(_this);
+	    _this.handleSortAll = _this.handleSortAll.bind(_this);
 	    return _this;
 	  }
 	
@@ -233,6 +234,19 @@
 	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort);
 	    }
 	  }, {
+	    key: 'handleSortAll',
+	    value: function handleSortAll() {
+	      this.state.quickSort.sticks.adopAlgorithm(_quick_sort.quickSort);
+	      this.state.bubbleSort.sticks.adopAlgorithm(_bubble_sort.bubbleSort);
+	      this.state.mergeSort.sticks.adopAlgorithm(_merge_sort.mergeSort);
+	      this.state.bitonicSort.sticks.adopAlgorithm(_bitonic_sort.bitonicSort);
+	      this.state.heapSort.sticks.adopAlgorithm(_heap_sort.heapSort);
+	      this.state.selectionSort.sticks.adopAlgorithm(_select_sort.selectionSort);
+	      this.state.insertionSort.sticks.adopAlgorithm(_insert_sort.insertionSort);
+	      this.state.oddEvenSort.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
+	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -247,11 +261,25 @@
 	          'div',
 	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleShuffle },
-	            'Shuffle'
+	            'div',
+	            { className: 'shuffle-sort-button-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleShuffle },
+	              'Shuffle All'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleSortAll },
+	              'Sort All'
+	            )
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 100 })
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Shuffle demo'
+	          ),
+	          _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -261,7 +289,7 @@
 	            { onClick: this.handleQuickSort },
 	            'Quick Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasQuicksort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasQuicksort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -271,7 +299,7 @@
 	            { onClick: this.handleMergeSort },
 	            'Merge Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasMergesort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasMergesort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -281,17 +309,17 @@
 	            { onClick: this.handleBitonicSort },
 	            'Bitonic Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasBitonicsort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasBitonicsort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'canvas-container' },
 	          _react2.default.createElement(
 	            'button',
-	            { onClick: this.handleHeapSort },
+	            { className: 'heapsort-button', onClick: this.handleHeapSort },
 	            'Heap Sort-Bottom Top'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasHeapsort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasHeapsort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -301,7 +329,7 @@
 	            { onClick: this.handleSelectionSort },
 	            'Selection Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasSelectsort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasSelectsort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -311,7 +339,7 @@
 	            { onClick: this.handleInsertionSort },
 	            'Insertion Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasInsertsort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasInsertsort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -321,7 +349,7 @@
 	            { onClick: this.handleBubbleSort },
 	            'Bubble Sort'
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasBubblesort', width: 1024, height: 100 })
+	          _react2.default.createElement('canvas', { ref: 'canvasBubblesort', width: 1024, height: 110 })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -437,15 +465,17 @@
 	    _classCallCheck(this, Sticks);
 	
 	    this.DIM_X = 1024;
-	    this.DIM_Y = 100;
+	    this.DIM_Y = 110;
 	    this.sticks = [];
-	    this.NUM_STICK = 9;
+	    this.NUM_STICK = 99;
 	    this.MID_NUM = (this.NUM_STICK - 1) / 2;
 	    this.dangle = Math.PI / 180;
 	    this.addSticks(this.ctx);
 	    this.cons = 0;
 	    this.traces = [];
 	    this.operationState = "";
+	    this.numComparisons = 0;
+	    this.numSwaps = 0;
 	  }
 	
 	  _createClass(Sticks, [{
@@ -497,7 +527,12 @@
 	            stick2 = this.sticks[i];
 	          }
 	        }
+	
 	        this.operationState = trace[3];
+	        if (this.operationState === 'Shuffling') {
+	          this.numSwaps = 0;
+	          this.numComparisons = 0;
+	        }
 	
 	        if (this.cons === traces.length - 1) {
 	          if (this.operationState === 'Sorting') {
@@ -516,6 +551,9 @@
 	            this.swap(stick1, stick2, timeDelta);
 	          } else {
 	            this.cons++;
+	            if (this.operationState !== 'Shuffling' && this.operationState !== 'Shuffled') {
+	              this.numSwaps++;
+	            }
 	          }
 	        }
 	      } else {
@@ -533,6 +571,9 @@
 	    value: function checkFinishSwap(stick1, stick2) {
 	      if (stick1.checkFinishMove() && stick2.checkFinishMove()) {
 	        this.cons++;
+	        if (this.operationState !== 'Shuffling' && this.operationState !== 'Shuffled') {
+	          this.numSwaps++;
+	        }
 	        return true;
 	      } else {
 	        return false;
@@ -551,6 +592,7 @@
 	    value: function checkFinishCompare(stick1, stick2) {
 	      if (stick1.checkFinishCompare() && stick2.checkFinishCompare()) {
 	        this.cons++;
+	        this.numComparisons++;
 	        return true;
 	      } else {
 	        return false;
@@ -569,9 +611,15 @@
 	    value: function draw(ctx) {
 	      ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
 	
-	      ctx.font = "18px serif";
+	      ctx.font = "13px Varela Round";
 	      ctx.fillStyle = "#000";
-	      ctx.fillText('' + this.operationState, 0, 50);
+	      ctx.fillText('State: ' + this.operationState, 470, 10);
+	
+	      ctx.fillStyle = "#147ee0";
+	      ctx.fillText('Number of Comparisons: ' + this.numComparisons, 570, 10);
+	
+	      ctx.fillStyle = "#dd6417";
+	      ctx.fillText('Number of Swaps: ' + this.numSwaps, 320, 10);
 	
 	      this.sticks.forEach(function (stick) {
 	        stick.draw(ctx);
