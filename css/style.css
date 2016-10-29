@@ -91,3 +91,14 @@ header {
 .red {
   color: #f00;
 }
+
+.InputRange {
+  width: 30%;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.speedAmplifier {
+  color: #3f51b5;
+}

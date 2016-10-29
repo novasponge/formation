@@ -84,6 +84,12 @@
 	
 	var _reactModal2 = _interopRequireDefault(_reactModal);
 	
+	var _reactInputRange = __webpack_require__(208);
+	
+	var _reactInputRange2 = _interopRequireDefault(_reactInputRange);
+	
+	__webpack_require__(217);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -125,7 +131,8 @@
 	    var _this = _possibleConstructorReturn(this, (SortingVisualization.__proto__ || Object.getPrototypeOf(SortingVisualization)).call(this, props));
 	
 	    _this.state = {
-	      instructionOpen: false
+	      instructionOpen: false,
+	      value: 1
 	    };
 	
 	    _this.handleShuffle = _this.handleShuffle.bind(_this);
@@ -289,8 +296,29 @@
 	      this.setState({ instructionOpen: true });
 	    }
 	  }, {
+	    key: 'handleValuesChange',
+	    value: function handleValuesChange(component, value) {
+	      this.setState({
+	        value: value
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+	
+	      if (this.state.shuffle) {
+	        this.state.shuffle.getSpeedAmplifier(this.state.value);
+	        this.state.quickSort.getSpeedAmplifier(this.state.value);
+	        this.state.bubbleSort.getSpeedAmplifier(this.state.value);
+	        this.state.mergeSort.getSpeedAmplifier(this.state.value);
+	        this.state.bitonicSort.getSpeedAmplifier(this.state.value);
+	        this.state.heapSort.getSpeedAmplifier(this.state.value);
+	        this.state.selectionSort.getSpeedAmplifier(this.state.value);
+	        this.state.insertionSort.getSpeedAmplifier(this.state.value);
+	        this.state.oddEvenSort.getSpeedAmplifier(this.state.value);
+	        this.state.cocktailSort.getSpeedAmplifier(this.state.value);
+	      }
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'visualization-body' },
@@ -340,7 +368,7 @@
 	            _react2.default.createElement(
 	              'p',
 	              null,
-	              'Red indicates line switch.'
+	              'Red lines are swapping for either shuffling or sorting purposes.'
 	            ),
 	            _react2.default.createElement(
 	              'h3',
@@ -350,7 +378,17 @@
 	            _react2.default.createElement(
 	              'p',
 	              null,
-	              'Black indicates slope comparison between two lines.'
+	              'Black lines are comparing between two slopes.'
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              { className: 'speedAmplifier' },
+	              'Speed Multiplier'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Drag the blue circle to change the speed.'
 	            ),
 	            _react2.default.createElement(
 	              'button',
@@ -374,10 +412,19 @@
 	              'button',
 	              { onClick: this.handleSortAll },
 	              'Sort All'
-	            )
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              null,
+	              'Speed Multiplier'
+	            ),
+	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 17,
+	              minValue: 1,
+	              value: this.state.value,
+	              onChange: this.handleValuesChange.bind(this) })
 	          ),
 	          _react2.default.createElement(
-	            'h2',
+	            'strong',
 	            null,
 	            'Shuffle demo'
 	          ),
@@ -512,10 +559,16 @@
 	
 	    this.sticks = new _stick_arr2.default(ctx);
 	    this.ctx = ctx;
+	    this.speedAmplifier = 1;
 	    this.algorithm = [];
 	  }
 	
 	  _createClass(SticksView, [{
+	    key: "getSpeedAmplifier",
+	    value: function getSpeedAmplifier(speedAmplifier) {
+	      this.speedAmplifier = speedAmplifier;
+	    }
+	  }, {
 	    key: "start",
 	    value: function start() {
 	      this.lastTime = Date.now();
@@ -527,7 +580,7 @@
 	    value: function render() {
 	      var time = Date.now();
 	      var timeDelta = time - this.lastTime;
-	      this.sticks.step(timeDelta);
+	      this.sticks.step(timeDelta, this.speedAmplifier);
 	      this.sticks.draw(this.ctx);
 	      this.lastTime = time;
 	      window.requestAnimationFrame(this.render.bind(this));
@@ -618,12 +671,12 @@
 	    }
 	  }, {
 	    key: 'step',
-	    value: function step(timeDelta) {
-	      this.updateSticks(timeDelta);
+	    value: function step(timeDelta, speedAmplifier) {
+	      this.updateSticks(timeDelta, speedAmplifier);
 	    }
 	  }, {
 	    key: 'updateSticks',
-	    value: function updateSticks(timeDelta) {
+	    value: function updateSticks(timeDelta, speedAmplifier) {
 	      var stick1 = void 0;
 	      var stick2 = void 0;
 	      var operation = void 0;
@@ -656,12 +709,12 @@
 	        }
 	
 	        if (operation === 'compare') {
-	          this.compare(stick1, stick2, timeDelta);
+	          this.compare(stick1, stick2, timeDelta, speedAmplifier);
 	        } else if (operation === 'swap') {
 	          if (stick1 !== stick2) {
 	            stick1.getEndpos(stick2);
 	            stick2.getEndpos(stick1);
-	            this.swap(stick1, stick2, timeDelta);
+	            this.swap(stick1, stick2, timeDelta, speedAmplifier);
 	          } else {
 	            this.cons++;
 	            if (this.operationState !== 'Shuffling' && this.operationState !== 'Shuffled') {
@@ -694,10 +747,10 @@
 	    }
 	  }, {
 	    key: 'swap',
-	    value: function swap(stick1, stick2, timeDelta) {
+	    value: function swap(stick1, stick2, timeDelta, speedAmplifier) {
 	      if (!this.checkFinishSwap(stick1, stick2)) {
-	        stick1.moveTo(stick1.endPos, timeDelta);
-	        stick2.moveTo(stick2.endPos, timeDelta);
+	        stick1.moveTo(stick1.endPos, timeDelta, speedAmplifier);
+	        stick2.moveTo(stick2.endPos, timeDelta, speedAmplifier);
 	      }
 	    }
 	  }, {
@@ -713,10 +766,10 @@
 	    }
 	  }, {
 	    key: 'compare',
-	    value: function compare(stick1, stick2, timeDelta) {
+	    value: function compare(stick1, stick2, timeDelta, speedAmplifier) {
 	      if (!this.checkFinishCompare(stick1, stick2)) {
-	        stick1.compare(timeDelta);
-	        stick2.compare(timeDelta);
+	        stick1.compare(timeDelta, speedAmplifier);
+	        stick2.compare(timeDelta, speedAmplifier);
 	      }
 	    }
 	  }, {
@@ -773,16 +826,16 @@
 	    this.width = 1;
 	    this.pos = options.pos;
 	    this.endPos = null;
-	    this.waitTime = 10;
+	    this.waitTime = 200;
 	  }
 	
 	  _createClass(Stick, [{
 	    key: "compare",
-	    value: function compare(timeDelta) {
+	    value: function compare(timeDelta, speedAmplifier) {
 	      if (!this.checkFinishCompare()) {
 	        this.color = "#000";
 	        this.width = 2;
-	        this.waitTime = _util.Util.wait(this.waitTime, timeDelta);
+	        this.waitTime = _util.Util.wait(this.waitTime, timeDelta, speedAmplifier);
 	      }
 	    }
 	  }, {
@@ -791,7 +844,7 @@
 	      if (this.waitTime === 0) {
 	        this.color = "#909090";
 	        this.width = 1;
-	        this.waitTime = 10;
+	        this.waitTime = 200;
 	        return true;
 	      } else {
 	        return false;
@@ -806,11 +859,11 @@
 	    }
 	  }, {
 	    key: "moveTo",
-	    value: function moveTo(endPos, timeDelta) {
+	    value: function moveTo(endPos, timeDelta, speedAmplifier) {
 	      if (!this.checkFinishMove()) {
 	        this.color = "#f00";
 	        this.width = 2;
-	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos, timeDelta);
+	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos, timeDelta, speedAmplifier);
 	        this.lineHead[0] += speed;
 	        this.lineTail[0] += speed;
 	      }
@@ -859,14 +912,14 @@
 	    var dx = Math.cos(angle) * 60;
 	    return [lineHead[0] - dx, lineHead[1] - dy];
 	  },
-	  moveSpeed: function moveSpeed(linePos, endPos, timeDelta) {
+	  moveSpeed: function moveSpeed(linePos, endPos, timeDelta, speedAmplifier) {
 	    var distance = Math.abs(endPos - linePos);
 	
 	    var direction = distance / (endPos - linePos);
 	    var vel = void 0;
 	
 	    if (distance > 20) {
-	      vel = distance * 19 / timeDelta;
+	      vel = distance / timeDelta * speedAmplifier;
 	    } else if (distance > 1) {
 	      vel = 1;
 	    } else {
@@ -874,9 +927,10 @@
 	    }
 	    return vel * direction;
 	  },
-	  wait: function wait(waitTime, timeDelta) {
-	    if (waitTime > 5) {
-	      return waitTime - timeDelta;
+	  wait: function wait(waitTime, timeDelta, speedAmplifier) {
+	    if (waitTime > 20) {
+	      var nextWaitTime = (waitTime - timeDelta) / speedAmplifier;
+	      return nextWaitTime;
 	    } else {
 	      return 0;
 	    }
@@ -41689,6 +41743,2201 @@
 	  if (!el) return
 	  if (this.has(className)) this.remove(className)
 	  else this.add(className)
+	}
+
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _InputRange = __webpack_require__(209);
+	
+	var _InputRange2 = _interopRequireDefault(_InputRange);
+	
+	/**
+	 * An object describing the position of a point
+	 * @typedef {Object} Point
+	 * @property {number} x - x value
+	 * @property {number} y - y value
+	 */
+	
+	/**
+	 * An object describing a range of values
+	 * @typedef {Object} Range
+	 * @property {number} min - Min value
+	 * @property {number} max - Max value
+	 */
+	
+	exports['default'] = _InputRange2['default'];
+	module.exports = exports['default'];
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(17);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Slider = __webpack_require__(210);
+	
+	var _Slider2 = _interopRequireDefault(_Slider);
+	
+	var _Track = __webpack_require__(213);
+	
+	var _Track2 = _interopRequireDefault(_Track);
+	
+	var _Label = __webpack_require__(211);
+	
+	var _Label2 = _interopRequireDefault(_Label);
+	
+	var _defaultClassNames = __webpack_require__(214);
+	
+	var _defaultClassNames2 = _interopRequireDefault(_defaultClassNames);
+	
+	var _valueTransformer = __webpack_require__(215);
+	
+	var _valueTransformer2 = _interopRequireDefault(_valueTransformer);
+	
+	var _util = __webpack_require__(212);
+	
+	var _propTypes = __webpack_require__(216);
+	
+	/**
+	 * A map for storing internal members
+	 * @const {WeakMap}
+	 */
+	var internals = new WeakMap();
+	
+	/**
+	 * An object storing keyboard key codes
+	 * @const {Object.<string, number>}
+	 */
+	var KeyCode = {
+	  DOWN_ARROW: 40,
+	  LEFT_ARROW: 37,
+	  RIGHT_ARROW: 39,
+	  UP_ARROW: 38
+	};
+	
+	/**
+	 * Check if values are within the max and min range of inputRange
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @param {Range} values - Min/max value of sliders
+	 * @return {boolean} True if within range
+	 */
+	function isWithinRange(inputRange, values) {
+	  var props = inputRange.props;
+	
+	  if (inputRange.isMultiValue) {
+	    return values.min >= props.minValue && values.max <= props.maxValue && values.min < values.max;
+	  }
+	
+	  return values.max >= props.minValue && values.max <= props.maxValue;
+	}
+	
+	/**
+	 * Check if the difference between values and the current values of inputRange
+	 * is greater or equal to its step amount
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @param {Range} values - Min/max value of sliders
+	 * @return {boolean} True if difference is greater or equal to step amount
+	 */
+	function hasStepDifference(inputRange, values) {
+	  var props = inputRange.props;
+	
+	  var currentValues = _valueTransformer2['default'].valuesFromProps(inputRange);
+	
+	  return (0, _util.length)(values.min, currentValues.min) >= props.step || (0, _util.length)(values.max, currentValues.max) >= props.step;
+	}
+	
+	/**
+	 * Check if inputRange should update with new values
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @param {Range} values - Min/max value of sliders
+	 * @return {boolean} True if inputRange should update
+	 */
+	function shouldUpdate(inputRange, values) {
+	  return isWithinRange(inputRange, values) && hasStepDifference(inputRange, values);
+	}
+	
+	/**
+	 * Get the owner document of inputRange
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @return {Document} Document
+	 */
+	function getDocument(inputRange) {
+	  var ownerDocument = inputRange.refs.inputRange.ownerDocument;
+	
+	  return ownerDocument;
+	}
+	
+	/**
+	 * Get the class name(s) of inputRange based on its props
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @return {string} A list of class names delimited with spaces
+	 */
+	function getComponentClassName(inputRange) {
+	  var props = inputRange.props;
+	
+	  if (!props.disabled) {
+	    return props.classNames.component;
+	  }
+	
+	  return props.classNames.component + ' is-disabled';
+	}
+	
+	/**
+	 * Get the key name of a slider
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @param {Slider} slider - React component
+	 * @return {string} Key name
+	 */
+	function getKeyFromSlider(inputRange, slider) {
+	  if (slider === inputRange.refs.sliderMin) {
+	    return 'min';
+	  }
+	
+	  return 'max';
+	}
+	
+	/**
+	 * Get all slider keys of inputRange
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @return {Array.<string>} Key names
+	 */
+	function getKeys(inputRange) {
+	  if (inputRange.isMultiValue) {
+	    return ['min', 'max'];
+	  }
+	
+	  return ['max'];
+	}
+	
+	/**
+	 * Get the key name of a slider that's the closest to a point
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @param {Point} position - x/y
+	 * @return {string} Key name
+	 */
+	function getKeyByPosition(inputRange, position) {
+	  var values = _valueTransformer2['default'].valuesFromProps(inputRange);
+	  var positions = _valueTransformer2['default'].positionsFromValues(inputRange, values);
+	
+	  if (inputRange.isMultiValue) {
+	    var distanceToMin = (0, _util.distanceTo)(position, positions.min);
+	    var distanceToMax = (0, _util.distanceTo)(position, positions.max);
+	
+	    if (distanceToMin < distanceToMax) {
+	      return 'min';
+	    }
+	  }
+	
+	  return 'max';
+	}
+	
+	/**
+	 * Get an array of slider HTML for rendering
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @return {Array.<string>} Array of HTML
+	 */
+	function renderSliders(inputRange) {
+	  var classNames = inputRange.props.classNames;
+	
+	  var sliders = [];
+	  var keys = getKeys(inputRange);
+	  var values = _valueTransformer2['default'].valuesFromProps(inputRange);
+	  var percentages = _valueTransformer2['default'].percentagesFromValues(inputRange, values);
+	
+	  var _iteratorNormalCompletion = true;
+	  var _didIteratorError = false;
+	  var _iteratorError = undefined;
+	
+	  try {
+	    for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	      var key = _step.value;
+	
+	      var value = values[key];
+	      var percentage = percentages[key];
+	      var ref = 'slider' + (0, _util.captialize)(key);
+	
+	      var _inputRange$props = inputRange.props;
+	      var maxValue = _inputRange$props.maxValue;
+	      var minValue = _inputRange$props.minValue;
+	
+	      if (key === 'min') {
+	        maxValue = values.max;
+	      } else {
+	        minValue = values.min;
+	      }
+	
+	      var slider = _react2['default'].createElement(_Slider2['default'], {
+	        ariaLabelledby: inputRange.props.ariaLabelledby,
+	        ariaControls: inputRange.props.ariaControls,
+	        classNames: classNames,
+	        formatLabel: inputRange.formatLabel,
+	        key: key,
+	        maxValue: maxValue,
+	        minValue: minValue,
+	        onSliderKeyDown: inputRange.handleSliderKeyDown,
+	        onSliderMouseMove: inputRange.handleSliderMouseMove,
+	        percentage: percentage,
+	        ref: ref,
+	        type: key,
+	        value: value });
+	
+	      sliders.push(slider);
+	    }
+	  } catch (err) {
+	    _didIteratorError = true;
+	    _iteratorError = err;
+	  } finally {
+	    try {
+	      if (!_iteratorNormalCompletion && _iterator['return']) {
+	        _iterator['return']();
+	      }
+	    } finally {
+	      if (_didIteratorError) {
+	        throw _iteratorError;
+	      }
+	    }
+	  }
+	
+	  return sliders;
+	}
+	
+	/**
+	 * Get an array of hidden input HTML for rendering
+	 * @private
+	 * @param {InputRange} inputRange - React component
+	 * @return {Array.<string>} Array of HTML
+	 */
+	function renderHiddenInputs(inputRange) {
+	  var inputs = [];
+	  var keys = getKeys(inputRange);
+	
+	  var _iteratorNormalCompletion2 = true;
+	  var _didIteratorError2 = false;
+	  var _iteratorError2 = undefined;
+	
+	  try {
+	    for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	      var key = _step2.value;
+	
+	      var _name = inputRange.isMultiValue ? '' + inputRange.props.name + (0, _util.captialize)(key) : inputRange.props.name;
+	
+	      var input = _react2['default'].createElement('input', { type: 'hidden', name: _name });
+	    }
+	  } catch (err) {
+	    _didIteratorError2 = true;
+	    _iteratorError2 = err;
+	  } finally {
+	    try {
+	      if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	        _iterator2['return']();
+	      }
+	    } finally {
+	      if (_didIteratorError2) {
+	        throw _iteratorError2;
+	      }
+	    }
+	  }
+	
+	  return inputs;
+	}
+	
+	/**
+	 * InputRange React component
+	 * @class
+	 * @extends React.Component
+	 * @param {Object} props - React component props
+	 */
+	
+	var InputRange = (function (_React$Component) {
+	  _inherits(InputRange, _React$Component);
+	
+	  function InputRange(props) {
+	    _classCallCheck(this, InputRange);
+	
+	    _get(Object.getPrototypeOf(InputRange.prototype), 'constructor', this).call(this, props);
+	
+	    // Private
+	    internals.set(this, {});
+	
+	    // Auto-bind
+	    (0, _util.autobind)(['formatLabel', 'handleInteractionEnd', 'handleInteractionStart', 'handleKeyDown', 'handleKeyUp', 'handleMouseDown', 'handleMouseUp', 'handleSliderKeyDown', 'handleSliderMouseMove', 'handleTouchStart', 'handleTouchEnd', 'handleTrackMouseDown'], this);
+	  }
+	
+	  /**
+	   * Accepted propTypes of InputRange
+	   * @static {Object}
+	   * @property {Function} ariaLabelledby
+	   * @property {Function} ariaControls
+	   * @property {Function} classNames
+	   * @property {Function} defaultValue
+	   * @property {Function} disabled
+	   * @property {Function} formatLabel
+	   * @property {Function} labelPrefix
+	   * @property {Function} labelSuffix
+	   * @property {Function} maxValue
+	   * @property {Function} minValue
+	   * @property {Function} name
+	   * @property {Function} onChange
+	   * @property {Function} onChangeComplete
+	   * @property {Function} step
+	   * @property {Function} value
+	   */
+	
+	  /**
+	   * Return the clientRect of the component's track
+	   * @member {ClientRect}
+	   */
+	
+	  _createClass(InputRange, [{
+	    key: 'updatePosition',
+	
+	    /**
+	     * Update the position of a slider by key
+	     * @param {string} key - min/max
+	     * @param {Point} position x/y
+	     */
+	    value: function updatePosition(key, position) {
+	      var values = _valueTransformer2['default'].valuesFromProps(this);
+	      var positions = _valueTransformer2['default'].positionsFromValues(this, values);
+	
+	      positions[key] = position;
+	
+	      this.updatePositions(positions);
+	    }
+	
+	    /**
+	     * Update the position of sliders
+	     * @param {Object} positions
+	     * @param {Point} positions.min
+	     * @param {Point} positions.max
+	     */
+	  }, {
+	    key: 'updatePositions',
+	    value: function updatePositions(positions) {
+	      var values = {
+	        min: _valueTransformer2['default'].valueFromPosition(this, positions.min),
+	        max: _valueTransformer2['default'].valueFromPosition(this, positions.max)
+	      };
+	
+	      var transformedValues = {
+	        min: _valueTransformer2['default'].stepValueFromValue(this, values.min),
+	        max: _valueTransformer2['default'].stepValueFromValue(this, values.max)
+	      };
+	
+	      this.updateValues(transformedValues);
+	    }
+	
+	    /**
+	     * Update the value of a slider by key
+	     * @param {string} key - max/min
+	     * @param {number} value - New value
+	     */
+	  }, {
+	    key: 'updateValue',
+	    value: function updateValue(key, value) {
+	      var values = _valueTransformer2['default'].valuesFromProps(this);
+	
+	      values[key] = value;
+	
+	      this.updateValues(values);
+	    }
+	
+	    /**
+	     * Update the values of all sliders
+	     * @param {Object|number} values - Object if multi-value, number if single-value
+	     */
+	  }, {
+	    key: 'updateValues',
+	    value: function updateValues(values) {
+	      if (!shouldUpdate(this, values)) {
+	        return;
+	      }
+	
+	      if (this.isMultiValue) {
+	        this.props.onChange(this, values);
+	      } else {
+	        this.props.onChange(this, values.max);
+	      }
+	    }
+	
+	    /**
+	     * Increment the value of a slider by key name
+	     * @param {string} key - max/min
+	     */
+	  }, {
+	    key: 'incrementValue',
+	    value: function incrementValue(key) {
+	      var values = _valueTransformer2['default'].valuesFromProps(this);
+	      var value = values[key] + this.props.step;
+	
+	      this.updateValue(key, value);
+	    }
+	
+	    /**
+	     * Decrement the value of a slider by key name
+	     * @param {string} key - max/min
+	     */
+	  }, {
+	    key: 'decrementValue',
+	    value: function decrementValue(key) {
+	      var values = _valueTransformer2['default'].valuesFromProps(this);
+	      var value = values[key] - this.props.step;
+	
+	      this.updateValue(key, value);
+	    }
+	
+	    /**
+	     * Format label
+	     * @param {number} labelValue - Label value
+	     * @return {string} Formatted label value
+	     */
+	  }, {
+	    key: 'formatLabel',
+	    value: function formatLabel(labelValue) {
+	      var _props = this.props;
+	      var formatLabel = _props.formatLabel;
+	      var labelPrefix = _props.labelPrefix;
+	      var labelSuffix = _props.labelSuffix;
+	
+	      if (formatLabel) {
+	        return formatLabel(labelValue, { labelPrefix: labelPrefix, labelSuffix: labelSuffix });
+	      }
+	
+	      return '' + labelPrefix + labelValue + labelSuffix;
+	    }
+	
+	    /**
+	     * Handle any mousemove event received by the slider
+	     * @param {SyntheticEvent} event - User event
+	     * @param {Slider} slider - React component
+	     */
+	  }, {
+	    key: 'handleSliderMouseMove',
+	    value: function handleSliderMouseMove(event, slider) {
+	      if (this.props.disabled) {
+	        return;
+	      }
+	
+	      var key = getKeyFromSlider(this, slider);
+	      var position = _valueTransformer2['default'].positionFromEvent(this, event);
+	
+	      this.updatePosition(key, position);
+	    }
+	
+	    /**
+	     * Handle any keydown event received by the slider
+	     * @param {SyntheticEvent} event - User event
+	     * @param {Slider} slider - React component
+	     */
+	  }, {
+	    key: 'handleSliderKeyDown',
+	    value: function handleSliderKeyDown(event, slider) {
+	      if (this.props.disabled) {
+	        return;
+	      }
+	
+	      var key = getKeyFromSlider(this, slider);
+	
+	      switch (event.keyCode) {
+	        case KeyCode.LEFT_ARROW:
+	        case KeyCode.DOWN_ARROW:
+	          event.preventDefault();
+	          this.decrementValue(key);
+	          break;
+	
+	        case KeyCode.RIGHT_ARROW:
+	        case KeyCode.UP_ARROW:
+	          event.preventDefault();
+	          this.incrementValue(key);
+	          break;
+	
+	        default:
+	          break;
+	      }
+	    }
+	
+	    /**
+	     * Handle any mousedown event received by the track
+	     * @param {SyntheticEvent} event - User event
+	     * @param {Slider} slider - React component
+	     * @param {Point} position - Mousedown position
+	     */
+	  }, {
+	    key: 'handleTrackMouseDown',
+	    value: function handleTrackMouseDown(event, track, position) {
+	      if (this.props.disabled) {
+	        return;
+	      }
+	
+	      event.preventDefault();
+	
+	      var key = getKeyByPosition(this, position);
+	
+	      this.updatePosition(key, position);
+	    }
+	
+	    /**
+	     * Handle the start of any user-triggered event
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleInteractionStart',
+	    value: function handleInteractionStart() {
+	      var _this = internals.get(this);
+	
+	      if (!this.props.onChangeComplete || (0, _util.isDefined)(_this.startValue)) {
+	        return;
+	      }
+	
+	      _this.startValue = this.props.value || this.props.defaultValue;
+	    }
+	
+	    /**
+	     * Handle the end of any user-triggered event
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleInteractionEnd',
+	    value: function handleInteractionEnd() {
+	      var _this = internals.get(this);
+	
+	      if (!this.props.onChangeComplete || !(0, _util.isDefined)(_this.startValue)) {
+	        return;
+	      }
+	
+	      if (_this.startValue !== this.props.value) {
+	        this.props.onChangeComplete(this, this.props.value);
+	      }
+	
+	      _this.startValue = null;
+	    }
+	
+	    /**
+	     * Handle any keydown event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleKeyDown',
+	    value: function handleKeyDown(event) {
+	      this.handleInteractionStart(event);
+	    }
+	
+	    /**
+	     * Handle any keyup event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleKeyUp',
+	    value: function handleKeyUp(event) {
+	      this.handleInteractionEnd(event);
+	    }
+	
+	    /**
+	     * Handle any mousedown event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleMouseDown',
+	    value: function handleMouseDown(event) {
+	      var document = getDocument(this);
+	
+	      this.handleInteractionStart(event);
+	
+	      document.addEventListener('mouseup', this.handleMouseUp);
+	    }
+	
+	    /**
+	     * Handle any mouseup event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleMouseUp',
+	    value: function handleMouseUp(event) {
+	      var document = getDocument(this);
+	
+	      this.handleInteractionEnd(event);
+	
+	      document.removeEventListener('mouseup', this.handleMouseUp);
+	    }
+	
+	    /**
+	     * Handle any touchstart event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchStart',
+	    value: function handleTouchStart(event) {
+	      var document = getDocument(this);
+	
+	      this.handleInteractionStart(event);
+	
+	      document.addEventListener('touchend', this.handleTouchEnd);
+	    }
+	
+	    /**
+	     * Handle any touchend event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchEnd',
+	    value: function handleTouchEnd(event) {
+	      var document = getDocument(this);
+	
+	      this.handleInteractionEnd(event);
+	
+	      document.removeEventListener('touchend', this.handleTouchEnd);
+	    }
+	
+	    /**
+	     * Render method of the component
+	     * @return {string} Component JSX
+	     */
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var classNames = this.props.classNames;
+	
+	      var componentClassName = getComponentClassName(this);
+	      var values = _valueTransformer2['default'].valuesFromProps(this);
+	      var percentages = _valueTransformer2['default'].percentagesFromValues(this, values);
+	
+	      return _react2['default'].createElement(
+	        'div',
+	        {
+	          'aria-disabled': this.props.disabled,
+	          ref: 'inputRange',
+	          className: componentClassName,
+	          onKeyDown: this.handleKeyDown,
+	          onKeyUp: this.handleKeyUp,
+	          onMouseDown: this.handleMouseDown,
+	          onTouchStart: this.handleTouchStart },
+	        _react2['default'].createElement(
+	          _Label2['default'],
+	          {
+	            className: classNames.labelMin,
+	            containerClassName: classNames.labelContainer,
+	            formatLabel: this.formatLabel },
+	          this.props.minValue
+	        ),
+	        _react2['default'].createElement(
+	          _Track2['default'],
+	          {
+	            classNames: classNames,
+	            ref: 'track',
+	            percentages: percentages,
+	            onTrackMouseDown: this.handleTrackMouseDown },
+	          renderSliders(this)
+	        ),
+	        _react2['default'].createElement(
+	          _Label2['default'],
+	          {
+	            className: classNames.labelMax,
+	            containerClassName: classNames.labelContainer,
+	            formatLabel: this.formatLabel },
+	          this.props.maxValue
+	        ),
+	        renderHiddenInputs(this)
+	      );
+	    }
+	  }, {
+	    key: 'trackClientRect',
+	    get: function get() {
+	      var track = this.refs.track;
+	
+	      if (track) {
+	        return track.clientRect;
+	      }
+	
+	      return {
+	        height: 0,
+	        left: 0,
+	        top: 0,
+	        width: 0
+	      };
+	    }
+	
+	    /**
+	     * Return true if the component accepts a range of values
+	     * @member {boolean}
+	     */
+	  }, {
+	    key: 'isMultiValue',
+	    get: function get() {
+	      return (0, _util.isObject)(this.props.value) || (0, _util.isObject)(this.props.defaultValue);
+	    }
+	  }]);
+	
+	  return InputRange;
+	})(_react2['default'].Component);
+	
+	exports['default'] = InputRange;
+	InputRange.propTypes = {
+	  ariaLabelledby: _react2['default'].PropTypes.string,
+	  ariaControls: _react2['default'].PropTypes.string,
+	  classNames: _react2['default'].PropTypes.objectOf(_react2['default'].PropTypes.string),
+	  defaultValue: _propTypes.maxMinValuePropType,
+	  disabled: _react2['default'].PropTypes.bool,
+	  formatLabel: _react2['default'].PropTypes.func,
+	  labelPrefix: _react2['default'].PropTypes.string,
+	  labelSuffix: _react2['default'].PropTypes.string,
+	  maxValue: _propTypes.maxMinValuePropType,
+	  minValue: _propTypes.maxMinValuePropType,
+	  name: _react2['default'].PropTypes.string,
+	  onChange: _react2['default'].PropTypes.func.isRequired,
+	  onChangeComplete: _react2['default'].PropTypes.func,
+	  step: _react2['default'].PropTypes.number,
+	  value: _propTypes.maxMinValuePropType
+	};
+	
+	/**
+	 * Default props of InputRange
+	 * @static {Object}
+	 * @property {Object.<string, string>} defaultClassNames
+	 * @property {Range|number} defaultValue
+	 * @property {boolean} disabled
+	 * @property {string} labelPrefix
+	 * @property {string} labelSuffix
+	 * @property {number} maxValue
+	 * @property {number} minValue
+	 * @property {number} step
+	 * @property {Range|number} value
+	 */
+	InputRange.defaultProps = {
+	  classNames: _defaultClassNames2['default'],
+	  defaultValue: 0,
+	  disabled: false,
+	  labelPrefix: '',
+	  labelSuffix: '',
+	  maxValue: 10,
+	  minValue: 0,
+	  step: 1,
+	  value: null
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange/Slider
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(17);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Label = __webpack_require__(211);
+	
+	var _Label2 = _interopRequireDefault(_Label);
+	
+	var _util = __webpack_require__(212);
+	
+	/**
+	 * Get the owner document of slider
+	 * @private
+	 * @param {Slider} slider - React component
+	 * @return {Document} Document
+	 */
+	function getDocument(slider) {
+	  var ownerDocument = slider.refs.slider.ownerDocument;
+	
+	  return ownerDocument;
+	}
+	
+	/**
+	 * Get the style of slider based on its props
+	 * @private
+	 * @param {Slider} slider - React component
+	 * @return {Object} CSS styles
+	 */
+	function getStyle(slider) {
+	  var perc = (slider.props.percentage || 0) * 100;
+	  var style = {
+	    position: 'absolute',
+	    left: perc + '%'
+	  };
+	
+	  return style;
+	}
+	
+	/**
+	 * Slider React component
+	 * @class
+	 * @extends React.Component
+	 * @param {Object} props - React component props
+	 */
+	
+	var Slider = (function (_React$Component) {
+	  _inherits(Slider, _React$Component);
+	
+	  function Slider(props) {
+	    _classCallCheck(this, Slider);
+	
+	    _get(Object.getPrototypeOf(Slider.prototype), 'constructor', this).call(this, props);
+	
+	    // Auto-bind
+	    (0, _util.autobind)(['handleClick', 'handleMouseDown', 'handleMouseUp', 'handleMouseMove', 'handleTouchStart', 'handleTouchEnd', 'handleTouchMove', 'handleKeyDown'], this);
+	  }
+	
+	  /**
+	   * Accepted propTypes of Slider
+	   * @static {Object}
+	   * @property {Function} ariaLabelledby
+	   * @property {Function} ariaControls
+	   * @property {Function} className
+	   * @property {Function} formatLabel
+	   * @property {Function} maxValue
+	   * @property {Function} minValue
+	   * @property {Function} onSliderKeyDown
+	   * @property {Function} onSliderMouseMove
+	   * @property {Function} percentage
+	   * @property {Function} type
+	   * @property {Function} value
+	   */
+	
+	  /**
+	   * Handle any click event received by the component
+	   * @param {SyntheticEvent} event - User event
+	   */
+	
+	  _createClass(Slider, [{
+	    key: 'handleClick',
+	    value: function handleClick(event) {
+	      event.preventDefault();
+	    }
+	
+	    /**
+	     * Handle any mousedown event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleMouseDown',
+	    value: function handleMouseDown() {
+	      var document = getDocument(this);
+	
+	      // Event
+	      document.addEventListener('mousemove', this.handleMouseMove);
+	      document.addEventListener('mouseup', this.handleMouseUp);
+	    }
+	
+	    /**
+	     * Handle any mouseup event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleMouseUp',
+	    value: function handleMouseUp() {
+	      var document = getDocument(this);
+	
+	      // Event
+	      document.removeEventListener('mousemove', this.handleMouseMove);
+	      document.removeEventListener('mouseup', this.handleMouseUp);
+	    }
+	
+	    /**
+	     * Handle any mousemove event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleMouseMove',
+	    value: function handleMouseMove(event) {
+	      this.props.onSliderMouseMove(event, this);
+	    }
+	
+	    /**
+	     * Handle any touchstart event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchStart',
+	    value: function handleTouchStart(event) {
+	      var document = getDocument(this);
+	
+	      event.preventDefault();
+	
+	      document.addEventListener('touchmove', this.handleTouchMove);
+	      document.addEventListener('touchend', this.handleTouchEnd);
+	    }
+	
+	    /**
+	     * Handle any touchmove event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchMove',
+	    value: function handleTouchMove(event) {
+	      this.props.onSliderMouseMove(event, this);
+	    }
+	
+	    /**
+	     * Handle any touchend event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchEnd',
+	    value: function handleTouchEnd(event) {
+	      var document = getDocument(this);
+	
+	      event.preventDefault();
+	
+	      document.removeEventListener('touchmove', this.handleTouchMove);
+	      document.removeEventListener('touchend', this.handleTouchEnd);
+	    }
+	
+	    /**
+	     * Handle any keydown event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleKeyDown',
+	    value: function handleKeyDown(event) {
+	      this.props.onSliderKeyDown(event, this);
+	    }
+	
+	    /**
+	     * Render method of the component
+	     * @return {string} Component JSX
+	     */
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var classNames = this.props.classNames;
+	      var style = getStyle(this);
+	
+	      return _react2['default'].createElement(
+	        'span',
+	        {
+	          className: classNames.sliderContainer,
+	          ref: 'slider',
+	          style: style },
+	        _react2['default'].createElement(
+	          _Label2['default'],
+	          {
+	            className: classNames.labelValue,
+	            containerClassName: classNames.labelContainer,
+	            formatLabel: this.props.formatLabel },
+	          this.props.value
+	        ),
+	        _react2['default'].createElement('a', {
+	          'aria-labelledby': this.props.ariaLabelledby,
+	          'aria-controls': this.props.ariaControls,
+	          'aria-valuemax': this.props.maxValue,
+	          'aria-valuemin': this.props.minValue,
+	          'aria-valuenow': this.props.value,
+	          className: classNames.slider,
+	          draggable: 'false',
+	          href: '#',
+	          onClick: this.handleClick,
+	          onKeyDown: this.handleKeyDown,
+	          onMouseDown: this.handleMouseDown,
+	          onTouchStart: this.handleTouchStart,
+	          role: 'slider' })
+	      );
+	    }
+	  }]);
+	
+	  return Slider;
+	})(_react2['default'].Component);
+	
+	exports['default'] = Slider;
+	Slider.propTypes = {
+	  ariaLabelledby: _react2['default'].PropTypes.string,
+	  ariaControls: _react2['default'].PropTypes.string,
+	  classNames: _react2['default'].PropTypes.objectOf(_react2['default'].PropTypes.string),
+	  formatLabel: _react2['default'].PropTypes.func,
+	  maxValue: _react2['default'].PropTypes.number,
+	  minValue: _react2['default'].PropTypes.number,
+	  onSliderKeyDown: _react2['default'].PropTypes.func.isRequired,
+	  onSliderMouseMove: _react2['default'].PropTypes.func.isRequired,
+	  percentage: _react2['default'].PropTypes.number.isRequired,
+	  type: _react2['default'].PropTypes.string.isRequired,
+	  value: _react2['default'].PropTypes.number.isRequired
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange/Label
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(17);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	/**
+	 * Label React component
+	 * @class
+	 * @extends React.Component
+	 * @param {Object} props - React component props
+	 */
+	
+	var Label = (function (_React$Component) {
+	  _inherits(Label, _React$Component);
+	
+	  function Label() {
+	    _classCallCheck(this, Label);
+	
+	    _get(Object.getPrototypeOf(Label.prototype), 'constructor', this).apply(this, arguments);
+	  }
+	
+	  /**
+	   * Accepted propTypes of Label
+	   * @static {Object}
+	   * @property {Function} children
+	   * @property {Function} className
+	   * @property {Function} containerClassName
+	   * @property {Function} formatLabel
+	   */
+	
+	  _createClass(Label, [{
+	    key: 'render',
+	
+	    /**
+	     * Render method of the component
+	     * @return {string} Component JSX
+	     */
+	    value: function render() {
+	      var _props = this.props;
+	      var className = _props.className;
+	      var containerClassName = _props.containerClassName;
+	
+	      var labelValue = this.props.formatLabel ? this.props.formatLabel(this.props.children) : this.props.children;
+	
+	      return _react2['default'].createElement(
+	        'span',
+	        { className: className },
+	        _react2['default'].createElement(
+	          'span',
+	          { className: containerClassName },
+	          labelValue
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return Label;
+	})(_react2['default'].Component);
+	
+	exports['default'] = Label;
+	Label.propTypes = {
+	  children: _react2['default'].PropTypes.node,
+	  className: _react2['default'].PropTypes.string,
+	  containerClassName: _react2['default'].PropTypes.string,
+	  formatLabel: _react2['default'].PropTypes.func
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 212 */
+/***/ function(module, exports) {
+
+	/**
+	 * @module InputRange/util
+	 */
+	
+	/**
+	 * @callback predicateFn
+	 * @param {*} value
+	 * @return {boolean}
+	 */
+	
+	/**
+	 * Clamp a value between a min and max value
+	 * @static
+	 * @param {number} value
+	 * @param {number} min
+	 * @param {number} max
+	 * @return {number}
+	 */
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.clamp = clamp;
+	exports.extend = extend;
+	exports.includes = includes;
+	exports.omit = omit;
+	exports.captialize = captialize;
+	exports.distanceTo = distanceTo;
+	exports.length = length;
+	exports.isNumber = isNumber;
+	exports.isObject = isObject;
+	exports.isDefined = isDefined;
+	exports.isEmpty = isEmpty;
+	exports.arrayOf = arrayOf;
+	exports.objectOf = objectOf;
+	exports.autobind = autobind;
+	
+	function clamp(value, min, max) {
+	  return Math.min(Math.max(value, min), max);
+	}
+	
+	/**
+	 * Extend an Object
+	 * @static
+	 * @param {Object} object - Destination object
+	 * @param {...Object} sources - Source objects
+	 * @return {Object} Destination object, extended with members from sources
+	 */
+	
+	function extend() {
+	  return Object.assign.apply(Object, arguments);
+	}
+	
+	/**
+	 * Check if a value is included in an array
+	 * @static
+	 * @param {Array} array
+	 * @param {number} value
+	 * @return {boolean}
+	 */
+	
+	function includes(array, value) {
+	  return array.indexOf(value) > -1;
+	}
+	
+	/**
+	 * Return a new object without the specified keys
+	 * @static
+	 * @param {Object} obj
+	 * @param {Array.<string>} omitKeys
+	 * @return {Object}
+	 */
+	
+	function omit(obj, omitKeys) {
+	  var keys = Object.keys(obj);
+	  var outputObj = {};
+	
+	  keys.forEach(function (key) {
+	    if (!includes(omitKeys, key)) {
+	      outputObj[key] = obj[key];
+	    }
+	  });
+	
+	  return outputObj;
+	}
+	
+	/**
+	 * Captialize a string
+	 * @static
+	 * @param {string} string
+	 * @return {string}
+	 */
+	
+	function captialize(string) {
+	  return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
+	/**
+	 * Calculate the distance between pointA and pointB
+	 * @static
+	 * @param {Point} pointA
+	 * @param {Point} pointB
+	 * @return {number} Distance
+	 */
+	
+	function distanceTo(pointA, pointB) {
+	  return Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
+	}
+	
+	/**
+	 * Calculate the absolute difference between two numbers
+	 * @static
+	 * @param {number} numA
+	 * @param {number} numB
+	 * @return {number}
+	 */
+	
+	function length(numA, numB) {
+	  return Math.abs(numA - numB);
+	}
+	
+	/**
+	 * Check if a value is a number
+	 * @static
+	 * @param {*} value
+	 * @return {Boolean}
+	 */
+	
+	function isNumber(value) {
+	  return typeof value === 'number';
+	}
+	
+	/**
+	 * Check if a value is an object
+	 * @static
+	 * @param {*} value
+	 * @return {Boolean}
+	 */
+	
+	function isObject(value) {
+	  return value !== null && typeof value === 'object';
+	}
+	
+	/**
+	 * Check if a value is defined
+	 * @static
+	 * @param {*} value
+	 * @return {Boolean}
+	 */
+	
+	function isDefined(value) {
+	  return value !== undefined && value !== null;
+	}
+	
+	/**
+	 * Check if an object is empty
+	 * @static
+	 * @param {Object|Array} obj
+	 * @return {Boolean}
+	 */
+	
+	function isEmpty(obj) {
+	  if (!obj) {
+	    return true;
+	  }
+	
+	  if (Array.isArray(obj)) {
+	    return obj.length === 0;
+	  }
+	
+	  return Object.keys(obj).length === 0;
+	}
+	
+	/**
+	 * Check if all items in an array match a predicate
+	 * @static
+	 * @param {Array} array
+	 * @param {predicateFn} predicate
+	 * @return {Boolean}
+	 */
+	
+	function arrayOf(array, predicate) {
+	  if (!Array.isArray(array)) {
+	    return false;
+	  }
+	
+	  for (var i = 0, len = array.length; i < len; i++) {
+	    if (!predicate(array[i])) {
+	      return false;
+	    }
+	  }
+	
+	  return true;
+	}
+	
+	/**
+	 * Check if all items in an object match a predicate
+	 * @static
+	 * @param {Object} object
+	 * @param {predicateFn} predicate
+	 * @param {Array.<string>} keys
+	 * @return {Boolean}
+	 */
+	
+	function objectOf(object, predicate, keys) {
+	  if (!isObject(object)) {
+	    return false;
+	  }
+	
+	  var props = keys || Object.keys(object);
+	
+	  for (var i = 0, len = props.length; i < len; i++) {
+	    var prop = props[i];
+	
+	    if (!predicate(object[prop])) {
+	      return false;
+	    }
+	  }
+	
+	  return true;
+	}
+	
+	/**
+	 * Bind all methods of an object to itself
+	 * @static
+	 * @param {Array.<Function>} methodNames
+	 * @param {Object} instance
+	 */
+	
+	function autobind(methodNames, instance) {
+	  methodNames.forEach(function (methodName) {
+	    instance[methodName] = instance[methodName].bind(instance);
+	  });
+	}
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange/Track
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(17);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(212);
+	
+	/**
+	 * Get the CSS styles for an active track
+	 * @private
+	 * @param {Track} track React component
+	 * @return {Object} CSS styles
+	 */
+	function getActiveTrackStyle(track) {
+	  var props = track.props;
+	
+	  var width = (props.percentages.max - props.percentages.min) * 100 + '%';
+	  var left = props.percentages.min * 100 + '%';
+	
+	  var activeTrackStyle = {
+	    left: left,
+	    width: width
+	  };
+	
+	  return activeTrackStyle;
+	}
+	
+	/**
+	 * Track React component
+	 * @class
+	 * @extends React.Component
+	 * @param {Object} props - React component props
+	 */
+	
+	var Track = (function (_React$Component) {
+	  _inherits(Track, _React$Component);
+	
+	  function Track(props) {
+	    _classCallCheck(this, Track);
+	
+	    _get(Object.getPrototypeOf(Track.prototype), 'constructor', this).call(this, props);
+	
+	    // Auto-bind
+	    (0, _util.autobind)(['handleMouseDown', 'handleTouchStart'], this);
+	  }
+	
+	  /**
+	   * Accepted propTypes of Track
+	   * @static {Object}
+	   * @property {Function} children
+	   * @property {Function} classNames
+	   * @property {Function} onTrackMouseDown
+	   * @property {Function} percentages
+	   */
+	
+	  /**
+	   * Return the clientRect of the component
+	   * @member {ClientRect}
+	   */
+	
+	  _createClass(Track, [{
+	    key: 'handleMouseDown',
+	
+	    /**
+	     * Handle any mousedown event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	    value: function handleMouseDown(event) {
+	      var trackClientRect = this.clientRect;
+	
+	      var _ref = event.touches ? event.touches[0] : event;
+	
+	      var clientX = _ref.clientX;
+	
+	      var position = {
+	        x: clientX - trackClientRect.left,
+	        y: 0
+	      };
+	
+	      this.props.onTrackMouseDown(event, this, position);
+	    }
+	
+	    /**
+	     * Handle any touchstart event received by the component
+	     * @param {SyntheticEvent} event - User event
+	     */
+	  }, {
+	    key: 'handleTouchStart',
+	    value: function handleTouchStart(event) {
+	      event.preventDefault();
+	
+	      this.handleMouseDown(event);
+	    }
+	
+	    /**
+	     * Render method of the component
+	     * @return {string} Component JSX
+	     */
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var activeTrackStyle = getActiveTrackStyle(this);
+	      var classNames = this.props.classNames;
+	
+	      return _react2['default'].createElement(
+	        'div',
+	        {
+	          className: classNames.trackContainer,
+	          onMouseDown: this.handleMouseDown,
+	          onTouchStart: this.handleTouchStart,
+	          ref: 'track' },
+	        _react2['default'].createElement('div', {
+	          style: activeTrackStyle,
+	          className: classNames.trackActive }),
+	        this.props.children
+	      );
+	    }
+	  }, {
+	    key: 'clientRect',
+	    get: function get() {
+	      var track = this.refs.track;
+	
+	      var clientRect = track.getBoundingClientRect();
+	
+	      return clientRect;
+	    }
+	  }]);
+	
+	  return Track;
+	})(_react2['default'].Component);
+	
+	exports['default'] = Track;
+	Track.propTypes = {
+	  children: _react2['default'].PropTypes.node,
+	  classNames: _react2['default'].PropTypes.objectOf(_react2['default'].PropTypes.string),
+	  onTrackMouseDown: _react2['default'].PropTypes.func.isRequired,
+	  percentages: _react2['default'].PropTypes.objectOf(_react2['default'].PropTypes.number).isRequired
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 214 */
+/***/ function(module, exports) {
+
+	/**
+	 * @module InputRange/defaultClassNames
+	 */
+	
+	/**
+	* An object containing class names
+	* @const {Object}
+	* @property {string} component
+	* @property {string} labelContainer
+	* @property {string} labelMax
+	* @property {string} labelMin
+	* @property {string} labelValue
+	* @property {string} slider
+	* @property {string} sliderContainer
+	* @property {string} trackActive
+	* @property {string} trackContainer
+	*/
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = {
+	  component: 'InputRange',
+	  labelContainer: 'InputRange-labelContainer',
+	  labelMax: 'InputRange-label InputRange-label--max',
+	  labelMin: 'InputRange-label InputRange-label--min',
+	  labelValue: 'InputRange-label InputRange-label--value',
+	  slider: 'InputRange-slider',
+	  sliderContainer: 'InputRange-sliderContainer',
+	  trackActive: 'InputRange-track InputRange-track--active',
+	  trackContainer: 'InputRange-track InputRange-track--container'
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 215 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange/valueTransformer
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _util = __webpack_require__(212);
+	
+	/**
+	 * Convert position into percentage value
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Point} position
+	 * @return {number} Percentage value
+	 */
+	function percentageFromPosition(inputRange, position) {
+	  var length = inputRange.trackClientRect.width;
+	  var sizePerc = position.x / length;
+	
+	  return sizePerc || 0;
+	}
+	
+	/**
+	 * Convert position into model value
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Point} position
+	 * @return {number} Model value
+	 */
+	function valueFromPosition(inputRange, position) {
+	  var sizePerc = percentageFromPosition(inputRange, position);
+	  var valueDiff = inputRange.props.maxValue - inputRange.props.minValue;
+	  var value = inputRange.props.minValue + valueDiff * sizePerc;
+	
+	  return value;
+	}
+	
+	/**
+	 * Extract values from props
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Point} [props=inputRange.props]
+	 * @return {Range} Range values
+	 */
+	function valuesFromProps(inputRange) {
+	  var _ref = arguments.length <= 1 || arguments[1] === undefined ? inputRange : arguments[1];
+	
+	  var props = _ref.props;
+	  return (function () {
+	    if (inputRange.isMultiValue) {
+	      var values = props.value;
+	
+	      if ((0, _util.isEmpty)(values) || !(0, _util.objectOf)(values, _util.isNumber)) {
+	        values = props.defaultValue;
+	      }
+	
+	      return Object.create(values);
+	    }
+	
+	    var value = (0, _util.isNumber)(props.value) ? props.value : props.defaultValue;
+	
+	    return {
+	      min: props.minValue,
+	      max: value
+	    };
+	  })();
+	}
+	
+	/**
+	 * Convert value into percentage value
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {number} value
+	 * @return {number} Percentage value
+	 */
+	function percentageFromValue(inputRange, value) {
+	  var validValue = (0, _util.clamp)(value, inputRange.props.minValue, inputRange.props.maxValue);
+	  var valueDiff = inputRange.props.maxValue - inputRange.props.minValue;
+	  var valuePerc = (validValue - inputRange.props.minValue) / valueDiff;
+	
+	  return valuePerc || 0;
+	}
+	
+	/**
+	 * Convert values into percentage values
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Range} values
+	 * @return {Range} Percentage values
+	 */
+	function percentagesFromValues(inputRange, values) {
+	  var percentages = {
+	    min: percentageFromValue(inputRange, values.min),
+	    max: percentageFromValue(inputRange, values.max)
+	  };
+	
+	  return percentages;
+	}
+	
+	/**
+	 * Convert value into position
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {number} value
+	 * @return {Point} Position
+	 */
+	function positionFromValue(inputRange, value) {
+	  var length = inputRange.trackClientRect.width;
+	  var valuePerc = percentageFromValue(inputRange, value);
+	  var positionValue = valuePerc * length;
+	
+	  return {
+	    x: positionValue,
+	    y: 0
+	  };
+	}
+	
+	/**
+	 * Convert a range of values into positions
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Range} values
+	 * @return {Object.<string, Point>}
+	 */
+	function positionsFromValues(inputRange, values) {
+	  var positions = {
+	    min: positionFromValue(inputRange, values.min),
+	    max: positionFromValue(inputRange, values.max)
+	  };
+	
+	  return positions;
+	}
+	
+	/**
+	 * Extract a position from an event
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {Event} event
+	 * @return {Point}
+	 */
+	function positionFromEvent(inputRange, event) {
+	  var trackClientRect = inputRange.trackClientRect;
+	  var length = trackClientRect.width;
+	
+	  var _ref2 = event.touches ? event.touches[0] : event;
+	
+	  var clientX = _ref2.clientX;
+	
+	  var position = {
+	    x: (0, _util.clamp)(clientX - trackClientRect.left, 0, length),
+	    y: 0
+	  };
+	
+	  return position;
+	}
+	
+	/**
+	 * Convert a value into a step value
+	 * @static
+	 * @param {InputRange} inputRange
+	 * @param {number} value
+	 * @return {number} Step value
+	 */
+	function stepValueFromValue(inputRange, value) {
+	  return Math.round(value / inputRange.props.step) * inputRange.props.step;
+	}
+	
+	exports['default'] = {
+	  percentageFromPosition: percentageFromPosition,
+	  percentageFromValue: percentageFromValue,
+	  percentagesFromValues: percentagesFromValues,
+	  positionFromEvent: positionFromEvent,
+	  positionFromValue: positionFromValue,
+	  positionsFromValues: positionsFromValues,
+	  stepValueFromValue: stepValueFromValue,
+	  valueFromPosition: valueFromPosition,
+	  valuesFromProps: valuesFromProps
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @module InputRange/maxMinValuePropType
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.maxMinValuePropType = maxMinValuePropType;
+	
+	var _util = __webpack_require__(212);
+	
+	/**
+	 * A prop type accepting a range of numeric values or a single numeric value
+	 * @param {Object} props - React component props
+	 * @return {?Error} Return Error if validation fails
+	 */
+	
+	function maxMinValuePropType(props) {
+	  var maxValue = props.maxValue;
+	  var minValue = props.minValue;
+	  var value = props.value;
+	  var defaultValue = props.defaultValue;
+	  var isValueNumber = (0, _util.isNumber)(value);
+	  var isDefaultValueNumber = (0, _util.isNumber)(defaultValue);
+	  var isValueNumberObject = (0, _util.objectOf)(value, _util.isNumber);
+	  var isDefaultValueNumberObject = (0, _util.objectOf)(defaultValue, _util.isNumber);
+	
+	  if (value === undefined) {
+	    return new Error('`value` must be defined');
+	  }
+	
+	  if (!isValueNumber && !isDefaultValueNumber && !isValueNumberObject && !isDefaultValueNumberObject) {
+	    return new Error('`value` or `defaultValue` must be a number or an array');
+	  }
+	
+	  if (minValue >= maxValue) {
+	    return new Error('`minValue` must be smaller than `maxValue`');
+	  }
+	
+	  if (maxValue <= minValue) {
+	    return new Error('`maxValue` must be larger than `minValue`');
+	  }
+	
+	  if (value < minValue || value > maxValue) {
+	    return new Error('`value` must be within `minValue` and `maxValue`');
+	  }
+	}
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(218);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(220)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../css-loader/index.js!./react-input-range.css", function() {
+				var newContent = require("!!./../../css-loader/index.js!./react-input-range.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 218 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(219)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".InputRange-slider {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  background: #3f51b5;\n  border: 1px solid #3f51b5;\n  border-radius: 100%;\n  cursor: pointer;\n  display: block;\n  height: 1rem;\n  margin-left: -0.5rem;\n  margin-top: -0.65rem;\n  outline: none;\n  position: absolute;\n  top: 50%;\n  transition: -webkit-transform 0.3s ease-out, box-shadow 0.3s ease-out;\n  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;\n  width: 1rem; }\n  .InputRange-slider:active {\n    -webkit-transform: scale(1.3);\n            transform: scale(1.3); }\n  .InputRange-slider:focus {\n    box-shadow: 0 0 0 5px rgba(63, 81, 181, 0.2); }\n  .InputRange.is-disabled .InputRange-slider {\n    background: #cccccc;\n    border: 1px solid #cccccc;\n    box-shadow: none;\n    -webkit-transform: none;\n            transform: none; }\n\n.InputRange-sliderContainer {\n  transition: left 0.3s ease-out; }\n\n.InputRange-label {\n  color: #aaaaaa;\n  font-family: \"Helvetica Neue\", san-serif;\n  font-size: 0.8rem;\n  white-space: nowrap; }\n\n.InputRange-label--min,\n.InputRange-label--max {\n  bottom: -1.4rem;\n  position: absolute; }\n\n.InputRange-label--min {\n  left: 0; }\n\n.InputRange-label--max {\n  right: 0; }\n\n.InputRange-label--value {\n  position: absolute;\n  top: -1.8rem; }\n\n.InputRange-labelContainer {\n  left: -50%;\n  position: relative; }\n  .InputRange-label--max .InputRange-labelContainer {\n    left: 50%; }\n\n.InputRange-track {\n  background: #eeeeee;\n  border-radius: 0.3rem;\n  display: block;\n  height: 0.3rem;\n  position: relative;\n  transition: left 0.3s ease-out, width 0.3s ease-out; }\n  .InputRange.is-disabled .InputRange-track {\n    background: #eeeeee; }\n\n.InputRange-track--container {\n  left: 0;\n  margin-top: -0.15rem;\n  position: absolute;\n  right: 0;\n  top: 50%; }\n\n.InputRange-track--active {\n  background: #3f51b5; }\n\n.InputRange {\n  cursor: pointer;\n  height: 1rem;\n  position: relative;\n  width: 100%; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 219 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+	
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+	
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 220 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+	
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+	
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+	
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+	
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+	
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+	
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+	
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+	
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+	
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+	
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+	
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+	
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+	
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+	
+		update(obj);
+	
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+	
+	var replaceText = (function () {
+		var textStore = [];
+	
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+	
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+	
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+	
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+	
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+	
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+	
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+	
+		var blob = new Blob([css], { type: "text/css" });
+	
+		var oldSrc = linkElement.href;
+	
+		linkElement.href = URL.createObjectURL(blob);
+	
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
 	}
 
 

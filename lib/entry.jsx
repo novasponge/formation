@@ -12,6 +12,8 @@ import { mergeSort } from './sorting_algs/merge_sort';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import InputRange from 'react-input-range';
+import "react-input-range/dist/react-input-range.css";
 
 const modalStyle = {
   overlay : {
@@ -41,7 +43,8 @@ class SortingVisualization extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      instructionOpen: false
+      instructionOpen: false,
+      value: 1,
     };
 
     this.handleShuffle = this.handleShuffle.bind(this);
@@ -188,7 +191,27 @@ class SortingVisualization extends React.Component {
     this.setState({instructionOpen: true});
   }
 
+  handleValuesChange(component, value) {
+    this.setState({
+      value: value,
+    });
+  }
+
   render () {
+
+    if (this.state.shuffle) {
+      this.state.shuffle.getSpeedAmplifier(this.state.value);
+      this.state.quickSort.getSpeedAmplifier(this.state.value);
+      this.state.bubbleSort.getSpeedAmplifier(this.state.value);
+      this.state.mergeSort.getSpeedAmplifier(this.state.value);
+      this.state.bitonicSort.getSpeedAmplifier(this.state.value);
+      this.state.heapSort.getSpeedAmplifier(this.state.value);
+      this.state.selectionSort.getSpeedAmplifier(this.state.value);
+      this.state.insertionSort.getSpeedAmplifier(this.state.value);
+      this.state.oddEvenSort.getSpeedAmplifier(this.state.value);
+      this.state.cocktailSort.getSpeedAmplifier(this.state.value);
+    }
+
     return (
       <div className="visualization-body">
         <header>
@@ -206,9 +229,11 @@ class SortingVisualization extends React.Component {
             style={modalStyle}>
             <h2>Lines are shuffled first, then sorted by slope.</h2>
             <h3 className='red'>Red</h3>
-            <p>Red indicates line switch.</p>
+            <p>Red lines are swapping for either shuffling or sorting purposes.</p>
             <h3>Black</h3>
-            <p>Black indicates slope comparison between two lines.</p>
+            <p>Black lines are comparing between two slopes.</p>
+            <h3 className='speedAmplifier'>Speed Multiplier</h3>
+            <p>Drag the blue circle to change the speed.</p>
             <button className='close-instruction' onClick={this.closeModal}>Close</button>
           </Modal>
         </header>
@@ -216,8 +241,13 @@ class SortingVisualization extends React.Component {
           <div className="shuffle-sort-button-container">
             <button onClick={this.handleShuffle}>Shuffle All</button>
             <button onClick={this.handleSortAll}>Sort All</button>
+            <h3>Speed Multiplier</h3>
+            <InputRange maxValue={17}
+                        minValue={1}
+                        value={this.state.value}
+                        onChange={this.handleValuesChange.bind(this)}/>
           </div>
-          <h2>Shuffle demo</h2>
+          <strong>Shuffle demo</strong>
           <canvas ref="canvasShuffle" width={1024} height={110} />
         </div>
         <div className="canvas-container">
