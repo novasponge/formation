@@ -13,31 +13,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import InputRange from 'react-input-range';
+import { modalStyle } from "./modal_style";
 import "react-input-range/dist/react-input-range.css";
-
-const modalStyle = {
-  overlay : {
-    position          : 'fixed',
-    top               : 0,
-    left              : 0,
-    right             : 0,
-    bottom            : 0,
-    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
-  },
-  content : {
-    display: "block",
-    position : 'fixed',
-    top : "50%",
-    left : "50%",
-    width : "500px",
-    border : '1px solid #ccc',
-    background : '#fff',
-    overflow : 'auto',
-    WebkitOverflowScrolling : 'touch',
-    borderRadius : '4px',
-    transform: 'translate(-50%, -50%)',
-  }
-};
 
 class SortingVisualization extends React.Component {
   constructor (props) {
@@ -60,6 +37,7 @@ class SortingVisualization extends React.Component {
     this.handleSortAll = this.handleSortAll.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
   }
 
   componentDidMount () {
@@ -107,7 +85,8 @@ class SortingVisualization extends React.Component {
       selectionSort: selectionSortView,
       insertionSort: insertionSortView,
       oddEvenSort: oddEvenSortView,
-      cocktailSort: cocktailSortView
+      cocktailSort: cocktailSortView,
+      loaded: true
     });
 
     shuffleView.start();
@@ -133,6 +112,10 @@ class SortingVisualization extends React.Component {
     this.state.insertionSort.sticks.adopAlgorithm(shuffle);
     this.state.oddEvenSort.sticks.adopAlgorithm(shuffle);
     this.state.cocktailSort.sticks.adopAlgorithm(shuffle);
+  }
+
+  handleShuffleDemo () {
+    this.state.shuffle.sticks.adopAlgorithm(shuffle);
   }
 
   handleQuickSort () {
@@ -199,7 +182,7 @@ class SortingVisualization extends React.Component {
 
   render () {
 
-    if (this.state.shuffle) {
+    if (this.state.loaded) {
       this.state.shuffle.getSpeedAmplifier(this.state.value);
       this.state.quickSort.getSpeedAmplifier(this.state.value);
       this.state.bubbleSort.getSpeedAmplifier(this.state.value);
@@ -229,8 +212,8 @@ class SortingVisualization extends React.Component {
             <button onClick={this.handleShuffle}>Shuffle All</button>
             <button onClick={this.handleSortAll}>Sort All</button>
             <h3>Speed Multiplier</h3>
-            <InputRange maxValue={17}
-              minValue={1}
+            <InputRange maxValue={20}
+              minValue={0}
               value={this.state.value}
               onChange={this.handleValuesChange.bind(this)}/>
           </div>
@@ -250,7 +233,7 @@ class SortingVisualization extends React.Component {
         </header>
         <div className="main-content">
           <div className="canvas-container">
-            <strong>Shuffle demo</strong>
+            <button onClick={this.handleShuffleDemo}>Shuffle demo</button>
             <canvas ref="canvasShuffle" width={1024} height={110} />
           </div>
           <div className="canvas-container">

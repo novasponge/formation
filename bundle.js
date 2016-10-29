@@ -88,6 +88,8 @@
 	
 	var _reactInputRange2 = _interopRequireDefault(_reactInputRange);
 	
+	var _modal_style = __webpack_require__(221);
+	
 	__webpack_require__(217);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -97,30 +99,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var modalStyle = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
-	  },
-	  content: {
-	    display: "block",
-	    position: 'fixed',
-	    top: "50%",
-	    left: "50%",
-	    width: "500px",
-	    border: '1px solid #ccc',
-	    background: '#fff',
-	    overflow: 'auto',
-	    WebkitOverflowScrolling: 'touch',
-	    borderRadius: '4px',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
 	
 	var SortingVisualization = function (_React$Component) {
 	  _inherits(SortingVisualization, _React$Component);
@@ -148,6 +126,7 @@
 	    _this.handleSortAll = _this.handleSortAll.bind(_this);
 	    _this.closeModal = _this.closeModal.bind(_this);
 	    _this.openModal = _this.openModal.bind(_this);
+	    _this.handleShuffleDemo = _this.handleShuffleDemo.bind(_this);
 	    return _this;
 	  }
 	
@@ -199,7 +178,8 @@
 	        selectionSort: selectionSortView,
 	        insertionSort: insertionSortView,
 	        oddEvenSort: oddEvenSortView,
-	        cocktailSort: cocktailSortView
+	        cocktailSort: cocktailSortView,
+	        loaded: true
 	      });
 	
 	      shuffleView.start();
@@ -226,6 +206,11 @@
 	      this.state.insertionSort.sticks.adopAlgorithm(_shuffle.shuffle);
 	      this.state.oddEvenSort.sticks.adopAlgorithm(_shuffle.shuffle);
 	      this.state.cocktailSort.sticks.adopAlgorithm(_shuffle.shuffle);
+	    }
+	  }, {
+	    key: 'handleShuffleDemo',
+	    value: function handleShuffleDemo() {
+	      this.state.shuffle.sticks.adopAlgorithm(_shuffle.shuffle);
 	    }
 	  }, {
 	    key: 'handleQuickSort',
@@ -306,7 +291,7 @@
 	    key: 'render',
 	    value: function render() {
 	
-	      if (this.state.shuffle) {
+	      if (this.state.loaded) {
 	        this.state.shuffle.getSpeedAmplifier(this.state.value);
 	        this.state.quickSort.getSpeedAmplifier(this.state.value);
 	        this.state.bubbleSort.getSpeedAmplifier(this.state.value);
@@ -371,8 +356,8 @@
 	              null,
 	              'Speed Multiplier'
 	            ),
-	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 17,
-	              minValue: 1,
+	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 20,
+	              minValue: 0,
 	              value: this.state.value,
 	              onChange: this.handleValuesChange.bind(this) })
 	          ),
@@ -381,7 +366,7 @@
 	            { className: 'instruction',
 	              isOpen: this.state.instructionOpen,
 	              onRequestClose: this.closeModal,
-	              style: modalStyle },
+	              style: _modal_style.modalStyle },
 	            _react2.default.createElement(
 	              'h2',
 	              null,
@@ -431,8 +416,8 @@
 	            'div',
 	            { className: 'canvas-container' },
 	            _react2.default.createElement(
-	              'strong',
-	              null,
+	              'button',
+	              { onClick: this.handleShuffleDemo },
 	              'Shuffle demo'
 	            ),
 	            _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 110 })
@@ -936,8 +921,8 @@
 	    return vel * direction;
 	  },
 	  wait: function wait(waitTime, timeDelta, speedAmplifier) {
-	    if (waitTime > 20) {
-	      var nextWaitTime = (waitTime - timeDelta) / speedAmplifier;
+	    var nextWaitTime = waitTime - timeDelta * speedAmplifier;
+	    if (nextWaitTime > 0) {
 	      return nextWaitTime;
 	    } else {
 	      return 0;
@@ -43948,6 +43933,39 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 221 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var modalStyle = exports.modalStyle = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+	  },
+	  content: {
+	    display: "block",
+	    position: 'fixed',
+	    top: "50%",
+	    left: "50%",
+	    width: "500px",
+	    border: '1px solid #ccc',
+	    background: '#fff',
+	    overflow: 'auto',
+	    WebkitOverflowScrolling: 'touch',
+	    borderRadius: '4px',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
 
 /***/ }
 /******/ ]);
