@@ -26,7 +26,7 @@ h2 {
 }
 
 body {
-  font-style: 'Varela Round';
+  font-family: 'Varela Round';
   width: 90%;
   text-align: center;
   margin: 0 auto;
@@ -52,6 +52,10 @@ button {
 
 button:hover {
   opacity: 0.7;
+}
+
+h6 {
+  padding-right: 50px;
 }
 
 .open-instruction {
@@ -84,6 +88,17 @@ button:hover {
 }
 
 header {
+  background-color: #fff;
+  width: 90%;
+  position: fixed;
+  top: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.header-content {
   display: flex;
   justify-content: center;
 }
@@ -101,4 +116,8 @@ header {
 
 .speedAmplifier {
   color: #3f51b5;
+}
+
+.main-content {
+  margin-top: 321.094px;
 }

@@ -215,14 +215,25 @@ class SortingVisualization extends React.Component {
     return (
       <div className="visualization-body">
         <header>
-          <button className='open-instruction' onClick={this.openModal}>Instruction</button>
-          <div className='title-container'>
-            <h1>Sorting Visualization</h1>
-            <h6>created by Zhuoli Zhang</h6>
+          <div className="header-content">
+            <button className='open-instruction' onClick={this.openModal}>Instruction</button>
+            <div className='title-container'>
+              <h1>Sorting Visualization</h1>
+              <h6>created by Zhuoli Zhang</h6>
+            </div>
+            <a href='https://github.com/novasponge/formation' className="github">
+              <i className="fa fa-github" aria-hidden="true"></i>
+            </a>
           </div>
-          <a href='https://github.com/novasponge/formation' className="github">
-            <i className="fa fa-github" aria-hidden="true"></i>
-          </a>
+          <div className="shuffle-sort-button-container">
+            <button onClick={this.handleShuffle}>Shuffle All</button>
+            <button onClick={this.handleSortAll}>Sort All</button>
+            <h3>Speed Multiplier</h3>
+            <InputRange maxValue={17}
+              minValue={1}
+              value={this.state.value}
+              onChange={this.handleValuesChange.bind(this)}/>
+          </div>
           <Modal className="instruction"
             isOpen={this.state.instructionOpen}
             onRequestClose={this.closeModal}
@@ -237,54 +248,47 @@ class SortingVisualization extends React.Component {
             <button className='close-instruction' onClick={this.closeModal}>Close</button>
           </Modal>
         </header>
-        <div className="canvas-container">
-          <div className="shuffle-sort-button-container">
-            <button onClick={this.handleShuffle}>Shuffle All</button>
-            <button onClick={this.handleSortAll}>Sort All</button>
-            <h3>Speed Multiplier</h3>
-            <InputRange maxValue={17}
-                        minValue={1}
-                        value={this.state.value}
-                        onChange={this.handleValuesChange.bind(this)}/>
+        <div className="main-content">
+          <div className="canvas-container">
+            <strong>Shuffle demo</strong>
+            <canvas ref="canvasShuffle" width={1024} height={110} />
           </div>
-          <strong>Shuffle demo</strong>
-          <canvas ref="canvasShuffle" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleQuickSort}>Quick Sort</button>
-          <canvas ref="canvasQuicksort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleMergeSort}>Merge Sort</button>
-          <canvas ref="canvasMergesort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
-          <canvas ref="canvasBitonicsort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
-          <canvas ref="canvasHeapsort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleSelectionSort}>Selection Sort</button>
-          <canvas ref="canvasSelectsort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleInsertionSort}>Insertion Sort</button>
-          <canvas ref="canvasInsertsort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleBubbleSort}>Bubble Sort</button>
-          <canvas ref="canvasBubblesort" width={1024} height={110} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
-          <canvas ref="canvasOddevensort" width={1024} height={100} />
-        </div>
-        <div className="canvas-container">
-          <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
-          <canvas ref="canvasCocktailsort" width={1024} height={100} />
+          <div className="canvas-container">
+            <button onClick={this.handleQuickSort}>Quick Sort</button>
+            <canvas ref="canvasQuicksort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleMergeSort}>Merge Sort</button>
+            <canvas ref="canvasMergesort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
+            <canvas ref="canvasBitonicsort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
+            <canvas ref="canvasHeapsort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleSelectionSort}>Selection Sort</button>
+            <canvas ref="canvasSelectsort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleInsertionSort}>Insertion Sort</button>
+            <canvas ref="canvasInsertsort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleBubbleSort}>Bubble Sort</button>
+            <canvas ref="canvasBubblesort" width={1024} height={110} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
+            <canvas ref="canvasOddevensort" width={1024} height={100} />
+          </div>
+          <div className="canvas-container">
+            <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
+            <canvas ref="canvasCocktailsort" width={1024} height={100} />
+          </div>
         </div>
       </div>
     );

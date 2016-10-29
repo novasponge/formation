@@ -326,28 +326,55 @@
 	          'header',
 	          null,
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'open-instruction', onClick: this.openModal },
-	            'Instruction'
-	          ),
-	          _react2.default.createElement(
 	            'div',
-	            { className: 'title-container' },
+	            { className: 'header-content' },
 	            _react2.default.createElement(
-	              'h1',
-	              null,
-	              'Sorting Visualization'
+	              'button',
+	              { className: 'open-instruction', onClick: this.openModal },
+	              'Instruction'
 	            ),
 	            _react2.default.createElement(
-	              'h6',
-	              null,
-	              'created by Zhuoli Zhang'
+	              'div',
+	              { className: 'title-container' },
+	              _react2.default.createElement(
+	                'h1',
+	                null,
+	                'Sorting Visualization'
+	              ),
+	              _react2.default.createElement(
+	                'h6',
+	                null,
+	                'created by Zhuoli Zhang'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'a',
+	              { href: 'https://github.com/novasponge/formation', className: 'github' },
+	              _react2.default.createElement('i', { className: 'fa fa-github', 'aria-hidden': 'true' })
 	            )
 	          ),
 	          _react2.default.createElement(
-	            'a',
-	            { href: 'https://github.com/novasponge/formation', className: 'github' },
-	            _react2.default.createElement('i', { className: 'fa fa-github', 'aria-hidden': 'true' })
+	            'div',
+	            { className: 'shuffle-sort-button-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleShuffle },
+	              'Shuffle All'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleSortAll },
+	              'Sort All'
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              null,
+	              'Speed Multiplier'
+	            ),
+	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 17,
+	              minValue: 1,
+	              value: this.state.value,
+	              onChange: this.handleValuesChange.bind(this) })
 	          ),
 	          _react2.default.createElement(
 	            _reactModal2.default,
@@ -399,126 +426,107 @@
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'canvas-container' },
+	          { className: 'main-content' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'shuffle-sort-button-container' },
+	            { className: 'canvas-container' },
 	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleShuffle },
-	              'Shuffle All'
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleSortAll },
-	              'Sort All'
-	            ),
-	            _react2.default.createElement(
-	              'h3',
+	              'strong',
 	              null,
-	              'Speed Multiplier'
+	              'Shuffle demo'
 	            ),
-	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 17,
-	              minValue: 1,
-	              value: this.state.value,
-	              onChange: this.handleValuesChange.bind(this) })
+	            _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 110 })
 	          ),
 	          _react2.default.createElement(
-	            'strong',
-	            null,
-	            'Shuffle demo'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleQuickSort },
+	              'Quick Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasQuicksort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleQuickSort },
-	            'Quick Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleMergeSort },
+	              'Merge Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasMergesort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasQuicksort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleMergeSort },
-	            'Merge Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleBitonicSort },
+	              'Bitonic Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasBitonicsort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasMergesort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleBitonicSort },
-	            'Bitonic Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { className: 'heapsort-button', onClick: this.handleHeapSort },
+	              'Heap Sort-Bottom Top'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasHeapsort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasBitonicsort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'heapsort-button', onClick: this.handleHeapSort },
-	            'Heap Sort-Bottom Top'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleSelectionSort },
+	              'Selection Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasSelectsort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasHeapsort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleSelectionSort },
-	            'Selection Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleInsertionSort },
+	              'Insertion Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasInsertsort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasSelectsort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleInsertionSort },
-	            'Insertion Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleBubbleSort },
+	              'Bubble Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasBubblesort', width: 1024, height: 110 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasInsertsort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleBubbleSort },
-	            'Bubble Sort'
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleOddEvenSort },
+	              'Odd Even Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasOddevensort', width: 1024, height: 100 })
 	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasBubblesort', width: 1024, height: 110 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleOddEvenSort },
-	            'Odd Even Sort'
-	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasOddevensort', width: 1024, height: 100 })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'canvas-container' },
-	          _react2.default.createElement(
-	            'button',
-	            { onClick: this.handleCocktailSort },
-	            'Cocktail Sort'
-	          ),
-	          _react2.default.createElement('canvas', { ref: 'canvasCocktailsort', width: 1024, height: 100 })
+	            'div',
+	            { className: 'canvas-container' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleCocktailSort },
+	              'Cocktail Sort'
+	            ),
+	            _react2.default.createElement('canvas', { ref: 'canvasCocktailsort', width: 1024, height: 100 })
+	          )
 	        )
 	      );
 	    }
