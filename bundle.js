@@ -288,6 +288,11 @@
 	      });
 	    }
 	  }, {
+	    key: 'formatLabel',
+	    value: function formatLabel(labelValue) {
+	      return labelValue.toFixed(1);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	
@@ -359,6 +364,8 @@
 	            _react2.default.createElement(_reactInputRange2.default, { maxValue: 20,
 	              minValue: 0,
 	              value: this.state.value,
+	              step: 0.1,
+	              formatLabel: this.formatLabel.bind(this),
 	              onChange: this.handleValuesChange.bind(this) })
 	          ),
 	          _react2.default.createElement(

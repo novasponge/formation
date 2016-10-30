@@ -180,6 +180,10 @@ class SortingVisualization extends React.Component {
     });
   }
 
+  formatLabel(labelValue) {
+    return labelValue.toFixed(1);
+  }
+
   render () {
 
     if (this.state.loaded) {
@@ -194,6 +198,7 @@ class SortingVisualization extends React.Component {
       this.state.oddEvenSort.getSpeedAmplifier(this.state.value);
       this.state.cocktailSort.getSpeedAmplifier(this.state.value);
     }
+
 
     return (
       <div className="visualization-body">
@@ -215,6 +220,8 @@ class SortingVisualization extends React.Component {
             <InputRange maxValue={20}
               minValue={0}
               value={this.state.value}
+              step={0.1}
+              formatLabel={this.formatLabel.bind(this)}
               onChange={this.handleValuesChange.bind(this)}/>
           </div>
           <Modal className="instruction"
