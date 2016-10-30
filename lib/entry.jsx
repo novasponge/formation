@@ -206,7 +206,7 @@ class SortingVisualization extends React.Component {
           <div className="header-content">
             <button className='open-instruction' onClick={this.openModal}>Instruction</button>
             <div className='title-container'>
-              <h1>Sorting Visualization</h1>
+              <h1>FORMATION</h1>
               <h6>created by Zhuoli Zhang</h6>
             </div>
             <a href='https://github.com/novasponge/formation' className="github">
@@ -228,7 +228,8 @@ class SortingVisualization extends React.Component {
             isOpen={this.state.instructionOpen}
             onRequestClose={this.closeModal}
             style={modalStyle}>
-            <h2>Lines are shuffled first, then sorted by slope.</h2>
+            <h3>Formation is the visualization of sorting algorithms.</h3>
+            <p>Lines are shuffled first, then sorted by slope.</p>
             <h3 className='red'>Red</h3>
             <p>Red lines are swapping for either shuffling or sorting purposes.</p>
             <h3>Black</h3>

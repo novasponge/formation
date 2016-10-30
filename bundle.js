@@ -329,7 +329,7 @@
 	              _react2.default.createElement(
 	                'h1',
 	                null,
-	                'Sorting Visualization'
+	                'FORMATION'
 	              ),
 	              _react2.default.createElement(
 	                'h6',
@@ -375,7 +375,12 @@
 	              onRequestClose: this.closeModal,
 	              style: _modal_style.modalStyle },
 	            _react2.default.createElement(
-	              'h2',
+	              'h3',
+	              null,
+	              'Formation is the visualization of sorting algorithms.'
+	            ),
+	            _react2.default.createElement(
+	              'p',
 	              null,
 	              'Lines are shuffled first, then sorted by slope.'
 	            ),
@@ -43961,6 +43966,7 @@
 	  },
 	  content: {
 	    display: "block",
+	    padding: "10px 5px",
 	    position: 'fixed',
 	    top: "50%",
 	    left: "50%",
