@@ -206,7 +206,7 @@ class SortingVisualization extends React.Component {
           <div className="header-content">
             <button className='open-instruction' onClick={this.openModal}>Instruction</button>
             <div className='title-container'>
-              <h1>FORMATION</h1>
+              <h1>""FORMATION""</h1>
               <h6>created by Zhuoli Zhang</h6>
             </div>
             <a href='https://github.com/novasponge/formation' className="github">
