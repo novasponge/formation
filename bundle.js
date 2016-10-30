@@ -329,7 +329,7 @@
 	              _react2.default.createElement(
 	                'h1',
 	                null,
-	                '""FORMATION""'
+	                'FORMATION'
 	              ),
 	              _react2.default.createElement(
 	                'h6',
