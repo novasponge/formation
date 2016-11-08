@@ -17,4 +17,4 @@
 .byebug_history
 
 node_modules/
-*.map
+bundle.js.map
