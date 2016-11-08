@@ -678,6 +678,13 @@
 	      this.stepVersion(timeDelta, speedAmplifier);
 	    }
 	  }, {
+	    key: 'quickShuffle',
+	    value: function quickShuffle(timeDelta, speedAmplifier) {
+	      for (var i = 0; i < this.sticks.length; i++) {
+	        this.sticks[i] = 1;
+	      }
+	    }
+	  }, {
 	    key: 'stepVersion',
 	    value: function stepVersion(timeDelta, speedAmplifier) {
 	      var stick1 = void 0;
