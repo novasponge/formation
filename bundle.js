@@ -88,9 +88,9 @@
 	
 	var _reactInputRange2 = _interopRequireDefault(_reactInputRange);
 	
-	var _modal_style = __webpack_require__(221);
+	var _modal_style = __webpack_require__(217);
 	
-	__webpack_require__(217);
+	__webpack_require__(218);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -43600,15 +43600,49 @@
 
 /***/ },
 /* 217 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var modalStyle = exports.modalStyle = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+	  },
+	  content: {
+	    display: "block",
+	    padding: "10px 5px",
+	    position: 'fixed',
+	    top: "50%",
+	    left: "50%",
+	    width: "500px",
+	    border: '1px solid #ccc',
+	    background: '#fff',
+	    overflow: 'auto',
+	    WebkitOverflowScrolling: 'touch',
+	    borderRadius: '4px',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+
+/***/ },
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(218);
+	var content = __webpack_require__(219);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(220)(content, {});
+	var update = __webpack_require__(221)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -43625,10 +43659,10 @@
 	}
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(219)();
+	exports = module.exports = __webpack_require__(220)();
 	// imports
 	
 	
@@ -43639,7 +43673,7 @@
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports) {
 
 	/*
@@ -43695,7 +43729,7 @@
 
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -43945,40 +43979,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 221 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var modalStyle = exports.modalStyle = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
-	  },
-	  content: {
-	    display: "block",
-	    padding: "10px 5px",
-	    position: 'fixed',
-	    top: "50%",
-	    left: "50%",
-	    width: "500px",
-	    border: '1px solid #ccc',
-	    background: '#fff',
-	    overflow: 'auto',
-	    WebkitOverflowScrolling: 'touch',
-	    borderRadius: '4px',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
 
 /***/ }
 /******/ ]);
