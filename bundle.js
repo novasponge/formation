@@ -88,9 +88,13 @@
 	
 	var _reactInputRange2 = _interopRequireDefault(_reactInputRange);
 	
-	var _modal_style = __webpack_require__(221);
+	var _modal_style = __webpack_require__(217);
 	
-	__webpack_require__(217);
+	__webpack_require__(218);
+	
+	var _single_sort = __webpack_require__(223);
+	
+	var _single_sort2 = _interopRequireDefault(_single_sort);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -110,7 +114,9 @@
 	
 	    _this.state = {
 	      instructionOpen: false,
-	      value: 1
+	      value: 1,
+	      shufflePause: false,
+	      quickSortPause: false
 	    };
 	
 	    _this.handleShuffle = _this.handleShuffle.bind(_this);
@@ -127,6 +133,7 @@
 	    _this.closeModal = _this.closeModal.bind(_this);
 	    _this.openModal = _this.openModal.bind(_this);
 	    _this.handleShuffleDemo = _this.handleShuffleDemo.bind(_this);
+	    _this.handlePause = _this.handlePause.bind(_this);
 	    return _this;
 	  }
 	
@@ -138,34 +145,34 @@
 	  }, {
 	    key: 'getCanvas',
 	    value: function getCanvas() {
-	      var shuffleCtx = this.refs.canvasShuffle.getContext('2d');
+	      var shuffleCtx = this.refs.canvasShuffle.refs.canvas.getContext('2d');
 	      var shuffleView = new _stick_view2.default(shuffleCtx);
 	
-	      var quickSortCtx = this.refs.canvasQuicksort.getContext('2d');
+	      var quickSortCtx = this.refs.canvasQuicksort.refs.canvas.getContext('2d');
 	      var quickSortView = new _stick_view2.default(quickSortCtx);
 	
-	      var bubbleSortCtx = this.refs.canvasBubblesort.getContext('2d');
+	      var bubbleSortCtx = this.refs.canvasBubblesort.refs.canvas.getContext('2d');
 	      var bubbleSortView = new _stick_view2.default(bubbleSortCtx);
 	
-	      var mergeSortCtx = this.refs.canvasMergesort.getContext('2d');
+	      var mergeSortCtx = this.refs.canvasMergesort.refs.canvas.getContext('2d');
 	      var mergeSortView = new _stick_view2.default(mergeSortCtx);
 	
-	      var bitonicSortCtx = this.refs.canvasBitonicsort.getContext('2d');
+	      var bitonicSortCtx = this.refs.canvasBitonicsort.refs.canvas.getContext('2d');
 	      var bitonicSortView = new _stick_view2.default(bitonicSortCtx);
 	
-	      var heapSortCtx = this.refs.canvasHeapsort.getContext('2d');
+	      var heapSortCtx = this.refs.canvasHeapsort.refs.canvas.getContext('2d');
 	      var heapSortView = new _stick_view2.default(heapSortCtx);
 	
-	      var selectionSortCtx = this.refs.canvasSelectsort.getContext('2d');
+	      var selectionSortCtx = this.refs.canvasSelectsort.refs.canvas.getContext('2d');
 	      var selectionSortView = new _stick_view2.default(selectionSortCtx);
 	
-	      var insertionSortCtx = this.refs.canvasInsertsort.getContext('2d');
+	      var insertionSortCtx = this.refs.canvasInsertsort.refs.canvas.getContext('2d');
 	      var insertionSortView = new _stick_view2.default(insertionSortCtx);
 	
-	      var oddEvenSortCtx = this.refs.canvasOddevensort.getContext('2d');
+	      var oddEvenSortCtx = this.refs.canvasOddevensort.refs.canvas.getContext('2d');
 	      var oddEvenSortView = new _stick_view2.default(oddEvenSortCtx);
 	
-	      var cocktailSortCtx = this.refs.canvasCocktailsort.getContext('2d');
+	      var cocktailSortCtx = this.refs.canvasCocktailsort.refs.canvas.getContext('2d');
 	      var cocktailSortView = new _stick_view2.default(cocktailSortCtx);
 	
 	      this.setState({
@@ -288,6 +295,15 @@
 	      });
 	    }
 	  }, {
+	    key: 'handlePause',
+	    value: function handlePause() {
+	      if (this.state.pause) {
+	        this.setState({ shufflePause: false });
+	      } else {
+	        this.setState({ shufflePause: true });
+	      }
+	    }
+	  }, {
 	    key: 'formatLabel',
 	    value: function formatLabel(labelValue) {
 	      return labelValue.toFixed(1);
@@ -295,19 +311,23 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      // let shufflePauseState;
+	      var pauseState = void 0;
+	      //
+	      // if (this.state.loaded) {
+	      //   this.state.shuffle.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.quickSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.bubbleSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.mergeSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.bitonicSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.heapSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.selectionSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.insertionSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.oddEvenSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      //   this.state.cocktailSort.getSpeedAmplifier(this.state.value, this.state.pause);
+	      // }
 	
-	      if (this.state.loaded) {
-	        this.state.shuffle.getSpeedAmplifier(this.state.value);
-	        this.state.quickSort.getSpeedAmplifier(this.state.value);
-	        this.state.bubbleSort.getSpeedAmplifier(this.state.value);
-	        this.state.mergeSort.getSpeedAmplifier(this.state.value);
-	        this.state.bitonicSort.getSpeedAmplifier(this.state.value);
-	        this.state.heapSort.getSpeedAmplifier(this.state.value);
-	        this.state.selectionSort.getSpeedAmplifier(this.state.value);
-	        this.state.insertionSort.getSpeedAmplifier(this.state.value);
-	        this.state.oddEvenSort.getSpeedAmplifier(this.state.value);
-	        this.state.cocktailSort.getSpeedAmplifier(this.state.value);
-	      }
+	      // shufflePauseState = this.state.shufflePause ? "Resume" : 'Pause';
 	
 	      return _react2.default.createElement(
 	        'div',
@@ -321,7 +341,7 @@
 	            _react2.default.createElement(
 	              'button',
 	              { className: 'open-instruction', onClick: this.openModal },
-	              'Instruction'
+	              'Instructions'
 	            ),
 	            _react2.default.createElement(
 	              'div',
@@ -334,7 +354,12 @@
 	              _react2.default.createElement(
 	                'h6',
 	                null,
-	                'created by Zhuoli Zhang'
+	                'created by ',
+	                _react2.default.createElement(
+	                  'a',
+	                  { href: 'http://www.zhuolizhang.com' },
+	                  'Zhuoli Zhang'
+	                )
 	              )
 	            ),
 	            _react2.default.createElement(
@@ -382,6 +407,21 @@
 	            _react2.default.createElement(
 	              'p',
 	              null,
+	              'Click shuffle all to shuffle all demos at once.'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Click sort all button to perform all sorting algorithms at once.'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Click algorithms name to perform specific sorting algorithm.'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
 	              'Lines are shuffled first, then sorted by slope.'
 	            ),
 	            _react2.default.createElement(
@@ -424,106 +464,76 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'main-content' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleShuffleDemo },
-	              'Shuffle demo'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasShuffle', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleQuickSort },
-	              'Quick Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasQuicksort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleMergeSort },
-	              'Merge Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasMergesort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleBitonicSort },
-	              'Bitonic Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasBitonicsort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { className: 'heapsort-button', onClick: this.handleHeapSort },
-	              'Heap Sort-Bottom Top'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasHeapsort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleSelectionSort },
-	              'Selection Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasSelectsort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleInsertionSort },
-	              'Insertion Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasInsertsort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleBubbleSort },
-	              'Bubble Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasBubblesort', width: 1024, height: 110 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleOddEvenSort },
-	              'Odd Even Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasOddevensort', width: 1024, height: 100 })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'canvas-container' },
-	            _react2.default.createElement(
-	              'button',
-	              { onClick: this.handleCocktailSort },
-	              'Cocktail Sort'
-	            ),
-	            _react2.default.createElement('canvas', { ref: 'canvasCocktailsort', width: 1024, height: 100 })
-	          )
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasShuffle',
+	            handleAlgorithm: this.handleShuffleDemo,
+	            algorithm: this.state.shuffle,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Shuffle Demo'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasQuicksort',
+	            handleAlgorithm: this.handleQuickSort,
+	            algorithm: this.state.quickSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Quick Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasMergesort',
+	            handleAlgorithm: this.handleMergeSort,
+	            algorithm: this.state.mergeSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Merge Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasBitonicsort',
+	            handleAlgorithm: this.handleBitonicSort,
+	            algorithm: this.state.bitonicSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Bintonic Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasHeapsort',
+	            handleAlgorithm: this.handleHeapSort,
+	            algorithm: this.state.heapSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Heap Sort-Bottom Up'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasSelectsort',
+	            handleAlgorithm: this.handleSelectionSort,
+	            algorithm: this.state.selectionSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Selection Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasInsertsort',
+	            handleAlgorithm: this.handleInsertionSort,
+	            algorithm: this.state.insertionSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Insertion Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasBubblesort',
+	            handleAlgorithm: this.handleBubbleSort,
+	            algorithm: this.state.bubbleSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Bubble Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasOddevensort',
+	            handleAlgorithm: this.handleOddEvenSort,
+	            algorithm: this.state.oddEvenSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Odd Even Sort'
+	          }),
+	          _react2.default.createElement(_single_sort2.default, { ref: 'canvasCocktailsort',
+	            handleAlgorithm: this.handleCocktailSort,
+	            algorithm: this.state.cocktailSort,
+	            speed: this.state.value,
+	            loaded: this.state.loaded,
+	            name: 'Cocktail Sort'
+	          })
 	        )
 	      );
 	    }
@@ -537,6 +547,77 @@
 	  _reactModal2.default.setAppElement(document.body);
 	  _reactDom2.default.render(_react2.default.createElement(SortingVisualization, null), root);
 	});
+	
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handleShuffleDemo}>Shuffle demo</button>
+	//     <button onClick={this.handlePause}>{shufflePauseState}</button>
+	//   </div>
+	//   <canvas ref="canvasShuffle" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handleQuickSort}>Quick Sort</button>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//   </div>
+	//   <canvas ref="canvasQuicksort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleMergeSort}>Merge Sort</button>
+	//   </div>
+	//   <canvas ref="canvasMergesort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
+	//   </div>
+	//   <canvas ref="canvasBitonicsort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
+	//   </div>
+	//   <canvas ref="canvasHeapsort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleSelectionSort}>Selection Sort</button>
+	//   </div>
+	//   <canvas ref="canvasSelectsort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleInsertionSort}>Insertion Sort</button>
+	//   </div>
+	//   <canvas ref="canvasInsertsort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleBubbleSort}>Bubble Sort</button>
+	//   </div>
+	//   <canvas ref="canvasBubblesort" width={1024} height={110} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
+	//   </div>
+	//   <canvas ref="canvasOddevensort" width={1024} height={100} />
+	// </div>
+	// <div className="canvas-container">
+	//   <div className='button-holder'>
+	//     <button onClick={this.handlePause}>{pauseState}</button>
+	//     <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
+	//   </div>
+	//   <canvas ref="canvasCocktailsort" width={1024} height={100} />
+	// </div>
 
 /***/ },
 /* 1 */
@@ -570,8 +651,8 @@
 	
 	  _createClass(SticksView, [{
 	    key: "getSpeedAmplifier",
-	    value: function getSpeedAmplifier(speedAmplifier) {
-	      this.speedAmplifier = speedAmplifier;
+	    value: function getSpeedAmplifier(speedAmplifier, pauseState) {
+	      this.speedAmplifier = pauseState ? 0 : speedAmplifier;
 	    }
 	  }, {
 	    key: "start",
@@ -682,6 +763,11 @@
 	  }, {
 	    key: 'updateSticks',
 	    value: function updateSticks(timeDelta, speedAmplifier) {
+	      this.stepVersion(timeDelta, speedAmplifier);
+	    }
+	  }, {
+	    key: 'stepVersion',
+	    value: function stepVersion(timeDelta, speedAmplifier) {
 	      var stick1 = void 0;
 	      var stick2 = void 0;
 	      var operation = void 0;
@@ -43600,15 +43686,49 @@
 
 /***/ },
 /* 217 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var modalStyle = exports.modalStyle = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+	  },
+	  content: {
+	    display: "block",
+	    padding: "10px 5px",
+	    position: 'fixed',
+	    top: "50%",
+	    left: "50%",
+	    width: "500px",
+	    border: '1px solid #ccc',
+	    background: '#fff',
+	    overflow: 'auto',
+	    WebkitOverflowScrolling: 'touch',
+	    borderRadius: '4px',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+
+/***/ },
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(218);
+	var content = __webpack_require__(219);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(220)(content, {});
+	var update = __webpack_require__(221)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -43625,10 +43745,10 @@
 	}
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(219)();
+	exports = module.exports = __webpack_require__(220)();
 	// imports
 	
 	
@@ -43639,7 +43759,7 @@
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports) {
 
 	/*
@@ -43695,7 +43815,7 @@
 
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -43947,38 +44067,91 @@
 
 
 /***/ },
-/* 221 */
-/***/ function(module, exports) {
+/* 222 */,
+/* 223 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var modalStyle = exports.modalStyle = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)'
-	  },
-	  content: {
-	    display: "block",
-	    padding: "10px 5px",
-	    position: 'fixed',
-	    top: "50%",
-	    left: "50%",
-	    width: "500px",
-	    border: '1px solid #ccc',
-	    background: '#fff',
-	    overflow: 'auto',
-	    WebkitOverflowScrolling: 'touch',
-	    borderRadius: '4px',
-	    transform: 'translate(-50%, -50%)'
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(17);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SingleSort = function (_React$Component) {
+	  _inherits(SingleSort, _React$Component);
+	
+	  function SingleSort(props) {
+	    _classCallCheck(this, SingleSort);
+	
+	    var _this = _possibleConstructorReturn(this, (SingleSort.__proto__ || Object.getPrototypeOf(SingleSort)).call(this, props));
+	
+	    _this.state = {
+	      pause: false
+	    };
+	
+	    _this.handlePause = _this.handlePause.bind(_this);
+	    return _this;
 	  }
-	};
+	
+	  _createClass(SingleSort, [{
+	    key: 'handlePause',
+	    value: function handlePause() {
+	      if (this.state.pause) {
+	        this.setState({ pause: false });
+	      } else {
+	        this.setState({ pause: true });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var pauseState = void 0;
+	
+	      pauseState = this.state.pause ? "Resume" : 'Pause';
+	      if (this.props.loaded) {
+	        this.props.algorithm.getSpeedAmplifier(this.props.speed, this.state.pause);
+	      }
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'canvas-container' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'button-holder' },
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.props.handleAlgorithm },
+	            this.props.name
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handlePause },
+	            pauseState
+	          )
+	        ),
+	        _react2.default.createElement('canvas', { ref: 'canvas', width: 1024, height: 110 })
+	      );
+	    }
+	  }]);
+	
+	  return SingleSort;
+	}(_react2.default.Component);
+	
+	exports.default = SingleSort;
 
 /***/ }
 /******/ ]);
