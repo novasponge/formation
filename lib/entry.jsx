@@ -15,6 +15,7 @@ import Modal from 'react-modal';
 import InputRange from 'react-input-range';
 import { modalStyle } from "./modal_style";
 import "react-input-range/dist/react-input-range.css";
+import SingleSort from "./single_sort";
 
 class SortingVisualization extends React.Component {
   constructor (props) {
@@ -22,6 +23,8 @@ class SortingVisualization extends React.Component {
     this.state = {
       instructionOpen: false,
       value: 1,
+      shufflePause: false,
+      quickSortPause: false
     };
 
     this.handleShuffle = this.handleShuffle.bind(this);
@@ -38,6 +41,7 @@ class SortingVisualization extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
+    this.handlePause = this.handlePause.bind(this);
   }
 
   componentDidMount () {
@@ -45,34 +49,34 @@ class SortingVisualization extends React.Component {
   }
 
   getCanvas () {
-    const shuffleCtx = this.refs.canvasShuffle.getContext('2d');
+    const shuffleCtx = this.refs.canvasShuffle.refs.canvas.getContext('2d');
     const shuffleView = new SticksView(shuffleCtx);
 
-    const quickSortCtx = this.refs.canvasQuicksort.getContext('2d');
+    const quickSortCtx = this.refs.canvasQuicksort.refs.canvas.getContext('2d');
     const quickSortView = new SticksView(quickSortCtx);
 
-    const bubbleSortCtx = this.refs.canvasBubblesort.getContext('2d');
+    const bubbleSortCtx = this.refs.canvasBubblesort.refs.canvas.getContext('2d');
     const bubbleSortView = new SticksView(bubbleSortCtx);
 
-    const mergeSortCtx = this.refs.canvasMergesort.getContext('2d');
+    const mergeSortCtx = this.refs.canvasMergesort.refs.canvas.getContext('2d');
     const mergeSortView = new SticksView(mergeSortCtx);
 
-    const bitonicSortCtx = this.refs.canvasBitonicsort.getContext('2d');
+    const bitonicSortCtx = this.refs.canvasBitonicsort.refs.canvas.getContext('2d');
     const bitonicSortView = new SticksView(bitonicSortCtx);
 
-    const heapSortCtx = this.refs.canvasHeapsort.getContext('2d');
+    const heapSortCtx = this.refs.canvasHeapsort.refs.canvas.getContext('2d');
     const heapSortView = new SticksView(heapSortCtx);
 
-    const selectionSortCtx = this.refs.canvasSelectsort.getContext('2d');
+    const selectionSortCtx = this.refs.canvasSelectsort.refs.canvas.getContext('2d');
     const selectionSortView = new SticksView(selectionSortCtx);
 
-    const insertionSortCtx = this.refs.canvasInsertsort.getContext('2d');
+    const insertionSortCtx = this.refs.canvasInsertsort.refs.canvas.getContext('2d');
     const insertionSortView = new SticksView(insertionSortCtx);
 
-    const oddEvenSortCtx = this.refs.canvasOddevensort.getContext('2d');
+    const oddEvenSortCtx = this.refs.canvasOddevensort.refs.canvas.getContext('2d');
     const oddEvenSortView = new SticksView(oddEvenSortCtx);
 
-    const cocktailSortCtx = this.refs.canvasCocktailsort.getContext('2d');
+    const cocktailSortCtx = this.refs.canvasCocktailsort.refs.canvas.getContext('2d');
     const cocktailSortView = new SticksView(cocktailSortCtx);
 
     this.setState({
@@ -180,34 +184,45 @@ class SortingVisualization extends React.Component {
     });
   }
 
+  handlePause () {
+    if (this.state.pause) {
+      this.setState({shufflePause: false});
+    } else {
+      this.setState({shufflePause: true});
+    }
+  }
+
   formatLabel(labelValue) {
     return labelValue.toFixed(1);
   }
 
   render () {
+    // let shufflePauseState;
+    let pauseState;
+    //
+    // if (this.state.loaded) {
+    //   this.state.shuffle.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.quickSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.bubbleSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.mergeSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.bitonicSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.heapSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.selectionSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.insertionSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.oddEvenSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    //   this.state.cocktailSort.getSpeedAmplifier(this.state.value, this.state.pause);
+    // }
 
-    if (this.state.loaded) {
-      this.state.shuffle.getSpeedAmplifier(this.state.value);
-      this.state.quickSort.getSpeedAmplifier(this.state.value);
-      this.state.bubbleSort.getSpeedAmplifier(this.state.value);
-      this.state.mergeSort.getSpeedAmplifier(this.state.value);
-      this.state.bitonicSort.getSpeedAmplifier(this.state.value);
-      this.state.heapSort.getSpeedAmplifier(this.state.value);
-      this.state.selectionSort.getSpeedAmplifier(this.state.value);
-      this.state.insertionSort.getSpeedAmplifier(this.state.value);
-      this.state.oddEvenSort.getSpeedAmplifier(this.state.value);
-      this.state.cocktailSort.getSpeedAmplifier(this.state.value);
-    }
-
+    // shufflePauseState = this.state.shufflePause ? "Resume" : 'Pause';
 
     return (
       <div className="visualization-body">
         <header>
           <div className="header-content">
-            <button className='open-instruction' onClick={this.openModal}>Instruction</button>
+            <button className='open-instruction' onClick={this.openModal}>Instructions</button>
             <div className='title-container'>
               <h1>FORMATION</h1>
-              <h6>created by Zhuoli Zhang</h6>
+              <h6>created by <a href="http://www.zhuolizhang.com">Zhuoli Zhang</a></h6>
             </div>
             <a href='https://github.com/novasponge/formation' className="github">
               <i className="fa fa-github" aria-hidden="true"></i>
@@ -229,6 +244,9 @@ class SortingVisualization extends React.Component {
             onRequestClose={this.closeModal}
             style={modalStyle}>
             <h3>Formation is the visualization of sorting algorithms.</h3>
+            <p>Click shuffle all to shuffle all demos at once.</p>
+            <p>Click sort all button to perform all sorting algorithms at once.</p>
+            <p>Click algorithms name to perform specific sorting algorithm.</p>
             <p>Lines are shuffled first, then sorted by slope.</p>
             <h3 className='red'>Red</h3>
             <p>Red lines are swapping for either shuffling or sorting purposes.</p>
@@ -240,46 +258,76 @@ class SortingVisualization extends React.Component {
           </Modal>
         </header>
         <div className="main-content">
-          <div className="canvas-container">
-            <button onClick={this.handleShuffleDemo}>Shuffle demo</button>
-            <canvas ref="canvasShuffle" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleQuickSort}>Quick Sort</button>
-            <canvas ref="canvasQuicksort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleMergeSort}>Merge Sort</button>
-            <canvas ref="canvasMergesort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
-            <canvas ref="canvasBitonicsort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
-            <canvas ref="canvasHeapsort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleSelectionSort}>Selection Sort</button>
-            <canvas ref="canvasSelectsort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleInsertionSort}>Insertion Sort</button>
-            <canvas ref="canvasInsertsort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleBubbleSort}>Bubble Sort</button>
-            <canvas ref="canvasBubblesort" width={1024} height={110} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
-            <canvas ref="canvasOddevensort" width={1024} height={100} />
-          </div>
-          <div className="canvas-container">
-            <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
-            <canvas ref="canvasCocktailsort" width={1024} height={100} />
-          </div>
+          <SingleSort ref="canvasShuffle"
+                      handleAlgorithm={this.handleShuffleDemo}
+                      algorithm={this.state.shuffle}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Shuffle Demo"
+          />
+          <SingleSort ref="canvasQuicksort"
+                      handleAlgorithm={this.handleQuickSort}
+                      algorithm={this.state.quickSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Quick Sort"
+          />
+          <SingleSort ref="canvasMergesort"
+                      handleAlgorithm={this.handleMergeSort}
+                      algorithm={this.state.mergeSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Merge Sort"
+          />
+          <SingleSort ref="canvasBitonicsort"
+                      handleAlgorithm={this.handleBitonicSort}
+                      algorithm={this.state.bitonicSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Bintonic Sort"
+          />
+          <SingleSort ref="canvasHeapsort"
+                      handleAlgorithm={this.handleHeapSort}
+                      algorithm={this.state.heapSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Heap Sort-Bottom Up"
+          />
+          <SingleSort ref="canvasSelectsort"
+                      handleAlgorithm={this.handleSelectionSort}
+                      algorithm={this.state.selectionSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Selection Sort"
+          />
+          <SingleSort ref="canvasInsertsort"
+                      handleAlgorithm={this.handleInsertionSort}
+                      algorithm={this.state.insertionSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Insertion Sort"
+          />
+          <SingleSort ref="canvasBubblesort"
+                      handleAlgorithm={this.handleBubbleSort}
+                      algorithm={this.state.bubbleSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Bubble Sort"
+          />
+          <SingleSort ref="canvasOddevensort"
+                      handleAlgorithm={this.handleOddEvenSort}
+                      algorithm={this.state.oddEvenSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Odd Even Sort"
+          />
+          <SingleSort ref="canvasCocktailsort"
+                      handleAlgorithm={this.handleCocktailSort}
+                      algorithm={this.state.cocktailSort}
+                      speed={this.state.value}
+                      loaded={this.state.loaded}
+                      name="Cocktail Sort"
+          />
         </div>
       </div>
     );
@@ -291,3 +339,74 @@ document.addEventListener("DOMContentLoaded", ()=>{
   Modal.setAppElement(document.body);
   ReactDOM.render(<SortingVisualization />, root);
 });
+
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handleShuffleDemo}>Shuffle demo</button>
+//     <button onClick={this.handlePause}>{shufflePauseState}</button>
+//   </div>
+//   <canvas ref="canvasShuffle" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handleQuickSort}>Quick Sort</button>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//   </div>
+//   <canvas ref="canvasQuicksort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleMergeSort}>Merge Sort</button>
+//   </div>
+//   <canvas ref="canvasMergesort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
+//   </div>
+//   <canvas ref="canvasBitonicsort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
+//   </div>
+//   <canvas ref="canvasHeapsort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleSelectionSort}>Selection Sort</button>
+//   </div>
+//   <canvas ref="canvasSelectsort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleInsertionSort}>Insertion Sort</button>
+//   </div>
+//   <canvas ref="canvasInsertsort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleBubbleSort}>Bubble Sort</button>
+//   </div>
+//   <canvas ref="canvasBubblesort" width={1024} height={110} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
+//   </div>
+//   <canvas ref="canvasOddevensort" width={1024} height={100} />
+// </div>
+// <div className="canvas-container">
+//   <div className='button-holder'>
+//     <button onClick={this.handlePause}>{pauseState}</button>
+//     <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
+//   </div>
+//   <canvas ref="canvasCocktailsort" width={1024} height={100} />
+// </div>

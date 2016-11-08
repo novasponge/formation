@@ -58,6 +58,14 @@ h6 {
   padding-right: 50px;
 }
 
+h6>a{
+  color: #e6821a;
+  opacity: 0.7;
+}
+h6>a:hover {
+  opacity: 1.0;
+}
+
 .open-instruction {
   height: 43px;
   background-color: #000;
@@ -121,3 +129,12 @@ header {
 .main-content {
   margin-top: 321.094px;
 }
+
+.button-holder > button{
+  margin-right: 15px;
+}
+
+/*.button-holder {
+  display: flex;
+  justify-content: center;
+}*/
