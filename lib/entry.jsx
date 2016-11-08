@@ -197,23 +197,6 @@ class SortingVisualization extends React.Component {
   }
 
   render () {
-    // let shufflePauseState;
-    let pauseState;
-    //
-    // if (this.state.loaded) {
-    //   this.state.shuffle.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.quickSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.bubbleSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.mergeSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.bitonicSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.heapSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.selectionSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.insertionSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.oddEvenSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    //   this.state.cocktailSort.getSpeedAmplifier(this.state.value, this.state.pause);
-    // }
-
-    // shufflePauseState = this.state.shufflePause ? "Resume" : 'Pause';
 
     return (
       <div className="visualization-body">
@@ -339,74 +322,3 @@ document.addEventListener("DOMContentLoaded", ()=>{
   Modal.setAppElement(document.body);
   ReactDOM.render(<SortingVisualization />, root);
 });
-
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handleShuffleDemo}>Shuffle demo</button>
-//     <button onClick={this.handlePause}>{shufflePauseState}</button>
-//   </div>
-//   <canvas ref="canvasShuffle" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handleQuickSort}>Quick Sort</button>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//   </div>
-//   <canvas ref="canvasQuicksort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleMergeSort}>Merge Sort</button>
-//   </div>
-//   <canvas ref="canvasMergesort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleBitonicSort}>Bitonic Sort</button>
-//   </div>
-//   <canvas ref="canvasBitonicsort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button className="heapsort-button" onClick={this.handleHeapSort}>Heap Sort-Bottom Top</button>
-//   </div>
-//   <canvas ref="canvasHeapsort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleSelectionSort}>Selection Sort</button>
-//   </div>
-//   <canvas ref="canvasSelectsort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleInsertionSort}>Insertion Sort</button>
-//   </div>
-//   <canvas ref="canvasInsertsort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleBubbleSort}>Bubble Sort</button>
-//   </div>
-//   <canvas ref="canvasBubblesort" width={1024} height={110} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleOddEvenSort}>Odd Even Sort</button>
-//   </div>
-//   <canvas ref="canvasOddevensort" width={1024} height={100} />
-// </div>
-// <div className="canvas-container">
-//   <div className='button-holder'>
-//     <button onClick={this.handlePause}>{pauseState}</button>
-//     <button onClick={this.handleCocktailSort}>Cocktail Sort</button>
-//   </div>
-//   <canvas ref="canvasCocktailsort" width={1024} height={100} />
-// </div>
