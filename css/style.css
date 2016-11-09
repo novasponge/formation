@@ -104,7 +104,6 @@ header {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  z-index: 1;
 }
 
 .header-content {
@@ -140,9 +139,9 @@ header {
 }
 
 .quickShuffle:disabled {
-  opacity: 0.5;
+  background-color: rgba(193, 215, 217, 0.72)
 }
 
 .sorting:disabled {
-  opacity: 0.5;
+  background-color: rgba(193, 215, 217, 0.72)
 }
