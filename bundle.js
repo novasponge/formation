@@ -133,7 +133,6 @@
 	    _this.openModal = _this.openModal.bind(_this);
 	    _this.handleShuffleDemo = _this.handleShuffleDemo.bind(_this);
 	    _this.handlePause = _this.handlePause.bind(_this);
-	    _this.checkAvailabilityCB = _this.checkAvailabilityCB.bind(_this);
 	    return _this;
 	  }
 	
@@ -265,13 +264,6 @@
 	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
-	    key: 'checkAvailabilityCB',
-	    value: function checkAvailabilityCB(value) {
-	      if (value) {
-	        this.setState({ checkAvailability: true });
-	      }
-	    }
-	  }, {
 	    key: 'handleSortAll',
 	    value: function handleSortAll() {
 	      var keys = Object.keys(this.refs);
@@ -306,7 +298,7 @@
 	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
 	              break;
 	            case "Bubble Sort":
-	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_bubble_sort.bubbleSort, false, null, this.checkAvailabilityCB);
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_bubble_sort.bubbleSort, false, null, checkAvailabilityCB);
 	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
 	              break;
 	            case "Odd Even Sort":
@@ -322,16 +314,6 @@
 	          }
 	        }
 	      }
-	      // this.state.quickSort.sticks.adopAlgorithm(quickSort);
-	      // this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
-	      // this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
-	      // this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
-	      // this.state.heapSort.sticks.adopAlgorithm(heapSort);
-	      // this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
-	      // this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
-	      // this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
-	      // this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
-	      this.setState({ checkAvailability: false });
 	    }
 	  }, {
 	    key: 'closeModal',
@@ -732,7 +714,7 @@
 	    }
 	  }, {
 	    key: 'updateSticks',
-	    value: function updateSticks(timeDelta, speedAmplifier, quickShuffle) {
+	    value: function updateSticks(timeDelta, speedAmplifier) {
 	      if (this.shuffle) {
 	        this.quickVersion(timeDelta, speedAmplifier);
 	      } else {

@@ -41,7 +41,6 @@ class SortingVisualization extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
     this.handlePause = this.handlePause.bind(this);
-    this.checkAvailabilityCB = this.checkAvailabilityCB.bind(this);
   }
 
   componentDidMount () {
@@ -158,12 +157,6 @@ class SortingVisualization extends React.Component {
     this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort, false, null, checkAvailabilityCB);
   }
 
-  checkAvailabilityCB(value) {
-    if (value) {
-      this.setState({checkAvailability : true});
-    }
-  }
-
   handleSortAll () {
     const keys = Object.keys(this.refs);
 
@@ -197,7 +190,7 @@ class SortingVisualization extends React.Component {
             this.refs[algorithm].setState({quickShuffleDisabled : true});
             break;
           case "Bubble Sort":
-            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bubbleSort, false, null, checkAvailabilityCB);
             this.refs[algorithm].setState({quickShuffleDisabled : true});
             break;
           case "Odd Even Sort":
@@ -213,16 +206,6 @@ class SortingVisualization extends React.Component {
         }
       }
     }
-    // this.state.quickSort.sticks.adopAlgorithm(quickSort);
-    // this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
-    // this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
-    // this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
-    // this.state.heapSort.sticks.adopAlgorithm(heapSort);
-    // this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
-    // this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
-    // this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
-    // this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
-    this.setState({checkAvailability: false});
   }
 
   closeModal () {
