@@ -23,8 +23,7 @@ class SortingVisualization extends React.Component {
     this.state = {
       instructionOpen: false,
       value: 1,
-      shufflePause: false,
-      quickSortPause: false
+      checkAvailability: true
     };
 
     this.handleShuffle = this.handleShuffle.bind(this);
@@ -42,6 +41,7 @@ class SortingVisualization extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
     this.handlePause = this.handlePause.bind(this);
+    this.checkAvailabilityCB = this.checkAvailabilityCB.bind(this);
   }
 
   componentDidMount () {
@@ -57,7 +57,7 @@ class SortingVisualization extends React.Component {
 
     const bubbleSortCtx = this.refs.canvasBubblesort.refs.canvas.getContext('2d');
     const bubbleSortView = new SticksView(bubbleSortCtx);
-
+    //
     const mergeSortCtx = this.refs.canvasMergesort.refs.canvas.getContext('2d');
     const mergeSortView = new SticksView(mergeSortCtx);
 
@@ -106,68 +106,123 @@ class SortingVisualization extends React.Component {
   }
 
   handleShuffle () {
+    const keys = Object.keys(this.refs);
+
+    for (var i = 0; i < keys.length; i++) {
+      let algorithm = keys[i];
+      if (!this.refs[algorithm].state.quickShuffleDisabled) {
+        let checkSortAvailability = this.refs[algorithm].checkSortAvailability;
+        this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, shuffle, true, null, checkSortAvailability );
+        this.refs[algorithm].setState({shuffling: true});
+      }
+    }
+  }
+
+  handleShuffleDemo (checkAvailabilityCB) {
     this.state.shuffle.sticks.adopAlgorithm(shuffle);
-    this.state.quickSort.sticks.adopAlgorithm(shuffle);
-    this.state.bubbleSort.sticks.adopAlgorithm(shuffle);
-    this.state.mergeSort.sticks.adopAlgorithm(shuffle);
-    this.state.bitonicSort.sticks.adopAlgorithm(shuffle);
-    this.state.heapSort.sticks.adopAlgorithm(shuffle);
-    this.state.selectionSort.sticks.adopAlgorithm(shuffle);
-    this.state.insertionSort.sticks.adopAlgorithm(shuffle);
-    this.state.oddEvenSort.sticks.adopAlgorithm(shuffle);
-    this.state.cocktailSort.sticks.adopAlgorithm(shuffle);
   }
 
-  handleShuffleDemo () {
-    this.state.shuffle.sticks.adopAlgorithm(shuffle);
+  handleQuickSort (checkAvailabilityCB) {
+    this.state.quickSort.sticks.adopAlgorithm(quickSort, false, null, checkAvailabilityCB);
   }
 
-  handleQuickSort () {
-    this.state.quickSort.sticks.adopAlgorithm(quickSort);
+  handleBubbleSort (checkAvailabilityCB) {
+    this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, checkAvailabilityCB);
   }
 
-  handleBubbleSort () {
-    this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort);
+  handleMergeSort (checkAvailabilityCB) {
+    this.state.mergeSort.sticks.adopAlgorithm(mergeSort, false, null, checkAvailabilityCB);
   }
 
-  handleMergeSort () {
-    this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
+  handleBitonicSort (checkAvailabilityCB) {
+    this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort, false, null, checkAvailabilityCB);
   }
 
-  handleBitonicSort () {
-    this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
+  handleHeapSort (checkAvailabilityCB) {
+    this.state.heapSort.sticks.adopAlgorithm(heapSort, false, null, checkAvailabilityCB);
   }
 
-  handleHeapSort () {
-    this.state.heapSort.sticks.adopAlgorithm(heapSort);
+  handleSelectionSort (checkAvailabilityCB) {
+    this.state.selectionSort.sticks.adopAlgorithm(selectionSort, false, null, checkAvailabilityCB);
   }
 
-  handleSelectionSort () {
-    this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
+  handleInsertionSort (checkAvailabilityCB) {
+    this.state.insertionSort.sticks.adopAlgorithm(insertionSort, false, null, checkAvailabilityCB);
   }
 
-  handleInsertionSort () {
-    this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
+  handleOddEvenSort (checkAvailabilityCB) {
+    this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort, false, null, checkAvailabilityCB);
   }
 
-  handleOddEvenSort () {
-    this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
+  handleCocktailSort (checkAvailabilityCB) {
+    this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort, false, null, checkAvailabilityCB);
   }
 
-  handleCocktailSort () {
-    this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
+  checkAvailabilityCB(value) {
+    if (value) {
+      this.setState({checkAvailability : true});
+    }
   }
 
   handleSortAll () {
-    this.state.quickSort.sticks.adopAlgorithm(quickSort);
-    this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort);
-    this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
-    this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
-    this.state.heapSort.sticks.adopAlgorithm(heapSort);
-    this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
-    this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
-    this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
-    this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
+    const keys = Object.keys(this.refs);
+
+    for (var i = 0; i < keys.length; i++) {
+      let algorithm = keys[i];
+      if (!this.refs[algorithm].state.shuffling) {
+        let checkAvailabilityCB = this.refs[algorithm].checkAvailabilityCB;
+        switch (this.refs[algorithm].props.name) {
+          case "Quick Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(quickSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Merge Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(mergeSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Bintonic Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bitonicSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Heap Sort-Bottom Up":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(heapSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Selection Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(selectionSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Insertion Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(insertionSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Bubble Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Odd Even Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(oddEvenSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          case "Cocktail Sort":
+            this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(cocktailSort, false, null, checkAvailabilityCB);
+            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    // this.state.quickSort.sticks.adopAlgorithm(quickSort);
+    // this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
+    // this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
+    // this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
+    // this.state.heapSort.sticks.adopAlgorithm(heapSort);
+    // this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
+    // this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
+    // this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
+    // this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
+    this.setState({checkAvailability: false});
   }
 
   closeModal () {
@@ -212,7 +267,7 @@ class SortingVisualization extends React.Component {
             </a>
           </div>
           <div className="shuffle-sort-button-container">
-            <button onClick={this.handleShuffle}>Shuffle All</button>
+            <button className="shuffle-all-button" onClick={this.handleShuffle} disabled={!this.state.checkAvailability}>Shuffle All</button>
             <button onClick={this.handleSortAll}>Sort All</button>
             <h3>Speed Multiplier</h3>
             <InputRange maxValue={20}

@@ -134,7 +134,14 @@ header {
   margin-right: 15px;
 }
 
-/*.button-holder {
-  display: flex;
-  justify-content: center;
-}*/
+.shuffle-all-button:disabled {
+  opacity: 0.5;
+}
+
+.quickShuffle:disabled {
+  opacity: 0.5;
+}
+
+.sorting:disabled {
+  opacity: 0.5;
+}

@@ -1,13 +1,20 @@
 import React from 'react';
+import { shuffle } from './sorting_algs/shuffle';
 
 class SingleSort extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
       pause: false,
+      quickShuffleDisabled: false,
+      shuffling: false
     };
 
     this.handlePause = this.handlePause.bind(this);
+    this.quickShuffle = this.quickShuffle.bind(this);
+    this.handleAlgorithm = this.handleAlgorithm.bind(this);
+    this.checkAvailabilityCB = this.checkAvailabilityCB.bind(this);
+    this.checkSortAvailability = this.checkSortAvailability.bind(this);
   }
 
   handlePause () {
@@ -15,6 +22,28 @@ class SingleSort extends React.Component {
       this.setState({pause: false});
     } else {
       this.setState({pause: true});
+    }
+  }
+
+  quickShuffle () {
+    this.props.algorithm.sticks.adopAlgorithm(null, shuffle, true, null, this.checkSortAvailability);
+    this.setState({shuffling : true});
+  }
+
+  checkAvailabilityCB(value) {
+    if (value) {
+      this.setState({quickShuffleDisabled : false});
+    }
+  }
+
+  handleAlgorithm () {
+    this.props.handleAlgorithm(this.checkAvailabilityCB);
+    this.setState({quickShuffleDisabled: true});
+  }
+
+  checkSortAvailability(value) {
+    if (value) {
+      this.setState({shuffling: false});
     }
   }
 
@@ -29,7 +58,8 @@ class SingleSort extends React.Component {
     return (
       <div className="canvas-container">
         <div className='button-holder'>
-          <button onClick={this.props.handleAlgorithm}>{this.props.name}</button>
+          <button className="quickShuffle" onClick={this.quickShuffle} disabled={this.state.quickShuffleDisabled}>Quick Shuffle</button>
+          <button className="sorting" onClick={this.handleAlgorithm} disabled={this.state.shuffling}>{this.props.name}</button>
           <button onClick={this.handlePause}>{pauseState}</button>
         </div>
         <canvas ref="canvas" width={1024} height={110} />

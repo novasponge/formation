@@ -115,8 +115,7 @@
 	    _this.state = {
 	      instructionOpen: false,
 	      value: 1,
-	      shufflePause: false,
-	      quickSortPause: false
+	      checkAvailability: true
 	    };
 	
 	    _this.handleShuffle = _this.handleShuffle.bind(_this);
@@ -134,6 +133,7 @@
 	    _this.openModal = _this.openModal.bind(_this);
 	    _this.handleShuffleDemo = _this.handleShuffleDemo.bind(_this);
 	    _this.handlePause = _this.handlePause.bind(_this);
+	    _this.checkAvailabilityCB = _this.checkAvailabilityCB.bind(_this);
 	    return _this;
 	  }
 	
@@ -153,7 +153,7 @@
 	
 	      var bubbleSortCtx = this.refs.canvasBubblesort.refs.canvas.getContext('2d');
 	      var bubbleSortView = new _stick_view2.default(bubbleSortCtx);
-	
+	      //
 	      var mergeSortCtx = this.refs.canvasMergesort.refs.canvas.getContext('2d');
 	      var mergeSortView = new _stick_view2.default(mergeSortCtx);
 	
@@ -203,79 +203,135 @@
 	  }, {
 	    key: 'handleShuffle',
 	    value: function handleShuffle() {
-	      this.state.shuffle.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.quickSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.bubbleSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.mergeSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.bitonicSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.heapSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.selectionSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.insertionSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.oddEvenSort.sticks.adopAlgorithm(_shuffle.shuffle);
-	      this.state.cocktailSort.sticks.adopAlgorithm(_shuffle.shuffle);
+	      var keys = Object.keys(this.refs);
+	
+	      for (var i = 0; i < keys.length; i++) {
+	        var algorithm = keys[i];
+	        if (!this.refs[algorithm].state.quickShuffleDisabled) {
+	          var checkSortAvailability = this.refs[algorithm].checkSortAvailability;
+	          this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, _shuffle.shuffle, true, null, checkSortAvailability);
+	          this.refs[algorithm].setState({ shuffling: true });
+	        }
+	      }
 	    }
 	  }, {
 	    key: 'handleShuffleDemo',
-	    value: function handleShuffleDemo() {
+	    value: function handleShuffleDemo(checkAvailabilityCB) {
 	      this.state.shuffle.sticks.adopAlgorithm(_shuffle.shuffle);
 	    }
 	  }, {
 	    key: 'handleQuickSort',
-	    value: function handleQuickSort() {
-	      this.state.quickSort.sticks.adopAlgorithm(_quick_sort.quickSort);
+	    value: function handleQuickSort(checkAvailabilityCB) {
+	      this.state.quickSort.sticks.adopAlgorithm(_quick_sort.quickSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleBubbleSort',
-	    value: function handleBubbleSort() {
-	      this.state.bubbleSort.sticks.adopAlgorithm(_bubble_sort.bubbleSort);
+	    value: function handleBubbleSort(checkAvailabilityCB) {
+	      this.state.bubbleSort.sticks.adopAlgorithm(_bubble_sort.bubbleSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleMergeSort',
-	    value: function handleMergeSort() {
-	      this.state.mergeSort.sticks.adopAlgorithm(_merge_sort.mergeSort);
+	    value: function handleMergeSort(checkAvailabilityCB) {
+	      this.state.mergeSort.sticks.adopAlgorithm(_merge_sort.mergeSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleBitonicSort',
-	    value: function handleBitonicSort() {
-	      this.state.bitonicSort.sticks.adopAlgorithm(_bitonic_sort.bitonicSort);
+	    value: function handleBitonicSort(checkAvailabilityCB) {
+	      this.state.bitonicSort.sticks.adopAlgorithm(_bitonic_sort.bitonicSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleHeapSort',
-	    value: function handleHeapSort() {
-	      this.state.heapSort.sticks.adopAlgorithm(_heap_sort.heapSort);
+	    value: function handleHeapSort(checkAvailabilityCB) {
+	      this.state.heapSort.sticks.adopAlgorithm(_heap_sort.heapSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleSelectionSort',
-	    value: function handleSelectionSort() {
-	      this.state.selectionSort.sticks.adopAlgorithm(_select_sort.selectionSort);
+	    value: function handleSelectionSort(checkAvailabilityCB) {
+	      this.state.selectionSort.sticks.adopAlgorithm(_select_sort.selectionSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleInsertionSort',
-	    value: function handleInsertionSort() {
-	      this.state.insertionSort.sticks.adopAlgorithm(_insert_sort.insertionSort);
+	    value: function handleInsertionSort(checkAvailabilityCB) {
+	      this.state.insertionSort.sticks.adopAlgorithm(_insert_sort.insertionSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleOddEvenSort',
-	    value: function handleOddEvenSort() {
-	      this.state.oddEvenSort.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
+	    value: function handleOddEvenSort(checkAvailabilityCB) {
+	      this.state.oddEvenSort.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort, false, null, checkAvailabilityCB);
 	    }
 	  }, {
 	    key: 'handleCocktailSort',
-	    value: function handleCocktailSort() {
-	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort);
+	    value: function handleCocktailSort(checkAvailabilityCB) {
+	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort, false, null, checkAvailabilityCB);
+	    }
+	  }, {
+	    key: 'checkAvailabilityCB',
+	    value: function checkAvailabilityCB(value) {
+	      if (value) {
+	        this.setState({ checkAvailability: true });
+	      }
 	    }
 	  }, {
 	    key: 'handleSortAll',
 	    value: function handleSortAll() {
-	      this.state.quickSort.sticks.adopAlgorithm(_quick_sort.quickSort);
-	      this.state.bubbleSort.sticks.adopAlgorithm(_bubble_sort.bubbleSort);
-	      this.state.mergeSort.sticks.adopAlgorithm(_merge_sort.mergeSort);
-	      this.state.bitonicSort.sticks.adopAlgorithm(_bitonic_sort.bitonicSort);
-	      this.state.heapSort.sticks.adopAlgorithm(_heap_sort.heapSort);
-	      this.state.selectionSort.sticks.adopAlgorithm(_select_sort.selectionSort);
-	      this.state.insertionSort.sticks.adopAlgorithm(_insert_sort.insertionSort);
-	      this.state.oddEvenSort.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort);
-	      this.state.cocktailSort.sticks.adopAlgorithm(_cocktail_sort.cocktailSort);
+	      var keys = Object.keys(this.refs);
+	
+	      for (var i = 0; i < keys.length; i++) {
+	        var algorithm = keys[i];
+	        if (!this.refs[algorithm].state.shuffling) {
+	          var checkAvailabilityCB = this.refs[algorithm].checkAvailabilityCB;
+	          switch (this.refs[algorithm].props.name) {
+	            case "Quick Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_quick_sort.quickSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Merge Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_merge_sort.mergeSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Bintonic Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_bitonic_sort.bitonicSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Heap Sort-Bottom Up":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_heap_sort.heapSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Selection Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_select_sort.selectionSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Insertion Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_insert_sort.insertionSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Bubble Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_bubble_sort.bubbleSort, false, null, this.checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Odd Even Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_odd_even_sort.oddEvenSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            case "Cocktail Sort":
+	              this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(_cocktail_sort.cocktailSort, false, null, checkAvailabilityCB);
+	              this.refs[algorithm].setState({ quickShuffleDisabled: true });
+	              break;
+	            default:
+	              break;
+	          }
+	        }
+	      }
+	      // this.state.quickSort.sticks.adopAlgorithm(quickSort);
+	      // this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, this.checkAvailabilityCB);
+	      // this.state.mergeSort.sticks.adopAlgorithm(mergeSort);
+	      // this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort);
+	      // this.state.heapSort.sticks.adopAlgorithm(heapSort);
+	      // this.state.selectionSort.sticks.adopAlgorithm(selectionSort);
+	      // this.state.insertionSort.sticks.adopAlgorithm(insertionSort);
+	      // this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort);
+	      // this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort);
+	      this.setState({ checkAvailability: false });
 	    }
 	  }, {
 	    key: 'closeModal',
@@ -356,7 +412,7 @@
 	            { className: 'shuffle-sort-button-container' },
 	            _react2.default.createElement(
 	              'button',
-	              { onClick: this.handleShuffle },
+	              { className: 'shuffle-all-button', onClick: this.handleShuffle, disabled: !this.state.checkAvailability },
 	              'Shuffle All'
 	            ),
 	            _react2.default.createElement(
@@ -630,6 +686,7 @@
 	    this.operationState = "";
 	    this.numComparisons = 0;
 	    this.numSwaps = 0;
+	    this.shuffle = false;
 	  }
 	
 	  _createClass(Sticks, [{
@@ -665,6 +722,7 @@
 	
 	      for (var i = 0; i < this.sticks.length; i++) {
 	        this.sticks[i].pos = i;
+	        this.sticks[i].prePos = i;
 	      }
 	    }
 	  }, {
@@ -674,14 +732,53 @@
 	    }
 	  }, {
 	    key: 'updateSticks',
-	    value: function updateSticks(timeDelta, speedAmplifier) {
-	      this.stepVersion(timeDelta, speedAmplifier);
+	    value: function updateSticks(timeDelta, speedAmplifier, quickShuffle) {
+	      if (this.shuffle) {
+	        this.quickVersion(timeDelta, speedAmplifier);
+	      } else {
+	        this.stepVersion(timeDelta, speedAmplifier);
+	      }
 	    }
 	  }, {
 	    key: 'quickShuffle',
-	    value: function quickShuffle(timeDelta, speedAmplifier) {
+	    value: function quickShuffle() {
+	      var sticks = {};
+	      var stick = void 0;
+	
 	      for (var i = 0; i < this.sticks.length; i++) {
-	        this.sticks[i] = 1;
+	        stick = this.sticks[i];
+	        sticks[stick.prePos] = stick;
+	      }
+	
+	      for (var j = 0; j < this.sticks.length; j++) {
+	        stick = this.sticks[j];
+	        stick.getEndpos(sticks[j]);
+	        this.sticks[j].prePos = j;
+	      }
+	    }
+	  }, {
+	    key: 'checkAllFinishMove',
+	    value: function checkAllFinishMove() {
+	      for (var i = 0; i < this.sticks.length; i++) {
+	        if (this.sticks[i].endPos) {
+	          return false;
+	        }
+	      }
+	
+	      return true;
+	    }
+	  }, {
+	    key: 'quickVersion',
+	    value: function quickVersion(timeDelta, speedAmplifier) {
+	      for (var i = 0; i < this.sticks.length; i++) {
+	        if (this.sticks[i].endPos) {
+	          this.sticks[i].moveTo(timeDelta, speedAmplifier);
+	        }
+	      }
+	      if (this.checkAllFinishMove()) {
+	        if (this.sortingCallback) {
+	          this.sortingCallback(true);
+	        }
 	      }
 	    }
 	  }, {
@@ -733,14 +830,33 @@
 	          }
 	        }
 	      } else {
+	        if (this.quickShuffleCallback) {
+	          this.quickShuffleCallback(true);
+	        }
 	        return;
 	      }
 	    }
 	  }, {
 	    key: 'adopAlgorithm',
-	    value: function adopAlgorithm(algorithm) {
-	      var traces = algorithm(this.sticks);
-	      this.traces = this.traces.concat(traces);
+	    value: function adopAlgorithm(algorithm, shuffle) {
+	      var quickShuffle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+	      var quickShuffleCallback = arguments[3];
+	      var sortingCallback = arguments[4];
+	
+	      this.shuffle = quickShuffle;
+	      if (quickShuffle) {
+	        if (this.checkAllFinishMove()) {
+	          this.sortingCallback = sortingCallback;
+	          shuffle(this.sticks);
+	          this.quickShuffle();
+	        } else {
+	          return;
+	        }
+	      } else {
+	        this.quickShuffleCallback = quickShuffleCallback;
+	        var traces = algorithm(this.sticks);
+	        this.traces = this.traces.concat(traces);
+	      }
 	    }
 	  }, {
 	    key: 'checkFinishSwap',
@@ -759,8 +875,8 @@
 	    key: 'swap',
 	    value: function swap(stick1, stick2, timeDelta, speedAmplifier) {
 	      if (!this.checkFinishSwap(stick1, stick2)) {
-	        stick1.moveTo(stick1.endPos, timeDelta, speedAmplifier);
-	        stick2.moveTo(stick2.endPos, timeDelta, speedAmplifier);
+	        stick1.moveTo(timeDelta, speedAmplifier);
+	        stick2.moveTo(timeDelta, speedAmplifier);
 	      }
 	    }
 	  }, {
@@ -834,7 +950,8 @@
 	    this.lineTail = options.lineTail;
 	    this.color = "#909090";
 	    this.width = 1;
-	    this.pos = options.pos;
+	    this.pos = null;
+	    this.prePos = null;
 	    this.endPos = null;
 	    this.waitTime = 200;
 	  }
@@ -869,11 +986,11 @@
 	    }
 	  }, {
 	    key: "moveTo",
-	    value: function moveTo(endPos, timeDelta, speedAmplifier) {
+	    value: function moveTo(timeDelta, speedAmplifier) {
 	      if (!this.checkFinishMove()) {
 	        this.color = "#f00";
 	        this.width = 2;
-	        var speed = _util.Util.moveSpeed(this.lineHead[0], endPos, timeDelta, speedAmplifier);
+	        var speed = _util.Util.moveSpeed(this.lineHead[0], this.endPos, timeDelta, speedAmplifier);
 	        this.lineHead[0] += speed;
 	        this.lineTail[0] += speed;
 	      }
@@ -44002,6 +44119,8 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _shuffle = __webpack_require__(7);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44019,10 +44138,16 @@
 	    var _this = _possibleConstructorReturn(this, (SingleSort.__proto__ || Object.getPrototypeOf(SingleSort)).call(this, props));
 	
 	    _this.state = {
-	      pause: false
+	      pause: false,
+	      quickShuffleDisabled: false,
+	      shuffling: false
 	    };
 	
 	    _this.handlePause = _this.handlePause.bind(_this);
+	    _this.quickShuffle = _this.quickShuffle.bind(_this);
+	    _this.handleAlgorithm = _this.handleAlgorithm.bind(_this);
+	    _this.checkAvailabilityCB = _this.checkAvailabilityCB.bind(_this);
+	    _this.checkSortAvailability = _this.checkSortAvailability.bind(_this);
 	    return _this;
 	  }
 	
@@ -44033,6 +44158,32 @@
 	        this.setState({ pause: false });
 	      } else {
 	        this.setState({ pause: true });
+	      }
+	    }
+	  }, {
+	    key: 'quickShuffle',
+	    value: function quickShuffle() {
+	      this.props.algorithm.sticks.adopAlgorithm(null, _shuffle.shuffle, true, null, this.checkSortAvailability);
+	      this.setState({ shuffling: true });
+	    }
+	  }, {
+	    key: 'checkAvailabilityCB',
+	    value: function checkAvailabilityCB(value) {
+	      if (value) {
+	        this.setState({ quickShuffleDisabled: false });
+	      }
+	    }
+	  }, {
+	    key: 'handleAlgorithm',
+	    value: function handleAlgorithm() {
+	      this.props.handleAlgorithm(this.checkAvailabilityCB);
+	      this.setState({ quickShuffleDisabled: true });
+	    }
+	  }, {
+	    key: 'checkSortAvailability',
+	    value: function checkSortAvailability(value) {
+	      if (value) {
+	        this.setState({ shuffling: false });
 	      }
 	    }
 	  }, {
@@ -44053,7 +44204,12 @@
 	          { className: 'button-holder' },
 	          _react2.default.createElement(
 	            'button',
-	            { onClick: this.props.handleAlgorithm },
+	            { className: 'quickShuffle', onClick: this.quickShuffle, disabled: this.state.quickShuffleDisabled },
+	            'Quick Shuffle'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'sorting', onClick: this.handleAlgorithm, disabled: this.state.shuffling },
 	            this.props.name
 	          ),
 	          _react2.default.createElement(
