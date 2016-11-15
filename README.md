@@ -11,8 +11,8 @@ Sorting Algorithm Visualization built using Javascript, React.js and HTML canvas
 
 Foramtion will allow users to:
 
-- [ ] visualize different sorting algorithms.
-- [ ] compare speed among sorting algorithms.
+* visualize different sorting algorithms.
+* compare speed among sorting algorithms.
 
 ### Instructions
 
