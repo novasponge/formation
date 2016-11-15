@@ -109,7 +109,7 @@ class SortingVisualization extends React.Component {
 
     for (var i = 0; i < keys.length; i++) {
       let algorithm = keys[i];
-      if (!this.refs[algorithm].state.quickShuffleDisabled) {
+      if (!this.refs[algorithm].state.quickShuffleDisabled && this.refs[algorithm].props.name !== "Shuffle Demo") {
         let checkSortAvailability = this.refs[algorithm].checkSortAvailability;
         this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, shuffle, true, null, checkSortAvailability );
         this.refs[algorithm].setState({shuffling: true});

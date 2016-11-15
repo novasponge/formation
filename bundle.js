@@ -92,7 +92,7 @@
 	
 	__webpack_require__(218);
 	
-	var _single_sort = __webpack_require__(223);
+	var _single_sort = __webpack_require__(222);
 	
 	var _single_sort2 = _interopRequireDefault(_single_sort);
 	
@@ -206,7 +206,7 @@
 	
 	      for (var i = 0; i < keys.length; i++) {
 	        var algorithm = keys[i];
-	        if (!this.refs[algorithm].state.quickShuffleDisabled) {
+	        if (!this.refs[algorithm].state.quickShuffleDisabled && this.refs[algorithm].props.name !== "Shuffle Demo") {
 	          var checkSortAvailability = this.refs[algorithm].checkSortAvailability;
 	          this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, _shuffle.shuffle, true, null, checkSortAvailability);
 	          this.refs[algorithm].setState({ shuffling: true });
@@ -44085,8 +44085,7 @@
 
 
 /***/ },
-/* 222 */,
-/* 223 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

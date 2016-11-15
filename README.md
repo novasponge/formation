@@ -1,34 +1,59 @@
-# Sorting-Algorithm-visualization
-### Wireframe
+# Formation
 
-![Sorting](./wireFrame/Sorting_visualization.png)
+![Sorting](./asset/sortingv.gif)
+[Live] (http://http://www.zhuolizhang.com/formation/)
 
-### MVP  
+### Overview  
 
-Sorting Algorithm visualization will allow users to:
+Sorting Algorithm Visualization built using Javascript, React.js and HTML canvas to create interactive visualizations of Sorting algorithms including: quick sort,  bubble sort, insertion sort, selection sort, cocktail sort, heap sort, odd even sort, and bitonic sort. It helps people to understand how different sorting algorithms behave in a swapping context.
 
-- [ ] visualize different sorting algorithms
-- [ ] compare speed among sorting algorithms
+### Features
 
-### Architecture and Technologies
+Foramtion will allow users to:
 
-This project will use JavaScript and `HTML5 Canvas` to implement the visualization of sorting algorithms
+- [ ] visualize different sorting algorithms.
+- [ ] compare speed among sorting algorithms.
 
-## Project Timeline
+### Instructions
 
-### Phase 1: quick sort and bubble sort (1.5 days)
+* Click shuffle all to shuffle all demos.
+* Click shuffle demo to see how shuffle works.
+* Lines are sorted by their slope, from negative slope to positive slope.
+* When line color is black, it means that two lines are comparing with each other.
+* When line color is red, it means that two lines are being swapped.
+* Use speed multiplier to change the visualization speed.
 
-- [ ] Create project
-- [ ] Set up Project with webpack
-- [ ] Write Sticks class that stores its display slope and position
-- [ ] Add a button to trigger bubble sort and quick sort visualization
+### Interesting Snippets
 
-### Phase 2: Merge sort and Heap sort (1.5 days)
+Merge Sort was by far the most difficult part of this visualization, because merge sort by nature is not sorted in swapping context.
 
-- [ ] Write merge sort and heap sort visualization
-- [ ] Add a timer on each sorting algorithm
+So the traces of sorting has to be transformed to fit the visualization engine.
 
-### Bonus Features
-- [ ] Add Selection sort and Insertion sort
-- [ ] Add odd-even sort and Cocktail sort
-- [ ] Add Bitonic mergesort and intrsort
+```JavaScript
+function perm_to_swaps(perm) {
+  let n = perm.length;
+  let used = [];
+  for (let i = 0; i < n; i++) {
+    used.push(false);
+  }
+
+  let swaps = [];
+
+  for (let i = 0; i < n; i++) {
+    if (used[i]) {
+      continue;
+    }
+    let current = i;
+    if (perm[i] == i) {
+      used[i] = true;
+    }
+    while (!used[perm[current]]) {
+      swaps.push([current, perm[current]]);
+      used[current] = true;
+      current = perm[current];
+    }
+  }
+
+  return swaps;
+}
+```
