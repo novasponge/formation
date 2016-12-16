@@ -1,7 +1,7 @@
 # Formation
 
 ![Sorting](./asset/sortingv.gif)
-[Live] (http://http://www.zhuolizhang.com/formation/)
+[Live] (http://www.zhuolizhang.com/formation/)
 
 ### Overview  
 
