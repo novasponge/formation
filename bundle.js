@@ -752,12 +752,17 @@
 	  }, {
 	    key: 'quickVersion',
 	    value: function quickVersion(timeDelta, speedAmplifier) {
+	      this.operationState = "shuffling";
 	      for (var i = 0; i < this.sticks.length; i++) {
 	        if (this.sticks[i].endPos) {
 	          this.sticks[i].moveTo(timeDelta, speedAmplifier);
 	        }
 	      }
 	      if (this.checkAllFinishMove()) {
+	        this.operationState = "shuffled";
+	        this.numSwaps = 0;
+	        this.numComparisons = 0;
+	
 	        if (this.sortingCallback) {
 	          this.sortingCallback(true);
 	        }
