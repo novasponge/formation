@@ -1,6 +1,6 @@
 # Formation
 
-![Sorting(./asset/sortingv.gif)
+![Sorting](./asset/sortingv.gif)
 [Live] (http://www.zhuolizhang.com/formation/)
 
 ### Overview  
