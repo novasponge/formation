@@ -103,16 +103,25 @@ describe('MagicArray', () => {
 
     describe('sorting algorithm integration', () => {
         test('bubble sort generates correct traces', () => {
-            const n = proxy.length;
+            // Use reverse-sorted array to ensure swaps happen
+            const unsortedSticks = [
+                { pos: 30, value: 300 },
+                { pos: 20, value: 200 },
+                { pos: 10, value: 100 }
+            ];
+            const unsortedArray = new MagicArray(unsortedSticks);
+            const unsortedProxy = unsortedArray.proxy;
+
+            const n = unsortedProxy.length;
             for (let i = 0; i < n - 1; i++) {
                 for (let j = 0; j < n - i - 1; j++) {
-                    if (proxy[j].pos > proxy[j + 1].pos) {
-                        [proxy[j], proxy[j + 1]] = [proxy[j + 1], proxy[j]];
+                    if (unsortedProxy[j].pos > unsortedProxy[j + 1].pos) {
+                        [unsortedProxy[j], unsortedProxy[j + 1]] = [unsortedProxy[j + 1], unsortedProxy[j]];
                     }
                 }
             }
 
-            const traces = magicArray.getTraces();
+            const traces = unsortedArray.getTraces();
             expect(traces.length).toBeGreaterThan(0);
 
             const compareTraces = traces.filter(t => t[0] === 'compare');
@@ -122,9 +131,9 @@ describe('MagicArray', () => {
             expect(swapTraces.length).toBeGreaterThan(0);
 
             // Verify array is sorted
-            expect(sticks[0].pos).toBe(10);
-            expect(sticks[1].pos).toBe(20);
-            expect(sticks[2].pos).toBe(30);
+            expect(unsortedSticks[0].pos).toBe(10);
+            expect(unsortedSticks[1].pos).toBe(20);
+            expect(unsortedSticks[2].pos).toBe(30);
         });
     });
 
