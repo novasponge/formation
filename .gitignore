@@ -18,3 +18,5 @@
 
 node_modules/
 bundle.js.map
+bundle.js
+bundle.js.map
