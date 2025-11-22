@@ -14,11 +14,11 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import InputRange from 'react-input-range';
 import { modalStyle } from "./modal_style";
-import "react-input-range/dist/react-input-range.css";
+import "react-input-range/lib/css/index.css";
 import SingleSort from "./single_sort";
 
 class SortingVisualization extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       instructionOpen: false,
@@ -43,11 +43,11 @@ class SortingVisualization extends React.Component {
     this.handlePause = this.handlePause.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.getCanvas();
   }
 
-  getCanvas () {
+  getCanvas() {
     const shuffleCtx = this.refs.canvasShuffle.refs.canvas.getContext('2d');
     const shuffleView = new SticksView(shuffleCtx);
 
@@ -104,60 +104,60 @@ class SortingVisualization extends React.Component {
     cocktailSortView.start();
   }
 
-  handleShuffle () {
+  handleShuffle() {
     const keys = Object.keys(this.refs);
 
     for (var i = 0; i < keys.length; i++) {
       let algorithm = keys[i];
       if (!this.refs[algorithm].state.quickShuffleDisabled && this.refs[algorithm].props.name !== "Shuffle Demo") {
         let checkSortAvailability = this.refs[algorithm].checkSortAvailability;
-        this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, shuffle, true, null, checkSortAvailability );
-        this.refs[algorithm].setState({shuffling: true});
+        this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(null, shuffle, true, null, checkSortAvailability);
+        this.refs[algorithm].setState({ shuffling: true });
       }
     }
   }
 
-  handleShuffleDemo (checkAvailabilityCB) {
+  handleShuffleDemo(checkAvailabilityCB) {
     this.state.shuffle.sticks.adopAlgorithm(shuffle);
   }
 
-  handleQuickSort (checkAvailabilityCB) {
+  handleQuickSort(checkAvailabilityCB) {
     this.state.quickSort.sticks.adopAlgorithm(quickSort, false, null, checkAvailabilityCB);
   }
 
-  handleBubbleSort (checkAvailabilityCB) {
+  handleBubbleSort(checkAvailabilityCB) {
     this.state.bubbleSort.sticks.adopAlgorithm(bubbleSort, false, null, checkAvailabilityCB);
   }
 
-  handleMergeSort (checkAvailabilityCB) {
+  handleMergeSort(checkAvailabilityCB) {
     this.state.mergeSort.sticks.adopAlgorithm(mergeSort, false, null, checkAvailabilityCB);
   }
 
-  handleBitonicSort (checkAvailabilityCB) {
+  handleBitonicSort(checkAvailabilityCB) {
     this.state.bitonicSort.sticks.adopAlgorithm(bitonicSort, false, null, checkAvailabilityCB);
   }
 
-  handleHeapSort (checkAvailabilityCB) {
+  handleHeapSort(checkAvailabilityCB) {
     this.state.heapSort.sticks.adopAlgorithm(heapSort, false, null, checkAvailabilityCB);
   }
 
-  handleSelectionSort (checkAvailabilityCB) {
+  handleSelectionSort(checkAvailabilityCB) {
     this.state.selectionSort.sticks.adopAlgorithm(selectionSort, false, null, checkAvailabilityCB);
   }
 
-  handleInsertionSort (checkAvailabilityCB) {
+  handleInsertionSort(checkAvailabilityCB) {
     this.state.insertionSort.sticks.adopAlgorithm(insertionSort, false, null, checkAvailabilityCB);
   }
 
-  handleOddEvenSort (checkAvailabilityCB) {
+  handleOddEvenSort(checkAvailabilityCB) {
     this.state.oddEvenSort.sticks.adopAlgorithm(oddEvenSort, false, null, checkAvailabilityCB);
   }
 
-  handleCocktailSort (checkAvailabilityCB) {
+  handleCocktailSort(checkAvailabilityCB) {
     this.state.cocktailSort.sticks.adopAlgorithm(cocktailSort, false, null, checkAvailabilityCB);
   }
 
-  handleSortAll () {
+  handleSortAll() {
     const keys = Object.keys(this.refs);
 
     for (var i = 0; i < keys.length; i++) {
@@ -167,39 +167,39 @@ class SortingVisualization extends React.Component {
         switch (this.refs[algorithm].props.name) {
           case "Quick Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(quickSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Merge Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(mergeSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Bintonic Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bitonicSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Heap Sort-Bottom Up":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(heapSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Selection Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(selectionSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Insertion Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(insertionSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Bubble Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(bubbleSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Odd Even Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(oddEvenSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           case "Cocktail Sort":
             this.refs[algorithm].props.algorithm.sticks.adopAlgorithm(cocktailSort, false, null, checkAvailabilityCB);
-            this.refs[algorithm].setState({quickShuffleDisabled : true});
+            this.refs[algorithm].setState({ quickShuffleDisabled: true });
             break;
           default:
             break;
@@ -208,33 +208,34 @@ class SortingVisualization extends React.Component {
     }
   }
 
-  closeModal () {
-    this.setState({instructionOpen: false});
+  closeModal() {
+    this.setState({ instructionOpen: false });
   }
 
-  openModal () {
-    this.setState({instructionOpen: true});
+  openModal() {
+    this.setState({ instructionOpen: true });
   }
 
-  handleValuesChange(component, value) {
+  handleValuesChange(value) {
     this.setState({
       value: value,
     });
   }
 
-  handlePause () {
+  handlePause() {
     if (this.state.pause) {
-      this.setState({shufflePause: false});
+      this.setState({ shufflePause: false });
     } else {
-      this.setState({shufflePause: true});
+      this.setState({ shufflePause: true });
     }
   }
 
   formatLabel(labelValue) {
+    if (labelValue === undefined || labelValue === null) return '';
     return labelValue.toFixed(1);
   }
 
-  render () {
+  render() {
 
     return (
       <div className="visualization-body">
@@ -258,7 +259,7 @@ class SortingVisualization extends React.Component {
               value={this.state.value}
               step={0.1}
               formatLabel={this.formatLabel.bind(this)}
-              onChange={this.handleValuesChange.bind(this)}/>
+              onChange={this.handleValuesChange.bind(this)} />
           </div>
           <Modal className="instruction"
             isOpen={this.state.instructionOpen}
@@ -280,74 +281,74 @@ class SortingVisualization extends React.Component {
         </header>
         <div className="main-content">
           <SingleSort ref="canvasShuffle"
-                      handleAlgorithm={this.handleShuffleDemo}
-                      algorithm={this.state.shuffle}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Shuffle Demo"
+            handleAlgorithm={this.handleShuffleDemo}
+            algorithm={this.state.shuffle}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Shuffle Demo"
           />
           <SingleSort ref="canvasQuicksort"
-                      handleAlgorithm={this.handleQuickSort}
-                      algorithm={this.state.quickSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Quick Sort"
+            handleAlgorithm={this.handleQuickSort}
+            algorithm={this.state.quickSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Quick Sort"
           />
           <SingleSort ref="canvasMergesort"
-                      handleAlgorithm={this.handleMergeSort}
-                      algorithm={this.state.mergeSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Merge Sort"
+            handleAlgorithm={this.handleMergeSort}
+            algorithm={this.state.mergeSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Merge Sort"
           />
           <SingleSort ref="canvasBitonicsort"
-                      handleAlgorithm={this.handleBitonicSort}
-                      algorithm={this.state.bitonicSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Bintonic Sort"
+            handleAlgorithm={this.handleBitonicSort}
+            algorithm={this.state.bitonicSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Bintonic Sort"
           />
           <SingleSort ref="canvasHeapsort"
-                      handleAlgorithm={this.handleHeapSort}
-                      algorithm={this.state.heapSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Heap Sort-Bottom Up"
+            handleAlgorithm={this.handleHeapSort}
+            algorithm={this.state.heapSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Heap Sort-Bottom Up"
           />
           <SingleSort ref="canvasSelectsort"
-                      handleAlgorithm={this.handleSelectionSort}
-                      algorithm={this.state.selectionSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Selection Sort"
+            handleAlgorithm={this.handleSelectionSort}
+            algorithm={this.state.selectionSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Selection Sort"
           />
           <SingleSort ref="canvasInsertsort"
-                      handleAlgorithm={this.handleInsertionSort}
-                      algorithm={this.state.insertionSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Insertion Sort"
+            handleAlgorithm={this.handleInsertionSort}
+            algorithm={this.state.insertionSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Insertion Sort"
           />
           <SingleSort ref="canvasBubblesort"
-                      handleAlgorithm={this.handleBubbleSort}
-                      algorithm={this.state.bubbleSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Bubble Sort"
+            handleAlgorithm={this.handleBubbleSort}
+            algorithm={this.state.bubbleSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Bubble Sort"
           />
           <SingleSort ref="canvasOddevensort"
-                      handleAlgorithm={this.handleOddEvenSort}
-                      algorithm={this.state.oddEvenSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Odd Even Sort"
+            handleAlgorithm={this.handleOddEvenSort}
+            algorithm={this.state.oddEvenSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Odd Even Sort"
           />
           <SingleSort ref="canvasCocktailsort"
-                      handleAlgorithm={this.handleCocktailSort}
-                      algorithm={this.state.cocktailSort}
-                      speed={this.state.value}
-                      loaded={this.state.loaded}
-                      name="Cocktail Sort"
+            handleAlgorithm={this.handleCocktailSort}
+            algorithm={this.state.cocktailSort}
+            speed={this.state.value}
+            loaded={this.state.loaded}
+            name="Cocktail Sort"
           />
         </div>
       </div>
@@ -355,8 +356,13 @@ class SortingVisualization extends React.Component {
   }
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  const root = document.getElementById("root");
+import { createRoot } from 'react-dom/client';
+
+// ... imports ...
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("root");
   Modal.setAppElement(document.body);
-  ReactDOM.render(<SortingVisualization />, root);
+  const root = createRoot(container);
+  root.render(<SortingVisualization />);
 });
