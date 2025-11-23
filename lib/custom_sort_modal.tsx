@@ -30,19 +30,40 @@ const DEFAULT_CODE = `// Write your sorting algorithm here.
 // Just perform comparisons and swaps on the array.
 // Traces are automatically generated!
 //
-// Example (Bubble Sort):
+// Example (Quick Sort):
 (arr) => {
-  for (let i = 0; i < arr.length - 1; i++) {
-    for (let j = 0; j < arr.length - i - 1; j++) {
-      // Accessing .pos triggers a comparison trace
-      if (arr[j].pos > arr[j+1].pos) {
-        // Swapping elements triggers a swap trace
-        let temp = arr[j];
-        arr[j] = arr[j+1];
-        arr[j+1] = temp;
+  function partition(low, high) {
+    let pivot = arr[high];
+    let i = low - 1;
+    
+    for (let j = low; j < high; j++) {
+      // Accessing .pos triggers comparison trace
+      if (arr[j].pos < pivot.pos) {
+        i++;
+        // Swap arr[i] and arr[j]
+        let temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
       }
     }
+    // Swap arr[i+1] and arr[high] (or pivot)
+    let temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return i + 1;
   }
+
+  function quickSort(low, high) {
+    if (low < high) {
+      let pi = partition(low, high);
+      
+      quickSort(low, pi - 1);
+      quickSort(pi + 1, high);
+    }
+  }
+
+  quickSort(0, arr.length - 1);
 }`;
 
 class CustomSortModal extends React.Component<CustomSortModalProps, CustomSortModalState> {
