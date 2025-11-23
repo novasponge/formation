@@ -31,9 +31,17 @@
     "webpack-cli": "^5.1.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.21",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-modal": "^3.16.3",
     "babel-jest": "^30.2.0",
     "jest": "^30.2.0",
     "jest-canvas-mock": "^2.5.2",
-    "jest-environment-jsdom": "^30.2.0"
+    "jest-environment-jsdom": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3"
   }
 }

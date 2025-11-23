@@ -1,0 +1,1 @@
+{"version":3,"file":"types.d.ts","sourceRoot":"","sources":["../../../lib/sorting_algs/types.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,UAAU,CAAC;AAE7B,MAAM,MAAM,KAAK,GAAG,CAAC,MAAM,EAAE,MAAM,EAAE,MAAM,EAAE,MAAM,CAAC,CAAC;AACrD,MAAM,MAAM,gBAAgB,GAAG,CAAC,GAAG,EAAE,KAAK,EAAE,KAAK,KAAK,EAAE,CAAC"}
