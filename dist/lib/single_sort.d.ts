@@ -11,10 +11,20 @@ interface SingleSortState {
     pause: boolean;
     quickShuffleDisabled: boolean;
     shuffling: boolean;
+    swaps: number;
+    comparisons: number;
+    state: string;
 }
 declare class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
     canvasRef: React.RefObject<HTMLCanvasElement>;
     constructor(props: SingleSortProps);
+    componentDidMount(): void;
+    componentDidUpdate(prevProps: SingleSortProps): void;
+    updateStats(stats: {
+        swaps: number;
+        comparisons: number;
+        state: string;
+    }): void;
     handlePause(): void;
     quickShuffle(): void;
     checkAvailabilityCB(value: boolean): void;

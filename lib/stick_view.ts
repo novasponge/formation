@@ -25,11 +25,26 @@ class SticksView {
         window.requestAnimationFrame(this.render.bind(this));
     }
 
+    onUpdate?: (stats: { swaps: number, comparisons: number, state: string }) => void;
+
+    setOnUpdate(cb: (stats: { swaps: number, comparisons: number, state: string }) => void) {
+        this.onUpdate = cb;
+    }
+
     render(): void {
         const time = Date.now();
         const timeDelta = time - this.lastTime;
         this.sticks.step(timeDelta, this.speedAmplifier);
         this.sticks.draw(this.ctx);
+        
+        if (this.onUpdate) {
+            this.onUpdate({
+                swaps: this.sticks.getNumSwaps(),
+                comparisons: this.sticks.getNumComparisons(),
+                state: this.sticks.getOperationState()
+            });
+        }
+
         this.lastTime = time;
         window.requestAnimationFrame(this.render.bind(this));
     }

@@ -14,6 +14,9 @@ interface SingleSortState {
   pause: boolean;
   quickShuffleDisabled: boolean;
   shuffling: boolean;
+  swaps: number;
+  comparisons: number;
+  state: string;
 }
 
 class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
@@ -24,7 +27,10 @@ class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
     this.state = {
       pause: false,
       quickShuffleDisabled: false,
-      shuffling: false
+      shuffling: false,
+      swaps: 0,
+      comparisons: 0,
+      state: ''
     };
 
     this.canvasRef = React.createRef();
@@ -34,6 +40,28 @@ class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
     this.handleAlgorithm = this.handleAlgorithm.bind(this);
     this.checkAvailabilityCB = this.checkAvailabilityCB.bind(this);
     this.checkSortAvailability = this.checkSortAvailability.bind(this);
+    this.updateStats = this.updateStats.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.algorithm) {
+      this.props.algorithm.setOnUpdate(this.updateStats);
+    }
+  }
+
+  componentDidUpdate(prevProps: SingleSortProps) {
+    if (prevProps.algorithm !== this.props.algorithm && this.props.algorithm) {
+      this.props.algorithm.setOnUpdate(this.updateStats);
+    }
+  }
+
+  updateStats(stats: { swaps: number, comparisons: number, state: string }) {
+    // Only update state if values changed to avoid unnecessary re-renders
+    if (stats.swaps !== this.state.swaps || 
+        stats.comparisons !== this.state.comparisons || 
+        stats.state !== this.state.state) {
+      this.setState(stats);
+    }
   }
 
   handlePause(): void {
@@ -80,6 +108,11 @@ class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
           <button className="quickShuffle" onClick={this.quickShuffle} disabled={this.state.quickShuffleDisabled}>Quick Shuffle</button>
           <button className="sorting" onClick={this.handleAlgorithm} disabled={this.state.shuffling}>{this.props.name}</button>
           <button onClick={this.handlePause}>{pauseState}</button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginBottom: '5px', fontFamily: 'Varela Round', fontSize: '13px' }}>
+            <span style={{ color: '#dd6417' }}>Number of Swaps: {this.state.swaps}</span>
+            <span style={{ color: '#000' }}>State: {this.state.state}</span>
+            <span style={{ color: '#147ee0' }}>Number of Comparisons: {this.state.comparisons}</span>
         </div>
         <canvas ref={this.canvasRef} width={1024} height={110} style={{ width: '100%' }} />
       </div>

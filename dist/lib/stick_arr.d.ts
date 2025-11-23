@@ -33,6 +33,7 @@ declare class Sticks {
     swap(stick1: Stick, stick2: Stick, timeDelta: number, speedAmplifier: number): void;
     checkFinishCompare(stick1: Stick, stick2: Stick): boolean;
     compare(stick1: Stick, stick2: Stick, timeDelta: number, speedAmplifier: number): void;
+    getOperationState(): string;
     draw(ctx: CanvasRenderingContext2D): void;
 }
 export default Sticks;

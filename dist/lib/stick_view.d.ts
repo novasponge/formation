@@ -8,6 +8,16 @@ declare class SticksView {
     constructor(ctx: CanvasRenderingContext2D);
     getSpeedAmplifier(speedAmplifier: number, pauseState: boolean): void;
     start(): void;
+    onUpdate?: (stats: {
+        swaps: number;
+        comparisons: number;
+        state: string;
+    }) => void;
+    setOnUpdate(cb: (stats: {
+        swaps: number;
+        comparisons: number;
+        state: string;
+    }) => void): void;
     render(): void;
 }
 export default SticksView;

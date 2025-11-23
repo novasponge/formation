@@ -246,18 +246,12 @@ class Sticks {
         }
     }
 
+    getOperationState(): string {
+        return this.operationState;
+    }
+
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
-
-        ctx.font = "13px Varela Round";
-        ctx.fillStyle = "#000";
-        ctx.fillText(`State: ${this.operationState}`, 470, 10);
-
-        ctx.fillStyle = "#147ee0";
-        ctx.fillText(`Number of Comparisons: ${this.numComparisons}`, 570, 10);
-
-        ctx.fillStyle = "#dd6417";
-        ctx.fillText(`Number of Swaps: ${this.numSwaps}`, 320, 10);
 
         this.sticks.forEach(stick => {
             stick.draw(ctx);
