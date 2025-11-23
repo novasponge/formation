@@ -81,7 +81,7 @@ class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
           <button className="sorting" onClick={this.handleAlgorithm} disabled={this.state.shuffling}>{this.props.name}</button>
           <button onClick={this.handlePause}>{pauseState}</button>
         </div>
-        <canvas ref={this.canvasRef} width={1024} height={110} />
+        <canvas ref={this.canvasRef} width={1024} height={110} style={{ width: '100%' }} />
       </div>
     );
   }

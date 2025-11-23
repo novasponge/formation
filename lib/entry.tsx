@@ -17,8 +17,11 @@ import { modalStyle } from "./modal_style";
 import "react-input-range/lib/css/index.css";
 import SingleSort from "./single_sort";
 
+import CustomSortModal from './custom_sort_modal';
+
 interface SortingVisualizationState {
   instructionOpen: boolean;
+  customSortOpen: boolean;
   value: number;
   checkAvailability: boolean;
   pause?: boolean;
@@ -52,6 +55,7 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
     super(props);
     this.state = {
       instructionOpen: false,
+      customSortOpen: false,
       value: 1,
       checkAvailability: true
     };
@@ -69,6 +73,8 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
     this.handleSortAll = this.handleSortAll.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.openCustomSort = this.openCustomSort.bind(this);
+    this.closeCustomSort = this.closeCustomSort.bind(this);
     this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
     this.handlePause = this.handlePause.bind(this);
   }
@@ -254,6 +260,14 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
     this.setState({ instructionOpen: true });
   }
 
+  openCustomSort(): void {
+    this.setState({ customSortOpen: true });
+  }
+
+  closeCustomSort(): void {
+    this.setState({ customSortOpen: false });
+  }
+
   handleValuesChange(value: number): void {
     this.setState({
       value: value,
@@ -280,6 +294,7 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
         <header>
           <div className="header-content">
             <button className='open-instruction' onClick={this.openModal}>Instructions</button>
+            <button className='open-instruction' onClick={this.openCustomSort} style={{ marginLeft: '10px' }}>Custom Sort</button>
             <div className='title-container'>
               <h1>FORMATION</h1>
               <h6>created by <a href="http://www.zhuolizhang.com">Zhuoli Zhang</a></h6>
@@ -316,6 +331,12 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
             <p>Drag the blue circle to change the speed.</p>
             <button className='close-instruction' onClick={this.closeModal}>Close</button>
           </Modal>
+          <CustomSortModal 
+            isOpen={this.state.customSortOpen}
+            onRequestClose={this.closeCustomSort}
+            value={this.state.value}
+            onSpeedChange={this.handleValuesChange.bind(this)}
+          />
         </header>
         <div className="main-content">
           <SingleSort ref={this.shuffleRef}
