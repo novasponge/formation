@@ -69,7 +69,7 @@ npm test
 
 The core visualization engine uses a "Trace" system. Algorithms generate a list of operations (comparisons and swaps), which are then played back by the visualization engine.
 
-For the **Custom Sort** feature, we implemented a `MagicArray` using JavaScript Proxies. This allows the user to write synchronous, imperative code while the system transparently records every read and write operation to generate the animation traces.
+For the **Custom Sort** feature, we implemented a `MagicArray` using JavaScript Proxies. This allows the user to write synchronous, imperative code while the system transparently records every read and write operation to generate the animation traces. :p
 
 ```typescript
 // Example of the simplified Custom Sort API
