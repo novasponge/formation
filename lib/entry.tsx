@@ -323,10 +323,19 @@ class SortingVisualization extends React.Component<{}, SortingVisualizationState
             <p>Click sort all button to perform all sorting algorithms at once.</p>
             <p>Click algorithms name to perform specific sorting algorithm.</p>
             <p>Lines are shuffled first, then sorted by slope.</p>
+            
+            <h3>Custom Sort</h3>
+            <p>Click "Custom Sort" to write your own sorting algorithm in JavaScript!</p>
+            <p>Just write the sorting logic (comparisons and swaps), and the visualization will be generated automatically.</p>
+
             <h3 className='red'>Red</h3>
             <p>Red lines are swapping for either shuffling or sorting purposes.</p>
             <h3>Black</h3>
             <p>Black lines are comparing between two slopes.</p>
+            
+            <h3>Statistics</h3>
+            <p>Real-time statistics (Swaps, Comparisons, State) are displayed above each visualization.</p>
+
             <h3 className='speedAmplifier'>Speed Multiplier</h3>
             <p>Drag the blue circle to change the speed.</p>
             <button className='close-instruction' onClick={this.closeModal}>Close</button>
