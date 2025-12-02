@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Modal from "react-modal";
 import Editor from "@monaco-editor/react";
-import SingleSort from "./single_sort";
+import SingleSort, { SingleSortHandle } from "./single_sort";
 import { modalStyle } from "./modal_style";
 import { SortingAlgorithm } from "./sorting_algs/types";
 import Stick from "./stick";
@@ -15,14 +15,6 @@ interface CustomSortModalProps {
   onRequestClose: () => void;
   value: number;
   onSpeedChange: (value: number) => void;
-}
-
-interface CustomSortModalState {
-  code: string;
-  error: string | null;
-  customAlgorithm: SortingAlgorithm | null;
-  sticksView: SticksView | null;
-  loaded: boolean;
 }
 
 const DEFAULT_CODE = `// Write your sorting algorithm here.
@@ -66,37 +58,25 @@ const DEFAULT_CODE = `// Write your sorting algorithm here.
   quickSort(0, arr.length - 1);
 }`;
 
-class CustomSortModal extends React.Component<
-  CustomSortModalProps,
-  CustomSortModalState
-> {
-  private singleSortRef = React.createRef<SingleSort>();
+const CustomSortModal: React.FC<CustomSortModalProps> = (props) => {
+  const [code, setCode] = useState(DEFAULT_CODE);
+  const [error, setError] = useState<string | null>(null);
+  const [customAlgorithm, setCustomAlgorithm] =
+    useState<SortingAlgorithm | null>(null);
+  const [sticksView, setSticksView] = useState<SticksView | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
-  constructor(props: CustomSortModalProps) {
-    super(props);
-    this.state = {
-      code: DEFAULT_CODE,
-      error: null,
-      customAlgorithm: null,
-      sticksView: null,
-      loaded: false,
-    };
+  const singleSortRef = useRef<SingleSortHandle>(null);
 
-    this.handleEditorChange = this.handleEditorChange.bind(this);
-    this.handleRun = this.handleRun.bind(this);
-    this.handleCustomSort = this.handleCustomSort.bind(this);
-    this.onSingleSortMount = this.onSingleSortMount.bind(this);
-  }
-
-  handleEditorChange(value: string | undefined) {
+  const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
-      this.setState({ code: value });
+      setCode(value);
     }
-  }
+  };
 
-  handleRun() {
+  const handleRun = () => {
     try {
-      const createAlgo = new Function(`return (${this.state.code})`);
+      const createAlgo = new Function(`return (${code})`);
       const userAlgo = createAlgo();
 
       if (typeof userAlgo !== "function") {
@@ -109,205 +89,178 @@ class CustomSortModal extends React.Component<
         return magicArray.getTraces();
       };
 
-      this.setState(
-        {
-          customAlgorithm: wrappedAlgorithm,
-          error: null,
-        },
-        () => {
-          // If view is already initialized, just run the shuffle to reset
-          if (this.state.sticksView && this.singleSortRef.current) {
-            this.singleSortRef.current.quickShuffle();
-          }
-        }
-      );
-    } catch (err: any) {
-      this.setState({ error: err.message });
-    }
-  }
+      setCustomAlgorithm(() => wrappedAlgorithm);
+      setError(null);
 
-  handleCustomSort(checkAvailabilityCB?: (value: boolean) => void) {
-    if (this.state.customAlgorithm && this.state.sticksView) {
-      this.state.sticksView.sticks.adopAlgorithm(
-        this.state.customAlgorithm,
+      // If view is already initialized, just run the shuffle to reset
+      if (sticksView && singleSortRef.current) {
+        singleSortRef.current.quickShuffle();
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleCustomSort = (checkAvailabilityCB?: (value: boolean) => void) => {
+    if (customAlgorithm && sticksView) {
+      sticksView.sticks.adopAlgorithm(
+        customAlgorithm,
         undefined,
         false,
         checkAvailabilityCB
       );
     }
-  }
-
-  onSingleSortMount() {
-    // This function is called when SingleSort is mounted and ref is set
-    // But we can't rely on callback ref easily with React.createRef in this class component structure
-    // if we are conditionally rendering.
-    // Instead, we'll check in componentDidUpdate or use a callback ref in render.
-  }
-
-  initSticksView = (element: SingleSort | null) => {
-    if (element && !this.state.sticksView) {
-      // Element is mounted
-      // We need to access the canvas ref from the SingleSort instance
-      // We exposed canvasRef in SingleSort!
-      const canvas = element.canvasRef.current;
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          const view = new SticksView(ctx);
-          view.start();
-          this.setState({ sticksView: view, loaded: true });
-
-          // Also set the ref manually since we are using this callback
-          (this.singleSortRef as any).current = element;
-        }
-      }
-    }
   };
 
-  render() {
-    return (
-      <Modal
-        isOpen={this.props.isOpen}
-        onRequestClose={this.props.onRequestClose}
-        style={{
-          overlay: modalStyle.overlay,
-          content: {
-            ...modalStyle.content,
-            width: "95%",
-            height: "95%",
-            maxWidth: "none",
-            maxHeight: "none",
-            padding: "20px",
-          },
-        }}
-        contentLabel="Custom Sort Editor"
-        onAfterOpen={() => {
-          // Reset state if needed, or keep it to preserve code
-        }}
-      >
+  const initSticksView = useCallback(
+    (element: SingleSortHandle | null) => {
+      if (element && !sticksView) {
+        // Element is mounted
+        // We need to access the canvas ref from the SingleSort instance
+        const canvas = element.canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            const view = new SticksView(ctx);
+            view.start();
+            setSticksView(view);
+            setLoaded(true);
+
+            // Also set the ref manually since we are using this callback
+            (singleSortRef as any).current = element;
+          }
+        }
+      }
+    },
+    [sticksView]
+  );
+
+  return (
+    <Modal
+      isOpen={props.isOpen}
+      onRequestClose={props.onRequestClose}
+      style={{
+        overlay: modalStyle.overlay,
+        content: {
+          ...modalStyle.content,
+          width: "95%",
+          height: "95%",
+          maxWidth: "none",
+          maxHeight: "none",
+          padding: "20px",
+        },
+      }}
+      contentLabel="Custom Sort Editor"
+      onAfterOpen={() => {
+        // Reset state if needed, or keep it to preserve code
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <div
-          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}
+        >
+          <h2>Custom Sorting Algorithm</h2>
+          <button onClick={props.onRequestClose}>Close</button>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minHeight: "400px",
+          }}
         >
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              flex: 1,
               marginBottom: "10px",
+              border: "1px solid #ccc",
+              overflow: "hidden",
+              position: "relative",
             }}
           >
-            <h2>Custom Sorting Algorithm</h2>
-            <button onClick={this.props.onRequestClose}>Close</button>
+            <Editor
+              height="100%"
+              defaultLanguage="javascript"
+              value={code}
+              onChange={handleEditorChange}
+              theme="vs-dark"
+            />
           </div>
-
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              flex: 1,
-              minHeight: "400px",
+              flexShrink: 0,
             }}
           >
-            <div
-              style={{
-                flex: 1,
-                marginBottom: "10px",
-                border: "1px solid #ccc",
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              <Editor
-                height="100%"
-                defaultLanguage="javascript"
-                value={this.state.code}
-                onChange={this.handleEditorChange}
-                theme="vs-dark"
-              />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexShrink: 0,
-              }}
-            >
-              <div style={{ marginBottom: "10px" }}>
-                <button
-                  onClick={this.handleRun}
-                  style={{
-                    padding: "10px 20px",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Update & Run
-                </button>
-                <div
-                  style={{
-                    display: "inline-block",
-                    width: "300px",
-                    marginLeft: "20px",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  <span style={{ marginRight: "10px", fontWeight: "bold" }}>
-                    Speed:
-                  </span>
-                  <div style={{ display: "inline-block", width: "200px" }}>
-                    <InputRange
-                      maxValue={20}
-                      minValue={0}
-                      value={this.props.value}
-                      step={0.1}
-                      onChange={(value) =>
-                        this.props.onSpeedChange(value as number)
-                      }
-                    />
-                  </div>
-                </div>
-                {this.state.error && (
-                  <div style={{ color: "red", marginTop: "10px" }}>
-                    <strong>Error:</strong> {this.state.error}
-                  </div>
-                )}
-              </div>
-
-              {/* Visualization Area */}
-              <div
+            <div style={{ marginBottom: "10px" }}>
+              <button
+                onClick={handleRun}
                 style={{
-                  border: "1px solid #eee",
-                  position: "relative",
-                  minHeight: "150px",
+                  padding: "10px 20px",
+                  fontSize: "16px",
+                  cursor: "pointer",
                 }}
               >
-                {/* We render SingleSort always, but we need to handle the case where sticksView is null.
-                        SingleSort props require algorithm to be SticksView.
-                        We can cast null to any to bypass TS for the initial render, 
-                        or we can conditionally render.
-                        If we conditionally render, we can't get the ref to initialize!
-                        Catch-22.
-                        
-                        Solution: Render a dummy div to get the ref? No.
-                        
-                        Actually, SingleSort renders a canvas. It doesn't use `algorithm` prop in render() except for `getSpeedAmplifier` which is guarded by `loaded`.
-                        So we can pass null/undefined as algorithm if loaded is false.
-                    */}
-                <SingleSort
-                  ref={this.initSticksView}
-                  handleAlgorithm={this.handleCustomSort}
-                  algorithm={this.state.sticksView as any}
-                  speed={this.props.value}
-                  loaded={this.state.loaded}
-                  name="Custom Sort"
-                />
+                Update & Run
+              </button>
+              <div
+                style={{
+                  display: "inline-block",
+                  width: "300px",
+                  marginLeft: "20px",
+                  verticalAlign: "middle",
+                }}
+              >
+                <span style={{ marginRight: "10px", fontWeight: "bold" }}>
+                  Speed:
+                </span>
+                <div style={{ display: "inline-block", width: "200px" }}>
+                  <InputRange
+                    maxValue={20}
+                    minValue={0}
+                    value={props.value}
+                    step={0.1}
+                    onChange={(value) => props.onSpeedChange(value as number)}
+                  />
+                </div>
               </div>
+              {error && (
+                <div style={{ color: "red", marginTop: "10px" }}>
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
+            </div>
+
+            {/* Visualization Area */}
+            <div
+              style={{
+                border: "1px solid #eee",
+                position: "relative",
+                minHeight: "150px",
+              }}
+            >
+              <SingleSort
+                ref={initSticksView}
+                handleAlgorithm={handleCustomSort}
+                algorithm={sticksView as any}
+                speed={props.value}
+                loaded={loaded}
+                name="Custom Sort"
+              />
             </div>
           </div>
         </div>
-      </Modal>
-    );
-  }
-}
+      </div>
+    </Modal>
+  );
+};
 
 export default CustomSortModal;

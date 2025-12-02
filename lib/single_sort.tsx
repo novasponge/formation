@@ -1,6 +1,12 @@
-import React from 'react';
-import { shuffle } from './sorting_algs/shuffle';
-import SticksView from './stick_view';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
+import { shuffle } from "./sorting_algs/shuffle";
+import SticksView from "./stick_view";
 
 interface SingleSortProps {
   algorithm: SticksView;
@@ -10,114 +16,167 @@ interface SingleSortProps {
   name: string;
 }
 
-interface SingleSortState {
-  pause: boolean;
-  quickShuffleDisabled: boolean;
-  shuffling: boolean;
-  swaps: number;
-  comparisons: number;
-  state: string;
+export interface SingleSortHandle {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  quickShuffle: () => void;
+  checkSortAvailability: (value: boolean) => void;
+  checkAvailabilityCB: (value: boolean) => void;
+  setShuffling: (shuffling: boolean) => void;
+  setQuickShuffleDisabled: (disabled: boolean) => void;
+  isQuickShuffleDisabled: () => boolean;
+  isShuffling: () => boolean;
+  algorithm: SticksView;
+  name: string;
 }
 
-class SingleSort extends React.Component<SingleSortProps, SingleSortState> {
-  public canvasRef: React.RefObject<HTMLCanvasElement>;
+const SingleSort = forwardRef<SingleSortHandle, SingleSortProps>(
+  (props, ref) => {
+    const [pause, setPause] = useState(false);
+    const [quickShuffleDisabled, setQuickShuffleDisabledState] =
+      useState(false);
+    const [shuffling, setShufflingState] = useState(false);
+    const [swaps, setSwaps] = useState(0);
+    const [comparisons, setComparisons] = useState(0);
+    const [state, setState] = useState("");
 
-  constructor(props: SingleSortProps) {
-    super(props);
-    this.state = {
-      pause: false,
-      quickShuffleDisabled: false,
-      shuffling: false,
-      swaps: 0,
-      comparisons: 0,
-      state: ''
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Refs to keep track of state for imperative access without stale closures if needed,
+    // though for simple getters/setters in useImperativeHandle, direct state access might be tricky due to closures.
+    // We'll use refs to hold the latest state values for the imperative getters.
+    const quickShuffleDisabledRef = useRef(quickShuffleDisabled);
+    const shufflingRef = useRef(shuffling);
+
+    useEffect(() => {
+      quickShuffleDisabledRef.current = quickShuffleDisabled;
+    }, [quickShuffleDisabled]);
+
+    useEffect(() => {
+      shufflingRef.current = shuffling;
+    }, [shuffling]);
+
+    const updateStats = (stats: {
+      swaps: number;
+      comparisons: number;
+      state: string;
+    }) => {
+      setSwaps((prev) => {
+        if (prev !== stats.swaps) return stats.swaps;
+        return prev;
+      });
+      setComparisons((prev) => {
+        if (prev !== stats.comparisons) return stats.comparisons;
+        return prev;
+      });
+      setState((prev) => {
+        if (prev !== stats.state) return stats.state;
+        return prev;
+      });
     };
 
-    this.canvasRef = React.createRef();
+    useEffect(() => {
+      if (props.algorithm) {
+        props.algorithm.setOnUpdate(updateStats);
+      }
+    }, [props.algorithm]);
 
-    this.handlePause = this.handlePause.bind(this);
-    this.quickShuffle = this.quickShuffle.bind(this);
-    this.handleAlgorithm = this.handleAlgorithm.bind(this);
-    this.checkAvailabilityCB = this.checkAvailabilityCB.bind(this);
-    this.checkSortAvailability = this.checkSortAvailability.bind(this);
-    this.updateStats = this.updateStats.bind(this);
-  }
+    const handlePause = () => {
+      setPause((prev) => !prev);
+    };
 
-  componentDidMount() {
-    if (this.props.algorithm) {
-      this.props.algorithm.setOnUpdate(this.updateStats);
-    }
-  }
+    const checkSortAvailability = (value: boolean) => {
+      if (value) {
+        setShufflingState(false);
+      }
+    };
 
-  componentDidUpdate(prevProps: SingleSortProps) {
-    if (prevProps.algorithm !== this.props.algorithm && this.props.algorithm) {
-      this.props.algorithm.setOnUpdate(this.updateStats);
-    }
-  }
+    const quickShuffle = () => {
+      props.algorithm.sticks.adopAlgorithm(
+        null,
+        shuffle,
+        true,
+        undefined,
+        checkSortAvailability
+      );
+      setShufflingState(true);
+    };
 
-  updateStats(stats: { swaps: number, comparisons: number, state: string }) {
-    // Only update state if values changed to avoid unnecessary re-renders
-    if (stats.swaps !== this.state.swaps || 
-        stats.comparisons !== this.state.comparisons || 
-        stats.state !== this.state.state) {
-      this.setState(stats);
-    }
-  }
+    const checkAvailabilityCB = (value: boolean) => {
+      if (value) {
+        setQuickShuffleDisabledState(false);
+      }
+    };
 
-  handlePause(): void {
-    if (this.state.pause) {
-      this.setState({ pause: false });
-    } else {
-      this.setState({ pause: true });
-    }
-  }
+    const handleAlgorithmClick = () => {
+      props.handleAlgorithm(checkAvailabilityCB);
+      setQuickShuffleDisabledState(true);
+    };
 
-  quickShuffle(): void {
-    this.props.algorithm.sticks.adopAlgorithm(null, shuffle, true, undefined, this.checkSortAvailability);
-    this.setState({ shuffling: true });
-  }
+    useImperativeHandle(ref, () => ({
+      canvasRef,
+      quickShuffle,
+      checkSortAvailability,
+      checkAvailabilityCB,
+      setShuffling: (val: boolean) => setShufflingState(val),
+      setQuickShuffleDisabled: (val: boolean) =>
+        setQuickShuffleDisabledState(val),
+      isQuickShuffleDisabled: () => quickShuffleDisabledRef.current,
+      isShuffling: () => shufflingRef.current,
+      algorithm: props.algorithm,
+      name: props.name,
+    }));
 
-  checkAvailabilityCB(value: boolean): void {
-    if (value) {
-      this.setState({ quickShuffleDisabled: false });
-    }
-  }
+    const pauseState = pause ? "Resume" : "Pause";
 
-  handleAlgorithm(): void {
-    this.props.handleAlgorithm(this.checkAvailabilityCB);
-    this.setState({ quickShuffleDisabled: true });
-  }
-
-  checkSortAvailability(value: boolean): void {
-    if (value) {
-      this.setState({ shuffling: false });
-    }
-  }
-
-  render(): React.ReactElement {
-    let pauseState: string;
-
-    pauseState = this.state.pause ? "Resume" : 'Pause';
-    if (this.props.loaded) {
-      this.props.algorithm.getSpeedAmplifier(this.props.speed, this.state.pause);
+    // This side effect was in render()
+    if (props.loaded && props.algorithm) {
+      props.algorithm.getSpeedAmplifier(props.speed, pause);
     }
 
     return (
       <div className="canvas-container">
-        <div className='button-holder'>
-          <button className="quickShuffle" onClick={this.quickShuffle} disabled={this.state.quickShuffleDisabled}>Quick Shuffle</button>
-          <button className="sorting" onClick={this.handleAlgorithm} disabled={this.state.shuffling}>{this.props.name}</button>
-          <button onClick={this.handlePause}>{pauseState}</button>
+        <div className="button-holder">
+          <button
+            className="quickShuffle"
+            onClick={quickShuffle}
+            disabled={quickShuffleDisabled}
+          >
+            Quick Shuffle
+          </button>
+          <button
+            className="sorting"
+            onClick={handleAlgorithmClick}
+            disabled={shuffling}
+          >
+            {props.name}
+          </button>
+          <button onClick={handlePause}>{pauseState}</button>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginBottom: '5px', fontFamily: 'Varela Round', fontSize: '13px' }}>
-            <span style={{ color: '#dd6417' }}>Number of Swaps: {this.state.swaps}</span>
-            <span style={{ color: '#000' }}>State: {this.state.state}</span>
-            <span style={{ color: '#147ee0' }}>Number of Comparisons: {this.state.comparisons}</span>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: "100%",
+            marginBottom: "5px",
+            fontFamily: "Varela Round",
+            fontSize: "13px",
+          }}
+        >
+          <span style={{ color: "#dd6417" }}>Number of Swaps: {swaps}</span>
+          <span style={{ color: "#000" }}>State: {state}</span>
+          <span style={{ color: "#147ee0" }}>
+            Number of Comparisons: {comparisons}
+          </span>
         </div>
-        <canvas ref={this.canvasRef} width={1024} height={110} style={{ width: '100%' }} />
+        <canvas
+          ref={canvasRef}
+          width={1024}
+          height={110}
+          style={{ width: "100%" }}
+        />
       </div>
     );
   }
-}
+);
 
 export default SingleSort;

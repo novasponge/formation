@@ -1,430 +1,596 @@
-import SticksView from './stick_view';
-import { shuffle } from './sorting_algs/shuffle';
-import { bubbleSort } from './sorting_algs/bubble_sort';
-import { quickSort } from './sorting_algs/quick_sort';
+import SticksView from "./stick_view";
+import { shuffle } from "./sorting_algs/shuffle";
+import { bubbleSort } from "./sorting_algs/bubble_sort";
+import { quickSort } from "./sorting_algs/quick_sort";
 import { insertionSort } from "./sorting_algs/insert_sort";
-import { selectionSort } from './sorting_algs/select_sort';
-import { heapSort } from './sorting_algs/heap_sort';
-import { oddEvenSort } from './sorting_algs/odd_even_sort';
-import { cocktailSort } from './sorting_algs/cocktail_sort';
-import { bitonicSort } from './sorting_algs/bitonic_sort';
-import { mergeSort } from './sorting_algs/merge_sort';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
-import InputRange from 'react-input-range';
+import { selectionSort } from "./sorting_algs/select_sort";
+import { heapSort } from "./sorting_algs/heap_sort";
+import { oddEvenSort } from "./sorting_algs/odd_even_sort";
+import { cocktailSort } from "./sorting_algs/cocktail_sort";
+import { bitonicSort } from "./sorting_algs/bitonic_sort";
+import { mergeSort } from "./sorting_algs/merge_sort";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import ReactDOM from "react-dom";
+import Modal from "react-modal";
+import InputRange from "react-input-range";
 import { modalStyle } from "./modal_style";
 import "react-input-range/lib/css/index.css";
-import SingleSort from "./single_sort";
+import SingleSort, { SingleSortHandle } from "./single_sort";
 
-import CustomSortModal from './custom_sort_modal';
+import CustomSortModal from "./custom_sort_modal";
 
-interface SortingVisualizationState {
-  instructionOpen: boolean;
-  customSortOpen: boolean;
-  value: number;
-  checkAvailability: boolean;
-  pause?: boolean;
-  shufflePause?: boolean;
-  loaded?: boolean;
-  shuffle?: SticksView;
-  quickSort?: SticksView;
-  bubbleSort?: SticksView;
-  mergeSort?: SticksView;
-  bitonicSort?: SticksView;
-  heapSort?: SticksView;
-  selectionSort?: SticksView;
-  insertionSort?: SticksView;
-  oddEvenSort?: SticksView;
-  cocktailSort?: SticksView;
-}
+import { createRoot } from "react-dom/client";
 
-class SortingVisualization extends React.Component<{}, SortingVisualizationState> {
-  private shuffleRef = React.createRef<SingleSort>();
-  private quickSortRef = React.createRef<SingleSort>();
-  private bubbleSortRef = React.createRef<SingleSort>();
-  private mergeSortRef = React.createRef<SingleSort>();
-  private bitonicSortRef = React.createRef<SingleSort>();
-  private heapSortRef = React.createRef<SingleSort>();
-  private selectionSortRef = React.createRef<SingleSort>();
-  private insertionSortRef = React.createRef<SingleSort>();
-  private oddEvenSortRef = React.createRef<SingleSort>();
-  private cocktailSortRef = React.createRef<SingleSort>();
+const SortingVisualization: React.FC = () => {
+  const [instructionOpen, setInstructionOpen] = useState(false);
+  const [customSortOpen, setCustomSortOpen] = useState(false);
+  const [value, setValue] = useState(1);
+  const [checkAvailability, setCheckAvailability] = useState(true);
+  const [pause, setPause] = useState(false);
+  const [shufflePause, setShufflePause] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      instructionOpen: false,
-      customSortOpen: false,
-      value: 1,
-      checkAvailability: true
+  const [shuffleView, setShuffleView] = useState<SticksView>();
+  const [quickSortView, setQuickSortView] = useState<SticksView>();
+  const [bubbleSortView, setBubbleSortView] = useState<SticksView>();
+  const [mergeSortView, setMergeSortView] = useState<SticksView>();
+  const [bitonicSortView, setBitonicSortView] = useState<SticksView>();
+  const [heapSortView, setHeapSortView] = useState<SticksView>();
+  const [selectionSortView, setSelectionSortView] = useState<SticksView>();
+  const [insertionSortView, setInsertionSortView] = useState<SticksView>();
+  const [oddEvenSortView, setOddEvenSortView] = useState<SticksView>();
+  const [cocktailSortView, setCocktailSortView] = useState<SticksView>();
+
+  const shuffleRef = useRef<SingleSortHandle>(null);
+  const quickSortRef = useRef<SingleSortHandle>(null);
+  const bubbleSortRef = useRef<SingleSortHandle>(null);
+  const mergeSortRef = useRef<SingleSortHandle>(null);
+  const bitonicSortRef = useRef<SingleSortHandle>(null);
+  const heapSortRef = useRef<SingleSortHandle>(null);
+  const selectionSortRef = useRef<SingleSortHandle>(null);
+  const insertionSortRef = useRef<SingleSortHandle>(null);
+  const oddEvenSortRef = useRef<SingleSortHandle>(null);
+  const cocktailSortRef = useRef<SingleSortHandle>(null);
+
+  useEffect(() => {
+    const getCanvas = () => {
+      if (!shuffleRef.current?.canvasRef.current) return;
+
+      const shuffleCtx = shuffleRef.current.canvasRef.current.getContext("2d")!;
+      const sView = new SticksView(shuffleCtx);
+
+      const quickSortCtx =
+        quickSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const qView = new SticksView(quickSortCtx);
+
+      const bubbleSortCtx =
+        bubbleSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const bView = new SticksView(bubbleSortCtx);
+
+      const mergeSortCtx =
+        mergeSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const mView = new SticksView(mergeSortCtx);
+
+      const bitonicSortCtx =
+        bitonicSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const biView = new SticksView(bitonicSortCtx);
+
+      const heapSortCtx =
+        heapSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const hView = new SticksView(heapSortCtx);
+
+      const selectionSortCtx =
+        selectionSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const seView = new SticksView(selectionSortCtx);
+
+      const insertionSortCtx =
+        insertionSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const iView = new SticksView(insertionSortCtx);
+
+      const oddEvenSortCtx =
+        oddEvenSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const oView = new SticksView(oddEvenSortCtx);
+
+      const cocktailSortCtx =
+        cocktailSortRef.current!.canvasRef.current!.getContext("2d")!;
+      const cView = new SticksView(cocktailSortCtx);
+
+      setShuffleView(sView);
+      setQuickSortView(qView);
+      setBubbleSortView(bView);
+      setMergeSortView(mView);
+      setBitonicSortView(biView);
+      setHeapSortView(hView);
+      setSelectionSortView(seView);
+      setInsertionSortView(iView);
+      setOddEvenSortView(oView);
+      setCocktailSortView(cView);
+      setLoaded(true);
+
+      sView.start();
+      qView.start();
+      bView.start();
+      mView.start();
+      biView.start();
+      hView.start();
+      seView.start();
+      iView.start();
+      oView.start();
+      cView.start();
     };
 
-    this.handleShuffle = this.handleShuffle.bind(this);
-    this.handleQuickSort = this.handleQuickSort.bind(this);
-    this.handleBubbleSort = this.handleBubbleSort.bind(this);
-    this.handleMergeSort = this.handleMergeSort.bind(this);
-    this.handleBitonicSort = this.handleBitonicSort.bind(this);
-    this.handleHeapSort = this.handleHeapSort.bind(this);
-    this.handleSelectionSort = this.handleSelectionSort.bind(this);
-    this.handleInsertionSort = this.handleInsertionSort.bind(this);
-    this.handleOddEvenSort = this.handleOddEvenSort.bind(this);
-    this.handleCocktailSort = this.handleCocktailSort.bind(this);
-    this.handleSortAll = this.handleSortAll.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.openCustomSort = this.openCustomSort.bind(this);
-    this.closeCustomSort = this.closeCustomSort.bind(this);
-    this.handleShuffleDemo = this.handleShuffleDemo.bind(this);
-    this.handlePause = this.handlePause.bind(this);
-  }
+    getCanvas();
+  }, []);
 
-  componentDidMount() {
-    this.getCanvas();
-  }
-
-  getCanvas() {
-    const shuffleCtx = this.shuffleRef.current!.canvasRef.current!.getContext('2d')!;
-    const shuffleView = new SticksView(shuffleCtx);
-
-    const quickSortCtx = this.quickSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const quickSortView = new SticksView(quickSortCtx);
-
-    const bubbleSortCtx = this.bubbleSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const bubbleSortView = new SticksView(bubbleSortCtx);
-
-    const mergeSortCtx = this.mergeSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const mergeSortView = new SticksView(mergeSortCtx);
-
-    const bitonicSortCtx = this.bitonicSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const bitonicSortView = new SticksView(bitonicSortCtx);
-
-    const heapSortCtx = this.heapSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const heapSortView = new SticksView(heapSortCtx);
-
-    const selectionSortCtx = this.selectionSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const selectionSortView = new SticksView(selectionSortCtx);
-
-    const insertionSortCtx = this.insertionSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const insertionSortView = new SticksView(insertionSortCtx);
-
-    const oddEvenSortCtx = this.oddEvenSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const oddEvenSortView = new SticksView(oddEvenSortCtx);
-
-    const cocktailSortCtx = this.cocktailSortRef.current!.canvasRef.current!.getContext('2d')!;
-    const cocktailSortView = new SticksView(cocktailSortCtx);
-
-    this.setState({
-      shuffle: shuffleView,
-      quickSort: quickSortView,
-      bubbleSort: bubbleSortView,
-      mergeSort: mergeSortView,
-      bitonicSort: bitonicSortView,
-      heapSort: heapSortView,
-      selectionSort: selectionSortView,
-      insertionSort: insertionSortView,
-      oddEvenSort: oddEvenSortView,
-      cocktailSort: cocktailSortView,
-      loaded: true
-    });
-
-    shuffleView.start();
-    quickSortView.start();
-    bubbleSortView.start();
-    mergeSortView.start();
-    bitonicSortView.start();
-    heapSortView.start();
-    selectionSortView.start();
-    insertionSortView.start();
-    oddEvenSortView.start();
-    cocktailSortView.start();
-  }
-
-  handleShuffle(): void {
+  const handleShuffle = useCallback(() => {
     const refs = [
-      this.shuffleRef, this.quickSortRef, this.bubbleSortRef, this.mergeSortRef,
-      this.bitonicSortRef, this.heapSortRef, this.selectionSortRef,
-      this.insertionSortRef, this.oddEvenSortRef, this.cocktailSortRef
+      shuffleRef,
+      quickSortRef,
+      bubbleSortRef,
+      mergeSortRef,
+      bitonicSortRef,
+      heapSortRef,
+      selectionSortRef,
+      insertionSortRef,
+      oddEvenSortRef,
+      cocktailSortRef,
     ];
 
-    refs.forEach(ref => {
+    refs.forEach((ref) => {
       const current = ref.current;
-      if (current && !current.state.quickShuffleDisabled && current.props.name !== "Shuffle Demo") {
+      if (
+        current &&
+        !current.isQuickShuffleDisabled() &&
+        current.name !== "Shuffle Demo"
+      ) {
         let checkSortAvailability = current.checkSortAvailability;
-        current.props.algorithm.sticks.adopAlgorithm(null, shuffle, true, undefined, checkSortAvailability);
-        current.setState({ shuffling: true });
+        // Access algorithm from state or ref?
+        // The original code used current.props.algorithm.
+        // We exposed algorithm in the handle.
+        current.algorithm.sticks.adopAlgorithm(
+          null,
+          shuffle,
+          true,
+          undefined,
+          checkSortAvailability
+        );
+        current.setShuffling(true);
       }
     });
-  }
+  }, []);
 
-  handleShuffleDemo(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.shuffle!.sticks.adopAlgorithm(shuffle);
-  }
+  const handleShuffleDemo = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      shuffleView!.sticks.adopAlgorithm(shuffle);
+    },
+    [shuffleView]
+  );
 
-  handleQuickSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.quickSort!.sticks.adopAlgorithm(quickSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleQuickSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      quickSortView!.sticks.adopAlgorithm(
+        quickSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [quickSortView]
+  );
 
-  handleBubbleSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.bubbleSort!.sticks.adopAlgorithm(bubbleSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleBubbleSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      bubbleSortView!.sticks.adopAlgorithm(
+        bubbleSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [bubbleSortView]
+  );
 
-  handleMergeSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.mergeSort!.sticks.adopAlgorithm(mergeSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleMergeSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      mergeSortView!.sticks.adopAlgorithm(
+        mergeSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [mergeSortView]
+  );
 
-  handleBitonicSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.bitonicSort!.sticks.adopAlgorithm(bitonicSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleBitonicSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      bitonicSortView!.sticks.adopAlgorithm(
+        bitonicSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [bitonicSortView]
+  );
 
-  handleHeapSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.heapSort!.sticks.adopAlgorithm(heapSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleHeapSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      heapSortView!.sticks.adopAlgorithm(
+        heapSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [heapSortView]
+  );
 
-  handleSelectionSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.selectionSort!.sticks.adopAlgorithm(selectionSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleSelectionSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      selectionSortView!.sticks.adopAlgorithm(
+        selectionSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [selectionSortView]
+  );
 
-  handleInsertionSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.insertionSort!.sticks.adopAlgorithm(insertionSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleInsertionSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      insertionSortView!.sticks.adopAlgorithm(
+        insertionSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [insertionSortView]
+  );
 
-  handleOddEvenSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.oddEvenSort!.sticks.adopAlgorithm(oddEvenSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleOddEvenSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      oddEvenSortView!.sticks.adopAlgorithm(
+        oddEvenSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [oddEvenSortView]
+  );
 
-  handleCocktailSort(checkAvailabilityCB?: (value: boolean) => void): void {
-    this.state.cocktailSort!.sticks.adopAlgorithm(cocktailSort, undefined, false, checkAvailabilityCB);
-  }
+  const handleCocktailSort = useCallback(
+    (checkAvailabilityCB?: (value: boolean) => void) => {
+      cocktailSortView!.sticks.adopAlgorithm(
+        cocktailSort,
+        undefined,
+        false,
+        checkAvailabilityCB
+      );
+    },
+    [cocktailSortView]
+  );
 
-  handleSortAll() {
+  const handleSortAll = useCallback(() => {
     const refs = [
-      this.quickSortRef, this.mergeSortRef, this.bitonicSortRef, this.heapSortRef,
-      this.selectionSortRef, this.insertionSortRef, this.bubbleSortRef,
-      this.oddEvenSortRef, this.cocktailSortRef
+      quickSortRef,
+      mergeSortRef,
+      bitonicSortRef,
+      heapSortRef,
+      selectionSortRef,
+      insertionSortRef,
+      bubbleSortRef,
+      oddEvenSortRef,
+      cocktailSortRef,
     ];
 
-    refs.forEach(ref => {
+    refs.forEach((ref) => {
       const current = ref.current;
-      if (current && !current.state.shuffling) {
+      if (current && !current.isShuffling()) {
         let checkAvailabilityCB = current.checkAvailabilityCB;
-        switch (current.props.name) {
+        switch (current.name) {
           case "Quick Sort":
-            current.props.algorithm.sticks.adopAlgorithm(quickSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              quickSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Merge Sort":
-            current.props.algorithm.sticks.adopAlgorithm(mergeSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              mergeSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Bintonic Sort":
-            current.props.algorithm.sticks.adopAlgorithm(bitonicSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              bitonicSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Heap Sort-Bottom Up":
-            current.props.algorithm.sticks.adopAlgorithm(heapSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              heapSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Selection Sort":
-            current.props.algorithm.sticks.adopAlgorithm(selectionSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              selectionSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Insertion Sort":
-            current.props.algorithm.sticks.adopAlgorithm(insertionSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              insertionSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Bubble Sort":
-            current.props.algorithm.sticks.adopAlgorithm(bubbleSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              bubbleSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Odd Even Sort":
-            current.props.algorithm.sticks.adopAlgorithm(oddEvenSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              oddEvenSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           case "Cocktail Sort":
-            current.props.algorithm.sticks.adopAlgorithm(cocktailSort, undefined, false, checkAvailabilityCB);
-            current.setState({ quickShuffleDisabled: true });
+            current.algorithm.sticks.adopAlgorithm(
+              cocktailSort,
+              undefined,
+              false,
+              checkAvailabilityCB
+            );
+            current.setQuickShuffleDisabled(true);
             break;
           default:
             break;
         }
       }
     });
-  }
+  }, []);
 
-  closeModal(): void {
-    this.setState({ instructionOpen: false });
-  }
+  const closeModal = () => {
+    setInstructionOpen(false);
+  };
 
-  openModal(): void {
-    this.setState({ instructionOpen: true });
-  }
+  const openModal = () => {
+    setInstructionOpen(true);
+  };
 
-  openCustomSort(): void {
-    this.setState({ customSortOpen: true });
-  }
+  const openCustomSort = () => {
+    setCustomSortOpen(true);
+  };
 
-  closeCustomSort(): void {
-    this.setState({ customSortOpen: false });
-  }
+  const closeCustomSort = () => {
+    setCustomSortOpen(false);
+  };
 
-  handleValuesChange(value: number): void {
-    this.setState({
-      value: value,
-    });
-  }
+  const handleValuesChange = (newValue: number) => {
+    setValue(newValue);
+  };
 
-  handlePause(): void {
-    if (this.state.pause) {
-      this.setState({ shufflePause: false });
+  const handlePauseToggle = () => {
+    if (pause) {
+      setShufflePause(false);
     } else {
-      this.setState({ shufflePause: true });
+      setShufflePause(true);
     }
-  }
+  };
 
-  formatLabel(labelValue: number | undefined): string {
-    if (labelValue === undefined || labelValue === null) return '';
+  const formatLabel = (labelValue: number | undefined): string => {
+    if (labelValue === undefined || labelValue === null) return "";
     return labelValue.toFixed(1);
-  }
+  };
 
-  render() {
-
-    return (
-      <div className="visualization-body">
-        <header>
-          <div className="header-content">
-            <button className='open-instruction' onClick={this.openModal}>Instructions</button>
-            <button className='open-instruction' onClick={this.openCustomSort} style={{ marginLeft: '10px' }}>Custom Sort</button>
-            <div className='title-container'>
-              <h1>FORMATION</h1>
-              <h6>created by <a href="http://www.zhuolizhang.com">Zhuoli Zhang</a></h6>
-            </div>
-            <a href='https://github.com/novasponge/formation' className="github">
-              <i className="fa fa-github" aria-hidden="true"></i>
-            </a>
+  return (
+    <div className="visualization-body">
+      <header>
+        <div className="header-content">
+          <button className="open-instruction" onClick={openModal}>
+            Instructions
+          </button>
+          <button
+            className="open-instruction"
+            onClick={openCustomSort}
+            style={{ marginLeft: "10px" }}
+          >
+            Custom Sort
+          </button>
+          <div className="title-container">
+            <h1>FORMATION</h1>
+            <h6>
+              created by <a href="http://www.zhuolizhang.com">Zhuoli Zhang</a>
+            </h6>
           </div>
-          <div className="shuffle-sort-button-container">
-            <button className="shuffle-all-button" onClick={this.handleShuffle} disabled={!this.state.checkAvailability}>Shuffle All</button>
-            <button onClick={this.handleSortAll}>Sort All</button>
-            <h3>Speed Multiplier</h3>
-            <InputRange maxValue={20}
-              minValue={0}
-              value={this.state.value}
-              step={0.1}
-              formatLabel={this.formatLabel.bind(this)}
-              onChange={this.handleValuesChange.bind(this)} />
-          </div>
-          <Modal className="instruction"
-            isOpen={this.state.instructionOpen}
-            onRequestClose={this.closeModal}
-            style={modalStyle}>
-            <h3>Formation is the visualization of sorting algorithms.</h3>
-            <p>Click shuffle all to shuffle all demos at once.</p>
-            <p>Click sort all button to perform all sorting algorithms at once.</p>
-            <p>Click algorithms name to perform specific sorting algorithm.</p>
-            <p>Lines are shuffled first, then sorted by slope.</p>
-            
-            <h3>Custom Sort</h3>
-            <p>Click "Custom Sort" to write your own sorting algorithm in JavaScript!</p>
-            <p>Just write the sorting logic (comparisons and swaps), and the visualization will be generated automatically.</p>
-
-            <h3 className='red'>Red</h3>
-            <p>Red lines are swapping for either shuffling or sorting purposes.</p>
-            <h3>Black</h3>
-            <p>Black lines are comparing between two slopes.</p>
-            
-            <h3>Statistics</h3>
-            <p>Real-time statistics (Swaps, Comparisons, State) are displayed above each visualization.</p>
-
-            <h3 className='speedAmplifier'>Speed Multiplier</h3>
-            <p>Drag the blue circle to change the speed.</p>
-            <button className='close-instruction' onClick={this.closeModal}>Close</button>
-          </Modal>
-          <CustomSortModal 
-            isOpen={this.state.customSortOpen}
-            onRequestClose={this.closeCustomSort}
-            value={this.state.value}
-            onSpeedChange={this.handleValuesChange.bind(this)}
-          />
-        </header>
-        <div className="main-content">
-          <SingleSort ref={this.shuffleRef}
-            handleAlgorithm={this.handleShuffleDemo}
-            algorithm={this.state.shuffle!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Shuffle Demo"
-          />
-          <SingleSort ref={this.quickSortRef}
-            handleAlgorithm={this.handleQuickSort}
-            algorithm={this.state.quickSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Quick Sort"
-          />
-          <SingleSort ref={this.mergeSortRef}
-            handleAlgorithm={this.handleMergeSort}
-            algorithm={this.state.mergeSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Merge Sort"
-          />
-          <SingleSort ref={this.bitonicSortRef}
-            handleAlgorithm={this.handleBitonicSort}
-            algorithm={this.state.bitonicSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Bintonic Sort"
-          />
-          <SingleSort ref={this.heapSortRef}
-            handleAlgorithm={this.handleHeapSort}
-            algorithm={this.state.heapSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Heap Sort-Bottom Up"
-          />
-          <SingleSort ref={this.selectionSortRef}
-            handleAlgorithm={this.handleSelectionSort}
-            algorithm={this.state.selectionSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Selection Sort"
-          />
-          <SingleSort ref={this.insertionSortRef}
-            handleAlgorithm={this.handleInsertionSort}
-            algorithm={this.state.insertionSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Insertion Sort"
-          />
-          <SingleSort ref={this.bubbleSortRef}
-            handleAlgorithm={this.handleBubbleSort}
-            algorithm={this.state.bubbleSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Bubble Sort"
-          />
-          <SingleSort ref={this.oddEvenSortRef}
-            handleAlgorithm={this.handleOddEvenSort}
-            algorithm={this.state.oddEvenSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Odd Even Sort"
-          />
-          <SingleSort ref={this.cocktailSortRef}
-            handleAlgorithm={this.handleCocktailSort}
-            algorithm={this.state.cocktailSort!}
-            speed={this.state.value}
-            loaded={this.state.loaded!}
-            name="Cocktail Sort"
+          <a href="https://github.com/novasponge/formation" className="github">
+            <i className="fa fa-github" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div className="shuffle-sort-button-container">
+          <button
+            className="shuffle-all-button"
+            onClick={handleShuffle}
+            disabled={!checkAvailability}
+          >
+            Shuffle All
+          </button>
+          <button onClick={handleSortAll}>Sort All</button>
+          <h3>Speed Multiplier</h3>
+          <InputRange
+            maxValue={20}
+            minValue={0}
+            value={value}
+            step={0.1}
+            formatLabel={formatLabel}
+            onChange={handleValuesChange as any}
           />
         </div>
-      </div>
-    );
-  }
-}
+        <Modal
+          className="instruction"
+          isOpen={instructionOpen}
+          onRequestClose={closeModal}
+          style={modalStyle}
+        >
+          <h3>Formation is the visualization of sorting algorithms.</h3>
+          <p>Click shuffle all to shuffle all demos at once.</p>
+          <p>
+            Click sort all button to perform all sorting algorithms at once.
+          </p>
+          <p>Click algorithms name to perform specific sorting algorithm.</p>
+          <p>Lines are shuffled first, then sorted by slope.</p>
 
-import { createRoot } from 'react-dom/client';
+          <h3>Custom Sort</h3>
+          <p>
+            Click "Custom Sort" to write your own sorting algorithm in
+            JavaScript!
+          </p>
+          <p>
+            Just write the sorting logic (comparisons and swaps), and the
+            visualization will be generated automatically.
+          </p>
+
+          <h3 className="red">Red</h3>
+          <p>
+            Red lines are swapping for either shuffling or sorting purposes.
+          </p>
+          <h3>Black</h3>
+          <p>Black lines are comparing between two slopes.</p>
+
+          <h3>Statistics</h3>
+          <p>
+            Real-time statistics (Swaps, Comparisons, State) are displayed above
+            each visualization.
+          </p>
+
+          <h3 className="speedAmplifier">Speed Multiplier</h3>
+          <p>Drag the blue circle to change the speed.</p>
+          <button className="close-instruction" onClick={closeModal}>
+            Close
+          </button>
+        </Modal>
+        <CustomSortModal
+          isOpen={customSortOpen}
+          onRequestClose={closeCustomSort}
+          value={value}
+          onSpeedChange={handleValuesChange}
+        />
+      </header>
+      <div className="main-content">
+        <SingleSort
+          ref={shuffleRef}
+          handleAlgorithm={handleShuffleDemo}
+          algorithm={shuffleView!}
+          speed={value}
+          loaded={loaded}
+          name="Shuffle Demo"
+        />
+        <SingleSort
+          ref={quickSortRef}
+          handleAlgorithm={handleQuickSort}
+          algorithm={quickSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Quick Sort"
+        />
+        <SingleSort
+          ref={mergeSortRef}
+          handleAlgorithm={handleMergeSort}
+          algorithm={mergeSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Merge Sort"
+        />
+        <SingleSort
+          ref={bitonicSortRef}
+          handleAlgorithm={handleBitonicSort}
+          algorithm={bitonicSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Bintonic Sort"
+        />
+        <SingleSort
+          ref={heapSortRef}
+          handleAlgorithm={handleHeapSort}
+          algorithm={heapSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Heap Sort-Bottom Up"
+        />
+        <SingleSort
+          ref={selectionSortRef}
+          handleAlgorithm={handleSelectionSort}
+          algorithm={selectionSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Selection Sort"
+        />
+        <SingleSort
+          ref={insertionSortRef}
+          handleAlgorithm={handleInsertionSort}
+          algorithm={insertionSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Insertion Sort"
+        />
+        <SingleSort
+          ref={bubbleSortRef}
+          handleAlgorithm={handleBubbleSort}
+          algorithm={bubbleSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Bubble Sort"
+        />
+        <SingleSort
+          ref={oddEvenSortRef}
+          handleAlgorithm={handleOddEvenSort}
+          algorithm={oddEvenSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Odd Even Sort"
+        />
+        <SingleSort
+          ref={cocktailSortRef}
+          handleAlgorithm={handleCocktailSort}
+          algorithm={cocktailSortView!}
+          speed={value}
+          loaded={loaded}
+          name="Cocktail Sort"
+        />
+      </div>
+    </div>
+  );
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("root");
